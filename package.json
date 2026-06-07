@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "zuplo dev",
+    "dev": "zuplo dev --port 8030",
     "test": "zuplo test",
     "typecheck": "tsc --noEmit",
     "docs": "zuplo docs"
