@@ -1,0 +1,61 @@
+---
+title: Nigeria Phone Lookup
+description: Lookup subscriber information associated with a Nigerian phone number.
+sidebar_label: Nigeria Phone Lookup
+---
+
+# Nigeria Phone Lookup
+
+Lookup subscriber information associated with a Nigerian phone number.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-gov-nigeria#nigeria-phone-lookup) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-gov-nigeria#nigeria-phone-lookup) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+ng_phone_number_lookup
+```
+
+## Use Cases
+
+- Reverse phone lookup
+- Subscriber identity discovery
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `phone_number` | string | Yes | Nigerian phone number to look up. |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `ng_phone_number_lookup`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "ng_phone_number_lookup",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-gov-nigeria#nigeria-phone-lookup)
+- [Bulk API reference](/api/bulk-gov-nigeria#nigeria-phone-lookup)
+- [All API endpoints](/api)

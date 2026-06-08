@@ -1,0 +1,77 @@
+---
+title: Document Verification
+description: Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.
+sidebar_label: Document Verification
+---
+
+# Document Verification
+
+Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-identity-verification#document-verification) — schemas, examples, and playground
+- Bulk API reference — not supported for this endpoint (hosted page required)
+:::
+
+## Verification Type
+
+```
+id_document
+```
+
+## Use Cases
+
+- Onboard customers with government-issued ID validation
+- Support passports, national IDs, and driver's licenses
+- Offer hosted verification links for end-user capture
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Customer's email address. Used to send the hosted verification link. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g., "NG", "ZA", "GH", "KE"). |
+| `language` | string | No | Language for the hosted verification page (e.g., "EN", "FR"). Defaults to "EN". |
+| `ttl` | number | No | Link expiry time in minutes. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |
+
+## Verification Modes
+
+This endpoint supports **link mode** (hosted verification page) and **direct mode** (server-side verification):
+
+- **Link mode (`onsite`)** — Returns a hosted verification URL to send to your customer.
+- **Direct mode (`offsite`)** — Runs verification server-side without a hosted page.
+
+Set `method_type` to `"onsite"` or `"offsite"` in your request body.
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `id_document`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "id_document",
+  "method_type": "onsite",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+:::caution Bulk not supported
+This verification type requires a hosted verification page and is **not available** in bulk mode. Use a single request instead.
+:::
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-identity-verification#document-verification)
+- [Bulk API reference](/api/bulk-identity-verification#document-verification) _(not supported)_
+- [All API endpoints](/api)

@@ -1,0 +1,63 @@
+---
+title: KYB - Know Your Business
+description: Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data.
+sidebar_label: KYB - Know Your Business
+---
+
+# KYB - Know Your Business
+
+Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-compliance-screening#kyb-know-your-business) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-compliance-screening#kyb-know-your-business) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+kyb_screening
+```
+
+## Use Cases
+
+- Verify company registration and status
+- Retrieve directors and ownership data
+- Support merchant and corporate onboarding
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `rc_number` | string | Yes | Company registration number. |
+| `company_name` | string | No | Legal name of the business (used for cross-validation). |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `kyb_screening`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "kyb_screening",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-compliance-screening#kyb-know-your-business)
+- [Bulk API reference](/api/bulk-compliance-screening#kyb-know-your-business)
+- [All API endpoints](/api)

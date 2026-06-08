@@ -1,153 +1,64 @@
 ---
-description: Welcome to your new Zudoku documentation site.
-sidebar_label: My Developer Portal
-sidebar_icon: panel-top
-category: ""
+description: Get started with the VerifyAfrica identity verification API.
+sidebar_label: Introduction
+sidebar_icon: sparkles
 ---
 
-<div>
-  <img src="/banner.svg" className="dark:hidden" />
-  <img src="/banner-dark.svg" className="hidden dark:block" />
-</div>
+# VerifyAfrica API
 
-# Welcome to Better API Documentation
+VerifyAfrica provides identity verification, compliance screening, and government registry checks across Africa. Use a single API to verify documents, screen for AML risk, validate addresses, and query official registries in Nigeria, Ghana, Kenya, South Africa, and more.
 
-Welcome to your new developer portal that makes sense. 🎉
+## Base URL
 
-This is your new developer portal, built with ["Zudoku by Zuplo"](https://github.com/zuplo/zudoku)
-and designed to elevate your API documentation experience. We've streamlined the setup process so
-you can focus on what matters most: creating exceptional developer experiences.
-
-Think of this as your API's professional showcase—presenting your endpoints and documentation in the
-best possible light. Whether you're launching innovative new features or improving existing
-services, this portal provides the foundation for clear, accessible, and engaging developer
-documentation.
-
-Let's explore what we've configured for you and how you can customize it to perfectly match your
-needs.
-
-## Let's Review Your Configuration
-
-The developer portal is configured in the `zudoku.config.tsx` file. We've created a starter
-configuration to get you up and running quickly. Let's walk you through everything we've set up so
-you know how to customize it:
-
-<Stepper>
-
-1. **Change the Basics**
-
-   First, you may want to change the title and banner we've put in place. These are part of the
-   `page` section in your configuration.
-
-   :::tip
-
-   **Have a company logo?** Learn how you can
-   [add your logo](https://zuplo.com/docs/dev-portal/zudoku/configuration/site#logo) in our
-   documentation.
-
-   :::
-
-   ```jsx
-   {
-    // ...
-    "page": {
-      "title": "My Developer Portal",
-      "banner": {
-        "message": (
-          <div className="w-full text-center">
-            <strong>Congrats!</strong> 🙌 You just created your first developer
-            portal.
-          </div>
-        ),
-        "color": "info",
-        "dismissible": true,
-      }
-   }
-   ```
-
-1. **API Reference**
-
-   Your [API Reference](/api) is generated from your Zuplo OpenAPI file in `../routes.oas.json`—you
-   can add other APIs whenever you need them. Improve your documentation by adding more details to
-   the OpenAPI file.
-
-   ```json
-   {
-     // ...
-     "apis": {
-       "type": "file",
-       "input": "../config/routes.oas.json",
-       "navigationId": "api"
-     }
-   }
-   ```
-
-1. **Authentication & Login**
-
-   We've configured your project to use [Auth0](https://auth0.com) as an authentication provider
-   with our demo account. We support many authentication providers—check the
-   [documentation on how to configure](https://zuplo.com/docs/dev-portal/zudoku/configuration/authentication#authentication-providers)
-   each one.
-
-   :::caution
-
-   You must change the authentication provider before taking this to **production**. Using our demo
-   provider is not secure for production use.
-
-   :::
-
-   ```json
-   {
-     // ...
-     "authentication": {
-       "type": "auth0",
-       "domain": "auth.zuplo.io",
-       "clientId": "kWQs12Q9Og4w6zzI82qJSa3klN1sMtvz",
-       "audience": "https://api.example.com/"
-     }
-   }
-   ```
-
-1. **API Keys**
-
-   We've enabled API Keys on your developer portal. This connects to the API Key Service in Zuplo.
-   To add API Keys for your users, create a consumer with the matching email address in **Services
-   => API Key Service** in Zuplo, or
-   [create a Consumer using the Zuplo API](https://zuplo.com/docs/api/api-keys-consumers#creates-a-consumer).
-
-   ```json
-   {
-     // ...
-     "apiKeys": {
-       "enabled": true
-     }
-   }
-   ```
-
-</Stepper>
-
-## Make It Yours
-
-You can customize the look and feel of your documentation site by modifying the `theme` section in
-`zudoku.config.tsx`. Why not try changing the primary color of your site?
-
-```json
-{
-  // ...
-  "theme": {
-    "light": {
-      "primary": "316 100% 50%",
-      "primaryForeground": "360 100% 100%"
-    },
-    "dark": {
-      "primary": "316 100% 50%",
-      "primaryForeground": "360 100% 100%"
-    }
-  }
-  // ...
-}
+```
+https://api.verifyafrica.io
 ```
 
-We have extensive customization options available. From colors to fonts and borders, find the
-[full list of options](https://zuplo.com/docs/dev-portal/zudoku/customization/colors-theme) in our
-documentation.
+## Authentication
+
+Include your API key in every request:
+
+```
+X-API-KEY: your_api_key_here
+```
+
+## Core Endpoints
+
+| Endpoint | Description |
+| --- | --- |
+| `POST /api/verifications/requests/` | Submit a single verification request |
+| `POST /api/verifications/bulk/` | Submit up to 100 verifications in one batch |
+
+Every request includes a `verification_type` that selects which check to run, plus an `input_data` object with the fields required for that check.
+
+## Verification Categories
+
+Explore the **Endpoints** section in the sidebar for detailed guides on each verification type:
+
+- **Identity Verification** — Document and facial screening
+- **Compliance & Screening** — AML, business AML, and KYB checks
+- **Address Verification** — Physical address validation
+- **Risk & Crypto** — Fraud risk scoring and crypto wallet screening
+- **Government Registry Checks** — Official ID and registry lookups by country
+
+## Quick Example
+
+```bash
+curl -X POST https://api.verifyafrica.io/api/verifications/requests/ \
+  -H "X-API-KEY: your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "is_test": false,
+    "verification_type": "ng_bvn_verification",
+    "input_data": {
+      "bvn": "22222222222",
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  }'
+```
+
+## Next Steps
+
+- Browse [endpoint guides](/endpoints/overview/identity-verification) to learn what each verification type does
+- Open the [API Reference](/api) for full schemas, parameters, and response codes

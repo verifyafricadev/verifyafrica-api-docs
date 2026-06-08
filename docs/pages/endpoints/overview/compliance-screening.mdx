@@ -1,0 +1,29 @@
+---
+title: Compliance & Screening
+description: Screen individuals and businesses against sanctions lists, PEP databases, adverse media, and corporate registries.
+sidebar_label: Compliance & Screening
+sidebar_icon: shield-check
+---
+
+# Compliance & Screening
+
+Screen individuals and businesses against sanctions lists, PEP databases, adverse media, and corporate registries.
+
+## API Reference
+
+- [Single API — Compliance & Screening](/api/single-compliance-screening)
+- [Bulk API — Compliance & Screening](/api/bulk-compliance-screening)
+
+## Available Endpoints
+
+- [AML Screening](../aml-screening) — Screen individuals against global sanctions lists, PEP databases, and adverse media sources. ([API](/api/single-compliance-screening#aml-screening))
+- [Business AML Screening](../business-aml-screening) — Screen businesses and corporate entities against global sanctions lists and adverse media. ([API](/api/single-compliance-screening#business-aml-screening))
+- [KYB - Know Your Business](../kyb-screening) — Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data. ([API](/api/single-compliance-screening#kyb-know-your-business))
+
+## Getting Started
+
+All endpoints in this category use the same base URL:
+
+`POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Set `verification_type` to the identifier for the check you need. See each endpoint page for required `input_data` fields.

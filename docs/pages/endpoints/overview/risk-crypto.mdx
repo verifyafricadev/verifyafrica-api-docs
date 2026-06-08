@@ -1,0 +1,28 @@
+---
+title: Risk & Crypto
+description: Assess identity fraud risk and screen cryptocurrency wallets for illicit activity.
+sidebar_label: Risk & Crypto
+sidebar_icon: bitcoin
+---
+
+# Risk & Crypto
+
+Assess identity fraud risk and screen cryptocurrency wallets for illicit activity.
+
+## API Reference
+
+- [Single API — Risk & Crypto](/api/single-risk-crypto)
+- [Bulk API — Risk & Crypto](/api/bulk-risk-crypto)
+
+## Available Endpoints
+
+- [Risk Assessment](../risk-assessment) — Assess the fraud and identity risk score for a given individual based on their identity data. ([API](/api/single-risk-crypto#risk-assessment))
+- [Crypto Wallet Screening](../crypto-wallet-screening) — Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources. ([API](/api/single-risk-crypto#crypto-wallet-screening))
+
+## Getting Started
+
+All endpoints in this category use the same base URL:
+
+`POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Set `verification_type` to the identifier for the check you need. See each endpoint page for required `input_data` fields.

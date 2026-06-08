@@ -1,0 +1,77 @@
+---
+title: Facial Screening
+description: Perform real-time liveness detection and face match verification against a reference document.
+sidebar_label: Facial Screening
+---
+
+# Facial Screening
+
+Perform real-time liveness detection and face match verification against a reference document.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-identity-verification#facial-screening) — schemas, examples, and playground
+- Bulk API reference — not supported for this endpoint (hosted page required)
+:::
+
+## Verification Type
+
+```
+face_match
+```
+
+## Use Cases
+
+- Confirm the person presenting an ID is the document holder
+- Detect presentation attacks with liveness checks
+- Combine with document verification for stronger KYC
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Customer's email address. Used to send the hosted verification link. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g., "NG", "ZA", "GH", "KE"). |
+| `language` | string | No | Language for the hosted verification page (e.g., "EN", "FR"). Defaults to "EN". |
+| `ttl` | number | No | Link expiry time in minutes. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |
+
+## Verification Modes
+
+This endpoint supports **link mode** (hosted verification page) and **direct mode** (server-side verification):
+
+- **Link mode (`onsite`)** — Returns a hosted verification URL to send to your customer.
+- **Direct mode (`offsite`)** — Runs verification server-side without a hosted page.
+
+Set `method_type` to `"onsite"` or `"offsite"` in your request body.
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `face_match`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "face_match",
+  "method_type": "onsite",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+:::caution Bulk not supported
+This verification type requires a hosted verification page and is **not available** in bulk mode. Use a single request instead.
+:::
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-identity-verification#facial-screening)
+- [Bulk API reference](/api/bulk-identity-verification#facial-screening) _(not supported)_
+- [All API endpoints](/api)

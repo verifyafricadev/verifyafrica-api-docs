@@ -1,0 +1,63 @@
+---
+title: South Africa ID Verification
+description: Verify South African ID numbers against the Department of Home Affairs registry.
+sidebar_label: South Africa ID Verification
+---
+
+# South Africa ID Verification
+
+Verify South African ID numbers against the Department of Home Affairs registry.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-gov-south-africa#south-africa-id-verification) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-gov-south-africa#south-africa-id-verification) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+za_said_verification
+```
+
+## Use Cases
+
+- Validate SA ID numbers during onboarding
+- Cross-check name against Home Affairs records
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id_number` | string | Yes | 13-digit South African ID number. |
+| `first_name` | string | No | Subject's first name for cross-validation. |
+| `last_name` | string | No | Subject's last name for cross-validation. |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `za_said_verification`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "za_said_verification",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-gov-south-africa#south-africa-id-verification)
+- [Bulk API reference](/api/bulk-gov-south-africa#south-africa-id-verification)
+- [All API endpoints](/api)

@@ -1,4 +1,5 @@
 import type { ZudokuConfig } from "zudoku";
+import { endpointNavigation } from "./endpoint-navigation";
 
 /**
  * Developer Portal Configuration
@@ -22,53 +23,8 @@ const config: ZudokuConfig = {
 		title: "VerifyAfrica Docs",
 		description: "VerifyAfrica API Documentation",
 	},
-	navigation: [
-		{
-			type: "category",
-			label: "Documentation",
-			items: [
-				{
-					type: "category",
-					label: "Getting Started",
-					icon: "sparkles",
-					items: [
-						{
-							type: "doc",
-							file: "introduction",
-						},
-						{
-							type: "doc",
-							file: "markdown",
-						},
-					],
-				},
-				{
-					type: "category",
-					label: "Useful Links",
-					collapsible: false,
-					icon: "link",
-					items: [
-						{
-							type: "link",
-							label: "Zuplo Docs",
-							to: "https://zuplo.com/docs/dev-portal/introduction",
-						},
-						{
-							type: "link",
-							label: "Developer Portal Docs",
-							to: "https://zuplo.com/docs/dev-portal/introduction",
-						},
-					],
-				},
-			],
-		},
-		{
-			type: "link",
-			to: "/api",
-			label: "API Reference",
-		},
-	],
-	redirects: [{ from: "/", to: "/api" }],
+	navigation: endpointNavigation,
+	redirects: [{ from: "/", to: "/introduction" }],
 	apis: [
 		{
 			type: "file",

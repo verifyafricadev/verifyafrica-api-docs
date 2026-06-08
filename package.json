@@ -7,7 +7,7 @@
     "dev": "zuplo dev --port 8030",
     "test": "zuplo test",
     "typecheck": "tsc --noEmit",
-    "docs": "zuplo docs --port 8031"
+    "docs": "zuplo docs --port 8031",
   },
   "dependencies": {
     "zuplo": "^6"

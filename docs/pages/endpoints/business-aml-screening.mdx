@@ -1,0 +1,64 @@
+---
+title: Business AML Screening
+description: Screen businesses and corporate entities against global sanctions lists and adverse media.
+sidebar_label: Business AML Screening
+---
+
+# Business AML Screening
+
+Screen businesses and corporate entities against global sanctions lists and adverse media.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-compliance-screening#business-aml-screening) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-compliance-screening#business-aml-screening) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+business_aml_screening
+```
+
+## Use Cases
+
+- Vendor and partner due diligence
+- Corporate sanctions screening
+- B2B onboarding compliance
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `company_name` | string | Yes | Legal name of the business entity. |
+| `country` | string | No | Country of incorporation (ISO 3166-1 alpha-2). |
+| `rc_number` | string | No | Registration or company number. |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `business_aml_screening`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "business_aml_screening",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-compliance-screening#business-aml-screening)
+- [Bulk API reference](/api/bulk-compliance-screening#business-aml-screening)
+- [All API endpoints](/api)

@@ -1,0 +1,66 @@
+---
+title: AML Screening
+description: Screen individuals against global sanctions lists, PEP databases, and adverse media sources.
+sidebar_label: AML Screening
+---
+
+# AML Screening
+
+Screen individuals against global sanctions lists, PEP databases, and adverse media sources.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-compliance-screening#aml-screening) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-compliance-screening#aml-screening) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+aml_screening
+```
+
+## Use Cases
+
+- Customer due diligence for financial services
+- PEP and sanctions list screening
+- Adverse media checks during onboarding
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `first_name` | string | Yes | Subject's first name. |
+| `last_name` | string | Yes | Subject's last name. |
+| `date_of_birth` | string | No | Date of birth in YYYY-MM-DD format. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code. |
+| `nationality` | string | No | Subject's nationality. |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `aml_screening`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "aml_screening",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-compliance-screening#aml-screening)
+- [Bulk API reference](/api/bulk-compliance-screening#aml-screening)
+- [All API endpoints](/api)

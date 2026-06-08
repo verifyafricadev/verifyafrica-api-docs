@@ -1,0 +1,63 @@
+---
+title: Crypto Wallet Screening
+description: Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources.
+sidebar_label: Crypto Wallet Screening
+---
+
+# Crypto Wallet Screening
+
+Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources.
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-risk-crypto#crypto-wallet-screening) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-risk-crypto#crypto-wallet-screening) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+crypto_wallet_screening
+```
+
+## Use Cases
+
+- Crypto exchange compliance
+- Wallet sanctions screening
+- AML checks for digital asset flows
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `wallet_address` | string | Yes | The cryptocurrency wallet address to screen. |
+| `blockchain` | string | Yes | Blockchain network (e.g., "bitcoin", "ethereum", "tron"). |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `crypto_wallet_screening`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "crypto_wallet_screening",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-risk-crypto#crypto-wallet-screening)
+- [Bulk API reference](/api/bulk-risk-crypto#crypto-wallet-screening)
+- [All API endpoints](/api)

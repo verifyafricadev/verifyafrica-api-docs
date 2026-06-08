@@ -1,0 +1,62 @@
+---
+title: Nigeria CAC Lookup
+description: Lookup company records from the Nigerian Corporate Affairs Commission (CAC).
+sidebar_label: Nigeria CAC Lookup
+---
+
+# Nigeria CAC Lookup
+
+Lookup company records from the Nigerian Corporate Affairs Commission (CAC).
+
+:::tip API Reference
+Jump directly to the interactive API docs for this endpoint:
+
+- [Single API reference](/api/single-gov-nigeria#nigeria-cac-lookup) — schemas, examples, and playground
+- [Bulk API reference](/api/bulk-gov-nigeria#nigeria-cac-lookup) — schemas, examples, and playground for batch requests
+:::
+
+## Verification Type
+
+```
+ng_cac_lookup
+```
+
+## Use Cases
+
+- Business registration verification
+- Corporate due diligence
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `rc_number` | string | Yes | CAC registration number (e.g., RC123456). |
+| `company_name` | string | No | Company name for cross-validation. |
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+
+Include your API key in the `X-API-KEY` header and set `verification_type` to `ng_cac_lookup`.
+
+```json
+{
+  "is_test": false,
+  "verification_type": "ng_cac_lookup",
+  "input_data": { /* see parameters above */ }
+}
+```
+
+## Bulk Processing
+
+Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [Single API reference](/api/single-gov-nigeria#nigeria-cac-lookup)
+- [Bulk API reference](/api/bulk-gov-nigeria#nigeria-cac-lookup)
+- [All API endpoints](/api)
