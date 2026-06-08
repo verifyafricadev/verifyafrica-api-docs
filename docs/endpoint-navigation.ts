@@ -10,7 +10,7 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 				type: "doc",
 				file: "introduction",
 				label: "Getting Started",
-				icon: "sparkles",
+				icon: "star",
 			},
 			{
 				type: "category",
