@@ -4,7 +4,7 @@ import type { ZudokuConfig } from "zudoku";
 export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 	{
 		type: "category",
-		label: "Documentation",
+		label: "Overview",
 		items: [
 			{
 				type: "category",
