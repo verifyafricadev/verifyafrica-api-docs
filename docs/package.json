@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "zudoku dev --zuplo",
+    "dev": "zudoku dev --zuplo --port 8031",
     "build": "zudoku build --zuplo"
   },
   "dependencies": {
