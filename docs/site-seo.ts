@@ -4,9 +4,7 @@ export const SITE_NAME = "VerifyAfrica";
 
 export const SITE_TITLE = "VerifyAfrica Docs";
 
-export const DEFAULT_OG_IMAGE = "/banner.svg";
-
-export const HOMEPAGE_OG_IMAGE = "/assets/brand/logo.svg";
+export const OG_IMAGE = "/assets/brand/meta-logo.svg";
 
 export const SITE_KEYWORDS = [
 	"VerifyAfrica",

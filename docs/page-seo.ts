@@ -1,4 +1,4 @@
-import { DEFAULT_OG_IMAGE, HOMEPAGE_OG_IMAGE } from "./site-seo";
+import { OG_IMAGE } from "./site-seo";
 
 export type PageSeo = {
 	title: string;
@@ -13,7 +13,6 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 			"VerifyAfrica: Identity Verification, Compliance Screening & Government Registry API",
 		description:
 			"Get started with the VerifyAfrica identity verification API. Verify documents, screen for AML risk, validate addresses, and query official registries across Nigeria, Ghana, Kenya, South Africa, and more.",
-		image: HOMEPAGE_OG_IMAGE,
 		keywords: [
 			"VerifyAfrica API",
 			"getting started",
@@ -212,5 +211,5 @@ export function getPageSeo(pathname: string): PageSeo | undefined {
 }
 
 export function getPageOgImage(page: PageSeo): string {
-	return page.image ?? DEFAULT_OG_IMAGE;
+	return page.image ?? OG_IMAGE;
 }
