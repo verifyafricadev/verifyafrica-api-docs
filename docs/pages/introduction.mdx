@@ -46,7 +46,9 @@ Success:
 }
 ```
 
-Error:
+## Example Error Responses
+
+All public API errors use the same envelope:
 
 ```json
 {
@@ -55,6 +57,59 @@ Error:
   "errors": ["…"]
 }
 ```
+
+### 400 Bad Request
+
+```json
+{
+  "success": false,
+  "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+  "errors": ["Missing required parameters for 'ng_bvn_verification': bvn"]
+}
+```
+
+### 401 Unauthorized
+
+```json
+{
+  "success": false,
+  "message": "Invalid API key.",
+  "errors": ["Invalid API key."]
+}
+```
+
+### 403 Forbidden
+
+```json
+{
+  "success": false,
+  "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+  "errors": [
+    "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+  ]
+}
+```
+
+### 404 Not Found
+
+```json
+{
+  "success": false,
+  "message": "Resource not found.",
+  "errors": ["Resource not found."]
+}
+```
+
+### 500 Internal Server Error
+
+```json
+{
+  "success": false,
+  "message": "An unexpected error occurred.",
+  "errors": ["An unexpected error occurred."]
+}
+```
+
 
 ## Verification Categories
 

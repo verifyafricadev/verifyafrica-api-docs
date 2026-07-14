@@ -234,19 +234,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -405,19 +500,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -645,19 +835,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -706,7 +991,7 @@
     "/api/v2/public/verifications/requests/business_aml_screening": {
       "post": {
         "summary": "Business AML Screening",
-        "description": "Screen businesses and corporate entities against global sanctions lists and adverse media.\n\nPublic API creates always use direct (offsite) mode.",
+        "description": "Screen businesses and corporate entities against global sanctions lists and adverse media.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `aml_for_businesses.filters` and precision with `aml_for_businesses.match_score` (0\u2013100).",
         "operationId": "single-business_aml_screening",
         "tags": [
           "single-compliance-screening"
@@ -736,23 +1021,103 @@
                   },
                   "input_data": {
                     "type": "object",
+                    "required": [
+                      "email",
+                      "language",
+                      "aml_for_businesses"
+                    ],
                     "properties": {
-                      "company_name": {
+                      "email": {
                         "type": "string",
-                        "description": "Legal name of the business entity."
+                        "format": "email",
+                        "description": "Customer's email address."
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "Language code (e.g. \"EN\", \"FR\").",
+                        "example": "EN"
                       },
                       "country": {
                         "type": "string",
-                        "description": "Country of incorporation (ISO 3166-1 alpha-2)."
+                        "description": "ISO 3166-1 alpha-2 country code for the request context (e.g. \"NG\").",
+                        "example": "NG"
                       },
-                      "rc_number": {
-                        "type": "string",
-                        "description": "Registration or company number."
+                      "aml_for_businesses": {
+                        "type": "object",
+                        "required": [
+                          "business_name"
+                        ],
+                        "description": "Business AML screening configuration.",
+                        "properties": {
+                          "business_name": {
+                            "type": "string",
+                            "description": "Full registered name of the business.",
+                            "example": "Acme Corp Ltd"
+                          },
+                          "filters": {
+                            "type": "array",
+                            "description": "Screening categories to run.",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "sanction",
+                                "warning",
+                                "fitness-probity",
+                                "pep",
+                                "pep-class-1",
+                                "pep-class-2",
+                                "pep-class-3",
+                                "pep-class-4"
+                              ]
+                            },
+                            "example": [
+                              "sanction",
+                              "warning",
+                              "fitness-probity",
+                              "pep",
+                              "pep-class-1",
+                              "pep-class-2",
+                              "pep-class-3",
+                              "pep-class-4"
+                            ]
+                          },
+                          "match_score": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "default": 100,
+                            "description": "Matching threshold from 0 to 100. A score of 100 applies the strictest accuracy.",
+                            "example": 100
+                          },
+                          "business_incorporation_date": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "Incorporation date in YYYY-MM-DD format.",
+                            "example": "2010-06-15"
+                          },
+                          "countries": {
+                            "type": "array",
+                            "description": "ISO alpha-2 country codes to restrict the screening to.",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "NG"
+                            ]
+                          },
+                          "rca_search": {
+                            "type": "boolean",
+                            "description": "Include relative and close associate (RCA) search.",
+                            "default": true
+                          },
+                          "alias_search": {
+                            "type": "boolean",
+                            "description": "Include alias search.",
+                            "default": true
+                          }
+                        }
                       }
-                    },
-                    "required": [
-                      "company_name"
-                    ]
+                    }
                   }
                 }
               },
@@ -762,9 +1127,29 @@
                   "value": {
                     "verification_type": "business_aml_screening",
                     "input_data": {
-                      "company_name": "Acme Corp Ltd",
+                      "email": "customer@example.com",
+                      "language": "EN",
                       "country": "NG",
-                      "rc_number": "RC123456"
+                      "aml_for_businesses": {
+                        "business_name": "Acme Corp Ltd",
+                        "business_incorporation_date": "2010-06-15",
+                        "filters": [
+                          "sanction",
+                          "warning",
+                          "fitness-probity",
+                          "pep",
+                          "pep-class-1",
+                          "pep-class-2",
+                          "pep-class-3",
+                          "pep-class-4"
+                        ],
+                        "match_score": 100,
+                        "countries": [
+                          "NG"
+                        ],
+                        "rca_search": true,
+                        "alias_search": true
+                      }
                     }
                   }
                 }
@@ -774,19 +1159,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -898,19 +1378,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1034,19 +1609,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1165,19 +1835,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1290,19 +2055,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1419,19 +2279,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1552,19 +2507,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1679,19 +2729,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1798,19 +2943,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -1925,19 +3165,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2044,19 +3379,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2167,19 +3597,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2298,19 +3823,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2421,19 +4041,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2544,19 +4259,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2667,19 +4477,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2790,19 +4695,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -2913,19 +4913,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -3036,19 +5131,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -3155,19 +5345,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -3278,19 +5563,114 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request - Missing or invalid parameters"
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "Forbidden - Insufficient credits or inactive key"
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Identity record not found"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "201": {
             "description": "Verification created successfully",
@@ -3395,13 +5775,114 @@
             }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing Bearer API key"
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - Verification does not exist for this tenant"
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "x-zuplo-route": {
@@ -3522,14 +6003,23 @@
             "example": false
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Primary error message (usually the first item in errors)."
           },
           "errors": {
             "type": "array",
+            "description": "Flattened list of error messages.",
             "items": {
               "type": "string"
             }
           }
+        },
+        "example": {
+          "success": false,
+          "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+          "errors": [
+            "Missing required parameters for 'ng_bvn_verification': bvn"
+          ]
         }
       }
     }

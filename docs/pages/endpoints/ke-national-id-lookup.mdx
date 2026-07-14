@@ -53,6 +53,29 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 ```
 
 
+
+## Example Error Responses
+
+Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+
+```json
+{
+  "success": false,
+  "message": "Invalid API key.",
+  "errors": ["Invalid API key."]
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Missing required parameters for 'ke_national_id_lookup': …",
+  "errors": ["Missing required parameters for 'ke_national_id_lookup': …"]
+}
+```
+
+See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
+
 ## API Reference
 
 View the full request/response schemas, response codes, and interactive playground:

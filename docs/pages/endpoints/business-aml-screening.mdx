@@ -11,7 +11,7 @@ Screen businesses and corporate entities against global sanctions lists and adve
 :::tip API Reference
 Jump directly to the interactive API docs:
 
-- [API reference](/api) — schemas, examples, and playground
+- [API reference](/api/single-compliance-screening#business-aml-screening) — schemas, examples, and playground
 - Create: `POST /api/v2/public/verifications/requests/`
 - Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
 :::
@@ -34,14 +34,39 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `company_name` | string | Yes | Legal name of the business entity. |
-| `country` | string | No | Country of incorporation (ISO 3166-1 alpha-2). |
-| `rc_number` | string | No | Registration or company number. |
+| `email` | string | Yes | Customer's email address. |
+| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
+| `aml_for_businesses` | object | Yes | Business AML screening configuration. See nested fields below. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code for the request context (e.g. `"NG"`). |
+
+### `aml_for_businesses` object
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `business_name` | string | Yes | Full registered name of the business. |
+| `filters` | array of string | No | Screening categories to run. See allowed values below. |
+| `match_score` | integer | No | Matching threshold from `0` to `100`. A score of `100` applies the strictest accuracy. Defaults to `100`. |
+| `business_incorporation_date` | string | No | Incorporation date in `YYYY-MM-DD` format. Improves match precision. |
+| `countries` | array of string | No | ISO alpha-2 country codes to restrict the screening to (e.g. `["NG", "GH"]`). |
+| `rca_search` | boolean | No | Include relative and close associate (RCA) search. Defaults to `true` in the product UI. |
+| `alias_search` | boolean | No | Include alias search. Defaults to `true` in the product UI. |
+
+### Allowed `filters` values
+
+| Value | Label |
+| --- | --- |
+| `sanction` | SANCTION |
+| `warning` | WARNING |
+| `fitness-probity` | FITNESS PROBITY |
+| `pep` | PEP |
+| `pep-class-1` | PEP CLASS 1 |
+| `pep-class-2` | PEP CLASS 2 |
+| `pep-class-3` | PEP CLASS 3 |
+| `pep-class-4` | PEP CLASS 4 |
 
 ## Making a Request
 
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
-
 
 **Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
 
@@ -50,13 +75,57 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 ```json
 {
   "verification_type": "business_aml_screening",
-  "input_data": { /* see parameters above */ }
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "aml_for_businesses": {
+      "business_name": "Acme Corp Ltd",
+      "business_incorporation_date": "2010-06-15",
+      "filters": [
+        "sanction",
+        "warning",
+        "fitness-probity",
+        "pep",
+        "pep-class-1",
+        "pep-class-2",
+        "pep-class-3",
+        "pep-class-4"
+      ],
+      "match_score": 100,
+      "countries": ["NG"],
+      "rca_search": true,
+      "alias_search": true
+    }
+  }
 }
 ```
 
+## Example Error Responses
+
+Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+
+```json
+{
+  "success": false,
+  "message": "Invalid API key.",
+  "errors": ["Invalid API key."]
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Missing required parameters for 'business_aml_screening': aml_for_businesses",
+  "errors": ["Missing required parameters for 'business_aml_screening': aml_for_businesses"]
+}
+```
+
+See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
 
 ## API Reference
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [API reference](/api)
+- [Business AML Screening API reference](/api/single-compliance-screening#business-aml-screening)
+- [All API endpoints](/api)
