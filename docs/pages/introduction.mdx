@@ -17,20 +17,44 @@ https://api.verifyafrica.io
 
 ## Authentication
 
-Include your API key in every request:
+Include your tenant API key as a Bearer token on every request:
 
 ```
-X-API-KEY: your_api_key_here
+Authorization: Bearer VA-your_api_key_here
 ```
+
+Do not send `X-API-KEY`. The API key identifies the tenant — no `X-TENANT-ID` header is required.
 
 ## Core Endpoints
 
 | Endpoint | Description |
 | --- | --- |
-| `POST /api/verifications/requests/` | Submit a single verification request |
-| `POST /api/verifications/bulk/` | Submit up to 100 verifications in one batch |
+| `POST /api/v2/public/verifications/requests/` | Create and run a single verification (direct/offsite) |
+| `GET /api/v2/public/verifications/requests/{verification_id}/detail/` | Retrieve verification status and details |
 
-Every request includes a `verification_type` that selects which check to run, plus an `input_data` object with the fields required for that check.
+Every create request includes a `verification_type` that selects which check to run, plus an `input_data` object with the fields required for that check. Public creates always use **direct (offsite)** mode.
+
+## Response format
+
+Success:
+
+```json
+{
+  "success": true,
+  "message": "Verification request created successfully.",
+  "data": { }
+}
+```
+
+Error:
+
+```json
+{
+  "success": false,
+  "message": "…",
+  "errors": ["…"]
+}
+```
 
 ## Verification Categories
 
@@ -45,11 +69,10 @@ Explore the **Endpoints** section in the sidebar for detailed guides on each ver
 ## Quick Example
 
 ```bash
-curl -X POST https://api.verifyafrica.io/api/verifications/requests/ \
-  -H "X-API-KEY: your_api_key_here" \
+curl -X POST https://api.verifyafrica.io/api/v2/public/verifications/requests/ \
+  -H "Authorization: Bearer VA-your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
-    "is_test": false,
     "verification_type": "ng_bvn_verification",
     "input_data": {
       "bvn": "22222222222",

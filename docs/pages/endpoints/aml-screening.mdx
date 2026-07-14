@@ -9,10 +9,11 @@ sidebar_label: AML Screening
 Screen individuals against global sanctions lists, PEP databases, and adverse media sources.
 
 :::tip API Reference
-Jump directly to the interactive API docs for this endpoint:
+Jump directly to the interactive API docs:
 
-- [Single API reference](/api/single-compliance-screening#aml-screening) — schemas, examples, and playground
-- [Bulk API reference](/api/bulk-compliance-screening#aml-screening) — schemas, examples, and playground for batch requests
+- [API reference](/api/single-compliance-screening#aml-screening) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/`
+- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
 :::
 
 ## Verification Type
@@ -33,34 +34,84 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `first_name` | string | Yes | Subject's first name. |
-| `last_name` | string | Yes | Subject's last name. |
-| `date_of_birth` | string | No | Date of birth in YYYY-MM-DD format. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code. |
-| `nationality` | string | No | Subject's nationality. |
+| `email` | string | Yes | Customer's email address. |
+| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
+| `background_checks` | object | Yes | AML screening configuration. See nested fields below. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code for the request context (e.g. `"NG"`). |
+
+### `background_checks` object
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | object | Yes | Subject name details. See nested fields below. |
+| `filters` | array of string | No | Screening categories to run. See allowed values below. If omitted, the provider default set is used. |
+| `match_score` | integer | No | Matching threshold from `0` to `100`. A score of `100` applies the strictest accuracy. Defaults to `100`. |
+| `dob` | string | No | Subject's date of birth in `YYYY-MM-DD` format. Improves match accuracy. |
+| `countries` | array of string | No | ISO alpha-2 country codes to restrict the screening to (e.g. `["NG", "GH"]`). |
+| `rca_search` | boolean | No | Include relative and close associate (RCA) search. Defaults to `true` in the product UI. |
+| `alias_search` | boolean | No | Include alias search. Defaults to `true` in the product UI. |
+
+### `background_checks.name` object
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `full_name` | string | Yes | Subject's full name. |
+
+### Allowed `filters` values
+
+| Value | Label |
+| --- | --- |
+| `sanction` | SANCTION |
+| `warning` | WARNING |
+| `fitness-probity` | FITNESS PROBITY |
+| `pep` | PEP |
+| `pep-class-1` | PEP CLASS 1 |
+| `pep-class-2` | PEP CLASS 2 |
+| `pep-class-3` | PEP CLASS 3 |
+| `pep-class-4` | PEP CLASS 4 |
 
 ## Making a Request
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
-Include your API key in the `X-API-KEY` header and set `verification_type` to `aml_screening`.
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+
+Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `aml_screening`.
 
 ```json
 {
-  "is_test": false,
   "verification_type": "aml_screening",
-  "input_data": { /* see parameters above */ }
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "background_checks": {
+      "name": {
+        "full_name": "John Doe"
+      },
+      "filters": [
+        "sanction",
+        "warning",
+        "fitness-probity",
+        "pep",
+        "pep-class-1",
+        "pep-class-2",
+        "pep-class-3",
+        "pep-class-4"
+      ],
+      "match_score": 100,
+      "dob": "1990-01-15",
+      "countries": ["NG"],
+      "rca_search": true,
+      "alias_search": true
+    }
+  }
 }
 ```
-
-## Bulk Processing
-
-Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
 
 ## API Reference
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [Single API reference](/api/single-compliance-screening#aml-screening)
-- [Bulk API reference](/api/bulk-compliance-screening#aml-screening)
+- [AML Screening API reference](/api/single-compliance-screening#aml-screening)
 - [All API endpoints](/api)

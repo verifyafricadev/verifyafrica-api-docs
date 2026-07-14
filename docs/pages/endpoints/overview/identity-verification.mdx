@@ -11,18 +11,21 @@ Verify government-issued identity documents and perform biometric checks across 
 
 ## API Reference
 
-- [Single API — Identity Verification](/api/single-identity-verification)
-- [Bulk API — Identity Verification](/api/bulk-identity-verification)
+- [API Reference](/api)
 
 ## Available Endpoints
 
-- [Document Verification](../id-document) — Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries. ([API](/api/single-identity-verification#document-verification))
-- [Facial Screening](../face-match) — Perform real-time liveness detection and face match verification against a reference document. ([API](/api/single-identity-verification#facial-screening))
+- [Document Verification](../id-document) — Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries. ([API](/api))
+- [Facial Screening](../face-match) — Perform real-time liveness detection and face match verification against a reference document. ([API](/api))
 
 ## Getting Started
 
-All endpoints in this category use the same base URL:
+All endpoints in this category use the public v2 create endpoint:
 
-`POST https://api.verifyafrica.io/api/verifications/requests/`
+`POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+
+Retrieve results with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/{verification_id}/detail/`.
+
+Authenticate with `Authorization: Bearer <VA-…api-key>`.
 
 Set `verification_type` to the identifier for the check you need. See each endpoint page for required `input_data` fields.

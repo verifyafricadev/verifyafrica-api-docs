@@ -9,10 +9,11 @@ sidebar_label: Nigeria Phone Verification
 Verify Nigerian phone numbers with advanced carrier and identity validation.
 
 :::tip API Reference
-Jump directly to the interactive API docs for this endpoint:
+Jump directly to the interactive API docs:
 
-- [Single API reference](/api/single-gov-nigeria#nigeria-phone-verification) — schemas, examples, and playground
-- [Bulk API reference](/api/bulk-gov-nigeria#nigeria-phone-verification) — schemas, examples, and playground for batch requests
+- [API reference](/api) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/`
+- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
 :::
 
 ## Verification Type
@@ -38,26 +39,23 @@ Pass these fields inside `input_data` in your request body.
 
 ## Making a Request
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
-Include your API key in the `X-API-KEY` header and set `verification_type` to `ng_advanced_phone_number_verification`.
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+
+Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ng_advanced_phone_number_verification`.
 
 ```json
 {
-  "is_test": false,
   "verification_type": "ng_advanced_phone_number_verification",
   "input_data": { /* see parameters above */ }
 }
 ```
 
-## Bulk Processing
-
-Bulk requests are supported. Include this verification in the `verifications` array when calling `/api/verifications/bulk/` (up to 100 records per batch).
 
 ## API Reference
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [Single API reference](/api/single-gov-nigeria#nigeria-phone-verification)
-- [Bulk API reference](/api/bulk-gov-nigeria#nigeria-phone-verification)
-- [All API endpoints](/api)
+- [API reference](/api)

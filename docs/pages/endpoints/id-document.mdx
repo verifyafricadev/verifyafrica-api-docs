@@ -9,10 +9,11 @@ sidebar_label: Document Verification
 Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.
 
 :::tip API Reference
-Jump directly to the interactive API docs for this endpoint:
+Jump directly to the interactive API docs:
 
-- [Single API reference](/api/single-identity-verification#document-verification) — schemas, examples, and playground
-- Bulk API reference — not supported for this endpoint (hosted page required)
+- [API reference](/api/single-identity-verification#document-verification) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/`
+- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
 :::
 
 ## Verification Type
@@ -25,7 +26,7 @@ id_document
 
 - Onboard customers with government-issued ID validation
 - Support passports, national IDs, and driver's licenses
-- Offer hosted verification links for end-user capture
+- Validate government-issued IDs with direct document proofs
 
 ## Input Parameters
 
@@ -33,45 +34,69 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `email` | string | Yes | Customer's email address. Used to send the hosted verification link. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g., "NG", "ZA", "GH", "KE"). |
-| `language` | string | No | Language for the hosted verification page (e.g., "EN", "FR"). Defaults to "EN". |
-| `ttl` | number | No | Link expiry time in minutes. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |
+| `email` | string | Yes | Customer's email address. |
+| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
+| `document` | object | Yes | Document proof and matching options. See nested fields below. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g. `"NG"`, `"ZA"`, `"GH"`, `"KE"`). |
+| `first_name` | string | No | Customer's first name for cross-validation. |
+| `last_name` | string | No | Customer's last name for cross-validation. |
 
-## Verification Modes
+### `document` object
 
-This endpoint supports **link mode** (hosted verification page) and **direct mode** (server-side verification):
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `proof` | string | Yes | Front image of the identity document. Accepts a base64 data URI (`data:image/jpeg;base64,...`) or an HTTPS URL to a `jpeg`/`jpg`/`png`/`pdf` file. |
+| `backside_proof` | string | No | Back image of the document, same format as `proof`. |
+| `backside_proof_required` | boolean | No | `true` to require a back image, `false` to skip it. Defaults to `false`. |
+| `allow_offline` | boolean | No | Defaults to `true`. |
+| `verification_mode` | string | No | Capture mode hint. Common value: `"any"`. |
+| `fetch_enhanced_data` | boolean | No | `true` to return enhanced OCR/extracted fields, `false` to skip. Defaults to `true`. |
+| `name` | object | No | Optional name matching details for the document owner. |
 
-- **Link mode (`onsite`)** — Returns a hosted verification URL to send to your customer.
-- **Direct mode (`offsite`)** — Runs verification server-side without a hosted page.
+### `document.name` object
 
-Set `method_type` to `"onsite"` or `"offsite"` in your request body.
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `first_name` | string | No | Expected first name on the document. |
+| `last_name` | string | No | Expected last name on the document. |
+| `fuzzy_match` | boolean | No | `true` to allow fuzzy name matching, `false` for exact match. Defaults to `true`. |
 
 ## Making a Request
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
-Include your API key in the `X-API-KEY` header and set `verification_type` to `id_document`.
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+
+Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `id_document`.
 
 ```json
 {
-  "is_test": false,
   "verification_type": "id_document",
-  "method_type": "onsite",
-  "input_data": { /* see parameters above */ }
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "first_name": "John",
+    "last_name": "Doe",
+    "document": {
+      "proof": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+      "backside_proof_required": false,
+      "allow_offline": true,
+      "verification_mode": "any",
+      "fetch_enhanced_data": true,
+      "name": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "fuzzy_match": true
+      }
+    }
+  }
 }
 ```
-
-## Bulk Processing
-
-:::caution Bulk not supported
-This verification type requires a hosted verification page and is **not available** in bulk mode. Use a single request instead.
-:::
 
 ## API Reference
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [Single API reference](/api/single-identity-verification#document-verification)
-- [Bulk API reference](/api/bulk-identity-verification#document-verification) _(not supported)_
+- [Document Verification API reference](/api/single-identity-verification#document-verification)
 - [All API endpoints](/api)

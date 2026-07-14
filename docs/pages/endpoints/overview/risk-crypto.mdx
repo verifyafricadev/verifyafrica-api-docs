@@ -11,18 +11,21 @@ Assess identity fraud risk and screen cryptocurrency wallets for illicit activit
 
 ## API Reference
 
-- [Single API — Risk & Crypto](/api/single-risk-crypto)
-- [Bulk API — Risk & Crypto](/api/bulk-risk-crypto)
+- [API Reference](/api)
 
 ## Available Endpoints
 
-- [Risk Assessment](../risk-assessment) — Assess the fraud and identity risk score for a given individual based on their identity data. ([API](/api/single-risk-crypto#risk-assessment))
-- [Crypto Wallet Screening](../crypto-wallet-screening) — Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources. ([API](/api/single-risk-crypto#crypto-wallet-screening))
+- [Risk Assessment](../risk-assessment) — Assess the fraud and identity risk score for a given individual based on their identity data. ([API](/api))
+- [Crypto Wallet Screening](../crypto-wallet-screening) — Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources. ([API](/api))
 
 ## Getting Started
 
-All endpoints in this category use the same base URL:
+All endpoints in this category use the public v2 create endpoint:
 
-`POST https://api.verifyafrica.io/api/verifications/requests/`
+`POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+
+Retrieve results with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/{verification_id}/detail/`.
+
+Authenticate with `Authorization: Bearer <VA-…api-key>`.
 
 Set `verification_type` to the identifier for the check you need. See each endpoint page for required `input_data` fields.

@@ -9,10 +9,11 @@ sidebar_label: Facial Screening
 Perform real-time liveness detection and face match verification against a reference document.
 
 :::tip API Reference
-Jump directly to the interactive API docs for this endpoint:
+Jump directly to the interactive API docs:
 
-- [Single API reference](/api/single-identity-verification#facial-screening) — schemas, examples, and playground
-- Bulk API reference — not supported for this endpoint (hosted page required)
+- [API reference](/api/single-identity-verification#facial-screening) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/`
+- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
 :::
 
 ## Verification Type
@@ -33,45 +34,47 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `email` | string | Yes | Customer's email address. Used to send the hosted verification link. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g., "NG", "ZA", "GH", "KE"). |
-| `language` | string | No | Language for the hosted verification page (e.g., "EN", "FR"). Defaults to "EN". |
-| `ttl` | number | No | Link expiry time in minutes. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |
+| `face` | object | Yes | Face image and verification options. See nested fields below. |
+| `email` | string | No | Customer's email address. |
+| `language` | string | No | Language code (e.g. `"EN"`, `"FR"`). Defaults to `"EN"`. |
+| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g. `"NG"`, `"ZA"`, `"GH"`, `"KE"`). |
 
-## Verification Modes
+### `face` object
 
-This endpoint supports **link mode** (hosted verification page) and **direct mode** (server-side verification):
-
-- **Link mode (`onsite`)** — Returns a hosted verification URL to send to your customer.
-- **Direct mode (`offsite`)** — Runs verification server-side without a hosted page.
-
-Set `method_type` to `"onsite"` or `"offsite"` in your request body.
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `proof` | string | Yes | Face image. Accepts a base64 data URI (`data:image/jpeg;base64,...`) or an HTTPS URL to a `jpeg`/`jpg`/`png` file. |
+| `verification_mode` | string | Yes | Capture type. One of: `"any"`, `"image_only"`, `"video_only"`. |
+| `allow_offline` | boolean | No | Defaults to `false`. |
+| `check_duplicate_request` | boolean | No | `true` to flag duplicate faces, `false` to allow. Defaults to `false`. |
 
 ## Making a Request
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/verifications/requests/`
+Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
-Include your API key in the `X-API-KEY` header and set `verification_type` to `face_match`.
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+
+Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `face_match`.
 
 ```json
 {
-  "is_test": false,
   "verification_type": "face_match",
-  "method_type": "onsite",
-  "input_data": { /* see parameters above */ }
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "face": {
+      "proof": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+      "verification_mode": "any",
+      "allow_offline": false,
+      "check_duplicate_request": false
+    }
+  }
 }
 ```
-
-## Bulk Processing
-
-:::caution Bulk not supported
-This verification type requires a hosted verification page and is **not available** in bulk mode. Use a single request instead.
-:::
 
 ## API Reference
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [Single API reference](/api/single-identity-verification#facial-screening)
-- [Bulk API reference](/api/bulk-identity-verification#facial-screening) _(not supported)_
+- [Facial Screening API reference](/api/single-identity-verification#facial-screening)
 - [All API endpoints](/api)
