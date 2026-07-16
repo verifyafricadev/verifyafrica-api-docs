@@ -107,7 +107,16 @@ Create via product-scoped endpoints:
 
 Retrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.
 
-Public creates always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.
+Public creates always run in **direct (offsite)** mode and return immediately with `status: PENDING`.
+Hosted/link (`onsite`) flows are not available on this API.
+Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.
+
+## Public response shape
+
+- Provider-agnostic: internal provider names and hosted provider URLs are never exposed
+- Document/face proofs must be **HTTPS URLs** (base64 data URIs are rejected)
+- `input_data.*.proof` and top-level `proofs` echo the original URLs from create time
+- `response_data` is sanitized (no access tokens, provider proof links, or verification URLs)
 
 ## Response format
 

@@ -55,28 +55,66 @@ Each OpenAPI schema maps to a specific key in the webhook JSON body:
 | `VerificationStatus` | `data.status` | Lifecycle statuses (`PENDING`, `SUCCESS`, `FAILED`, `ERROR`, …) |
 | `TerminalVerificationStatus` | `data.status` (subset) | Statuses that trigger a terminal webhook (`SUCCESS`, `FAILED`, `ERROR`) |
 
-Example shape with those keys:
+| Event (`event`) | When | Envelope `status` | Typical `data.status` |
+| --- | --- | --- | --- |
+| `verification.completed` | Verification finished successfully | `success` | `SUCCESS` |
+| `verification.failed` | Verification did not succeed | `failure` | `FAILED` or `ERROR` |
+
+No webhook is sent while the verification is still `PENDING`.
+
+## Payload shape
+
+Webhook `data` uses the same public shape as GET detail responses. It is **provider-agnostic**:
+
+- No internal provider names
+- No provider-hosted proof URLs, access tokens, or verification links
+- `input_data.*.proof` is the **original HTTPS URL** you sent at create time (never base64)
+- Top-level `proofs` echoes those same URLs when available
+- `response_data` contains the verification result with upstream artifacts stripped
+
+Example terminal payload:
 
 ```json
 {
   "status": "success",
   "event": "verification.completed",
   "data": {
-    "id": "...",
+    "id": "6a59068c-cc6c-7d97-8000-90755031f952",
     "verification_type": "id_document",
-    "status": "SUCCESS"
+    "status": "SUCCESS",
+    "reference": "VER-…",
+    "input_data": {
+      "email": "customer@example.com",
+      "language": "EN",
+      "country": "NG",
+      "document": {
+        "proof": "https://cdn.example.com/documents/id-front.jpg",
+        "verification_mode": "any",
+        "backside_proof_required": "0",
+        "fetch_enhanced_data": "1"
+      }
+    },
+    "response_data": {
+      "event": "verification.accepted",
+      "status": "SUCCESS",
+      "verification_result": {
+        "document": {
+          "document": 1
+        }
+      }
+    },
+    "proofs_available": true,
+    "proofs": {
+      "document": {
+        "proof": "https://cdn.example.com/documents/id-front.jpg"
+      }
+    },
+    "by_api": true
   }
 }
 ```
 
-| Event (`event`) | When | Envelope `status` | Typical `data.status` |
-| --- | --- | --- | --- |
-| `verification.completed` | Verification finished successfully | `success` | `SUCCESS` |
-| `verification.failed` | Verification did not succeed | `failure` | `FAILED` or `ERROR` |
-
 Open the [Webhooks API reference](/api/webhooks) to browse enums and examples.
-
-No webhook is sent while the verification is still `PENDING`.
 
 ## Delivery details
 

@@ -45,8 +45,8 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `proof` | string | Yes | Front image of the identity document. Accepts a base64 data URI (`data:image/jpeg;base64,...`) or an HTTPS URL to a `jpeg`/`jpg`/`png`/`pdf` file. |
-| `backside_proof` | string | No | Back image of the document, same format as `proof`. |
+| `proof` | string | Yes | HTTPS URL to the front of the identity document (`jpeg`/`jpg`/`png`/`pdf`). Base64 data URIs are **not** accepted on the public API. |
+| `backside_proof` | string | No | HTTPS URL to the back of the document, same formats as `proof`. |
 | `backside_proof_required` | boolean | No | `true` to require a back image, `false` to skip it. Defaults to `false`. |
 | `verification_mode` | string | No | Capture mode hint. Common value: `"any"`. |
 | `fetch_enhanced_data` | boolean | No | `true` to return enhanced OCR/extracted fields, `false` to skip. Defaults to `true`. |
@@ -64,6 +64,8 @@ Pass these fields inside `input_data` in your request body.
 
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
+The create response returns immediately with `status: PENDING`. Use [Webhooks](/webhooks) or the GET detail endpoint for the final result. GET and webhook payloads echo your original `document.proof` URL in both `input_data` and top-level `proofs`.
+
 **Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/document_verification/`
 
 Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
@@ -77,7 +79,7 @@ Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path sele
     "first_name": "John",
     "last_name": "Doe",
     "document": {
-      "proof": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+      "proof": "https://cdn.example.com/documents/id-front.jpg",
       "backside_proof_required": false,
       "verification_mode": "any",
       "fetch_enhanced_data": true,
@@ -109,6 +111,16 @@ Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["�
   "success": false,
   "message": "Missing required parameters for 'id_document': …",
   "errors": ["Missing required parameters for 'id_document': …"]
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "…",
+  "errors": [
+    "input_data.document.proof: Must be an http(s) URL to the proof file. Base64 data URIs are not accepted."
+  ]
 }
 ```
 

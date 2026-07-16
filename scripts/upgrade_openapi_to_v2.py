@@ -32,7 +32,16 @@ Do not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-
 - **Create** — Submit one verification via `POST /api/v2/public/verifications/requests/`
 - **Detail** — Retrieve a verification via `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
 
-Public create requests always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.
+Public create requests always run in **direct (offsite)** mode and return immediately with `status: PENDING`.
+Hosted/link (`onsite`) flows are not available on this API.
+Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.
+
+## Public response shape
+
+- Provider-agnostic: internal provider names and hosted provider URLs are never exposed
+- Document/face proofs must be **HTTPS URLs** (base64 data URIs are rejected)
+- `input_data.*.proof` and top-level `proofs` echo the original URLs from create time
+- `response_data` is sanitized (no access tokens, provider proof links, or verification URLs)
 
 ## Response format
 
@@ -212,8 +221,9 @@ def transform(spec: dict) -> dict:
         "get": {
             "summary": "Get verification detail",
             "description": (
-                "Retrieve a verification request belonging to the API key's tenant, "
-                "including optional Shufti proof metadata when available."
+                "Retrieve a verification request belonging to the API key's tenant. "
+                "`proofs` / `proofs_available` and `input_data.*.proof` echo the original "
+                "HTTPS proof URLs from create time — never provider-hosted assets or base64."
             ),
             "operationId": "public-verification-detail",
             "tags": ["single-identity-verification"],

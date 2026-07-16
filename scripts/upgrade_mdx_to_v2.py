@@ -109,35 +109,32 @@ def transform_endpoint_page(content: str) -> str:
             "## Making a Request\n",
             "## Making a Request\n\n"
             "Public API creates always use **direct (offsite)** mode. "
-            "Do not send `method_type` — the API forces `offsite`.\n\n",
+            "Do not send `method_type` — the API forces `offsite`.\n\n"
+            "Creates return immediately with `status: PENDING`. Use webhooks or GET for the final result.\n\n",
         )
 
-    # Onsite-only products caution
+    # Remove stale onsite-only caution if present (crypto/risk are now public)
     if vtype in {"crypto_wallet_screening", "risk_assessment"}:
-        caution = (
+        stale = (
             "\n:::caution Not available on public create\n"
             "This verification type currently requires a hosted (`onsite`) flow and is "
             "**not supported** by `POST /api/v2/public/verifications/requests/` "
             "(which always uses direct/offsite mode).\n"
             ":::\n"
         )
-        if "Not available on public create" not in content:
-            content = content.replace(
-                f"```\n{vtype}\n```\n",
-                f"```\n{vtype}\n```\n{caution}",
-            )
+        content = content.replace(stale, "\n")
 
     # id_document / face_match: document proof requirements for offsite
     if vtype == "id_document" and "`document.proof`" not in content:
         content = content.replace(
             "| `ttl` | number | No | Optional TTL in minutes when applicable. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |\n",
             "| `ttl` | number | No | Optional TTL in minutes when applicable. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |\n"
-            "| `document` | object | Yes | Document payload. For direct mode, include `document.proof` (image URL or base64). |\n",
+            "| `document` | object | Yes | Document payload. Include `document.proof` as an HTTPS URL (`jpeg`/`jpg`/`png`/`pdf`). Base64 is not accepted. |\n",
         )
     if vtype == "face_match" and "`face.proof`" not in content:
         content = content.replace(
             "| `ttl` | number | No | Optional TTL in minutes when applicable. Allowed: 30, 60, 180, 360, 720, 1440, 2880. Defaults to 60. |\n",
-            "| `face` | object | Yes | Face payload. For direct mode, include `face.proof` and `face.verification_mode`. |\n",
+            "| `face` | object | Yes | Face payload. Include `face.proof` as an HTTPS URL and `face.verification_mode`. Base64 is not accepted. |\n",
         )
 
     return content

@@ -50,16 +50,31 @@ Public API creates return immediately with `PENDING` — do not wait on the crea
 
 See the [Webhooks](/webhooks) guide for payload shape, authentication, response requirements, and automatic retries.
 
+## Public response rules
+
+Create, GET, and webhook payloads share the same public shape:
+
+- **Provider-agnostic** — internal provider names and hosted provider URLs are never exposed
+- **Proofs are HTTPS URLs** — send `document.proof` / `face.proof` as `https://…` links (base64 data URIs are rejected)
+- **`input_data` proofs** — returned as the same URLs you submitted at create time
+- **`proofs` / `proofs_available`** — echo those original URLs on GET and webhooks
+- **`response_data`** — verification result only; access tokens, provider proof links, and similar upstream artifacts are stripped
 
 ## Response format
 
-Success:
+Success (create accepts the request and starts processing):
 
 ```json
 {
   "success": true,
-  "message": "Verification request created successfully.",
-  "data": { }
+  "message": "Verification request accepted. Processing has started; you will be notified via webhook when complete.",
+  "data": {
+    "id": "…",
+    "status": "PENDING",
+    "response_data": {},
+    "proofs": {},
+    "proofs_available": false
+  }
 }
 ```
 
