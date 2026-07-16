@@ -6,13 +6,13 @@ sidebar_label: Risk Assessment
 
 # Risk Assessment
 
-Assess the fraud and identity risk score for a given individual based on their identity data.
+Assess the fraud and identity risk score for a given individual based on their phone number and a configured risk check.
 
 :::tip API Reference
 Jump directly to the interactive API docs:
 
 - [API reference](/api) — schemas, examples, and playground
-- Create: not available on the public API (onsite-only)
+- Create: `POST /api/v2/public/verifications/requests/risk_assessment/`
 - Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
@@ -21,10 +21,6 @@ Jump directly to the interactive API docs:
 ```
 risk_assessment
 ```
-
-:::caution Not available on public create
-This verification type currently requires a hosted (`onsite`) flow and is **not supported** by the public product create endpoints.
-:::
 
 ## Use Cases
 
@@ -38,27 +34,48 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `id_number` | string | Yes | The identity number to assess. |
-| `id_type` | string | Yes | Type of ID (e.g., "national_id", "passport", "bvn"). |
-| `country` | string | Yes | ISO 3166-1 alpha-2 country code. |
+| `email` | string | Yes | Customer's email address. |
+| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
+| `risk_assessment` | object | Yes | Risk assessment configuration. See nested fields below. |
+
+### `risk_assessment` object
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `phone_number` | string | Yes | Phone number to assess, including country dialing code (e.g. `"+2348012345678"`). |
+| `risk_reference` | string | Yes | Configured risk-assessment check ID. See allowed values below. |
+
+### Allowed `risk_reference` values
+
+| Value | Check |
+| --- | --- |
+| `3miTFA` | Gaming/Gambling |
+| `iSSH1t` | Crypto/NFT/DeFi |
+| `m8bcQM` | Banking/Finance/FinTech/Investments |
+| `oDPp6l` | Trading Risk |
+| `G1uc7d` | Trading Risk Assessment |
+| `cY0m7x` | Risk Management |
 
 ## Making a Request
 
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/risk_assessment/`
 
-**Endpoint:** not available on the public API
-
-Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `risk_assessment`.
+Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
 
 ```json
 {
-  "verification_type": "risk_assessment",
-  "input_data": { /* see parameters above */ }
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "risk_assessment": {
+      "phone_number": "+2348012345678",
+      "risk_reference": "3miTFA"
+    }
+  }
 }
 ```
-
-
 
 ## Example Error Responses
 
@@ -86,4 +103,5 @@ See the [Introduction](/) for the full set of status-code examples, or the inter
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [API reference](/api)
+- [Risk Assessment API reference](/api/single-risk-crypto#risk-assessment)
+- [All API endpoints](/api)

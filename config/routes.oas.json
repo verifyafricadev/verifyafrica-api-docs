@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\nPublic creates always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\nPublic creates always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -29,22 +29,22 @@
     },
     {
       "name": "single-identity-verification",
-      "description": "Identity Verification \u2014 create verification requests.",
+      "description": "Identity Verification — create verification requests.",
       "x-displayName": "Identity Verification"
     },
     {
       "name": "single-compliance-screening",
-      "description": "Compliance & Screening \u2014 create verification requests.",
+      "description": "Compliance & Screening — create verification requests.",
       "x-displayName": "Compliance & Screening"
     },
     {
       "name": "single-address-verification",
-      "description": "Address Verification \u2014 create verification requests.",
+      "description": "Address Verification — create verification requests.",
       "x-displayName": "Address Verification"
     },
     {
       "name": "single-risk-crypto",
-      "description": "Risk & Crypto \u2014 create verification requests.",
+      "description": "Risk & Crypto — create verification requests.",
       "x-displayName": "Risk & Crypto"
     },
     {
@@ -229,7 +229,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -251,7 +251,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -273,7 +273,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -295,7 +295,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -317,7 +317,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -480,7 +480,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -502,7 +502,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -524,7 +524,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -546,7 +546,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -568,7 +568,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -702,7 +702,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -724,7 +724,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -746,7 +746,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -768,7 +768,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -790,7 +790,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -858,7 +858,7 @@
     "/api/v2/public/verifications/requests/aml_screening/": {
       "post": {
         "summary": "AML Screening",
-        "description": "Screen individuals against global sanctions lists, PEP databases, and adverse media sources.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `background_checks.filters` and precision with `background_checks.match_score` (0\u2013100).",
+        "description": "Screen individuals against global sanctions lists, PEP databases, and adverse media sources.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `background_checks.filters` and precision with `background_checks.match_score` (0–100).",
         "operationId": "public-aml_screening",
         "tags": [
           "single-compliance-screening"
@@ -1028,7 +1028,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1050,7 +1050,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1072,7 +1072,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1094,7 +1094,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1116,7 +1116,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1184,7 +1184,7 @@
     "/api/v2/public/verifications/requests/business_aml_screening/": {
       "post": {
         "summary": "Business AML Screening",
-        "description": "Screen businesses and corporate entities against global sanctions lists and adverse media.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `aml_for_businesses.filters` and precision with `aml_for_businesses.match_score` (0\u2013100).",
+        "description": "Screen businesses and corporate entities against global sanctions lists and adverse media.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `aml_for_businesses.filters` and precision with `aml_for_businesses.match_score` (0–100).",
         "operationId": "public-business_aml_screening",
         "tags": [
           "single-compliance-screening"
@@ -1343,7 +1343,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1365,7 +1365,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1387,7 +1387,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1409,7 +1409,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1431,7 +1431,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1553,7 +1553,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1575,7 +1575,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1597,7 +1597,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1619,7 +1619,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1641,7 +1641,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1706,6 +1706,529 @@
         }
       }
     },
+    "/api/v2/public/verifications/requests/crypto_wallet_screening/": {
+      "post": {
+        "summary": "Crypto Wallet Screening",
+        "description": "Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources.\n\nPublic API creates always use direct (offsite) mode. Pass the wallet address as `background_checks.name.full_name` and set `is_crypto_request` to `true`.",
+        "operationId": "public-crypto_wallet_screening",
+        "tags": [
+          "single-risk-crypto"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input_data"
+                ],
+                "properties": {
+                  "input_data": {
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "is_crypto_request",
+                      "verification_mode",
+                      "background_checks"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Customer's email address."
+                      },
+                      "is_crypto_request": {
+                        "type": "boolean",
+                        "description": "Must be `true` for crypto wallet screening.",
+                        "example": true
+                      },
+                      "verification_mode": {
+                        "type": "string",
+                        "description": "Verification mode. Use `\"any\"`.",
+                        "example": "any"
+                      },
+                      "background_checks": {
+                        "type": "object",
+                        "required": [
+                          "name"
+                        ],
+                        "description": "Crypto wallet screening configuration.",
+                        "properties": {
+                          "name": {
+                            "type": "object",
+                            "required": [
+                              "full_name"
+                            ],
+                            "description": "Wallet address details.",
+                            "properties": {
+                              "full_name": {
+                                "type": "string",
+                                "description": "Cryptocurrency wallet address to screen (EVM, Bitcoin, Tron, or Solana).",
+                                "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+                              },
+                              "match_score": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 100,
+                                "default": 100,
+                                "description": "Matching threshold from 0 to 100. A score of 100 applies the strictest accuracy.",
+                                "example": 100
+                              }
+                            }
+                          },
+                          "filters": {
+                            "type": "array",
+                            "description": "Screening categories to run.",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "sanction",
+                                "warning",
+                                "fitness-probity",
+                                "SIP",
+                                "SIE",
+                                "Insolvency",
+                                "pep",
+                                "pep-class-1"
+                              ]
+                            },
+                            "example": [
+                              "sanction",
+                              "warning",
+                              "fitness-probity",
+                              "SIP",
+                              "SIE",
+                              "Insolvency",
+                              "pep",
+                              "pep-class-1"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "default": {
+                  "summary": "Sample request",
+                  "value": {
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "is_crypto_request": true,
+                      "verification_mode": "any",
+                      "background_checks": {
+                        "name": {
+                          "full_name": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+                          "match_score": 100
+                        },
+                        "filters": [
+                          "sanction",
+                          "warning",
+                          "fitness-probity",
+                          "SIP",
+                          "SIE",
+                          "Insolvency",
+                          "pep",
+                          "pep-class-1"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'crypto_wallet_screening': background_checks",
+                      "errors": [
+                        "Missing required parameters for 'crypto_wallet_screening': background_checks"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Verification created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2SuccessResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful verification",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request created successfully.",
+                      "data": {
+                        "id": "ver_9gjzgc36t",
+                        "verification_type": "crypto_wallet_screening",
+                        "status": "verified",
+                        "created_at": "2026-02-09T08:01:42.891Z",
+                        "response_data": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/crypto_wallet_screening/"
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/requests/risk_assessment/": {
+      "post": {
+        "summary": "Risk Assessment",
+        "description": "Assess fraud and identity risk for an individual using a configured risk check and phone number.\n\nPublic API creates always use direct (offsite) mode. Provide `risk_assessment.phone_number` and a configured `risk_assessment.risk_reference` (e.g. `3miTFA` for Gaming/Gambling).",
+        "operationId": "public-risk_assessment",
+        "tags": [
+          "single-risk-crypto"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input_data"
+                ],
+                "properties": {
+                  "input_data": {
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "language",
+                      "risk_assessment"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Customer's email address."
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "Language code (e.g. \"EN\", \"FR\").",
+                        "example": "EN"
+                      },
+                      "risk_assessment": {
+                        "type": "object",
+                        "required": [
+                          "phone_number",
+                          "risk_reference"
+                        ],
+                        "description": "Risk assessment configuration.",
+                        "properties": {
+                          "phone_number": {
+                            "type": "string",
+                            "description": "Phone number to assess, including country dialing code.",
+                            "example": "+2348012345678"
+                          },
+                          "risk_reference": {
+                            "type": "string",
+                            "description": "Configured Shufti risk-assessment check ID (e.g. `3miTFA`, `iSSH1t`, `m8bcQM`).",
+                            "example": "3miTFA"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "default": {
+                  "summary": "Sample request",
+                  "value": {
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "risk_assessment": {
+                        "phone_number": "+2348012345678",
+                        "risk_reference": "3miTFA"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'risk_assessment': risk_assessment",
+                      "errors": [
+                        "Missing required parameters for 'risk_assessment': risk_assessment"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Verification created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2SuccessResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful verification",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request created successfully.",
+                      "data": {
+                        "id": "ver_9gjzgc36t",
+                        "verification_type": "risk_assessment",
+                        "status": "verified",
+                        "created_at": "2026-02-09T08:01:42.891Z",
+                        "response_data": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/risk_assessment/"
+            }
+          }
+        }
+      }
+    },
     "/api/v2/public/verifications/requests/": {
       "get": {
         "summary": "Get verification detail",
@@ -1765,7 +2288,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1787,7 +2310,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1809,7 +2332,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1831,7 +2354,7 @@
             }
           },
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1853,7 +2376,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1957,7 +2480,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1979,7 +2502,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2001,7 +2524,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2023,7 +2546,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2045,7 +2568,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2180,7 +2703,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2202,7 +2725,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2224,7 +2747,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2246,7 +2769,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2268,7 +2791,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2395,7 +2918,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2417,7 +2940,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2439,7 +2962,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2461,7 +2984,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2483,7 +3006,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2610,7 +3133,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2632,7 +3155,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2654,7 +3177,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2676,7 +3199,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2698,7 +3221,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2825,7 +3348,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2847,7 +3370,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2869,7 +3392,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2891,7 +3414,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2913,7 +3436,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3040,7 +3563,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3062,7 +3585,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3084,7 +3607,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3106,7 +3629,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3128,7 +3651,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3255,7 +3778,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3277,7 +3800,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3299,7 +3822,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3321,7 +3844,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3343,7 +3866,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3470,7 +3993,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3492,7 +4015,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3514,7 +4037,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3536,7 +4059,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3558,7 +4081,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3685,7 +4208,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3707,7 +4230,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3729,7 +4252,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3751,7 +4274,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3773,7 +4296,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3900,7 +4423,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3922,7 +4445,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3944,7 +4467,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3966,7 +4489,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3988,7 +4511,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4115,7 +4638,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4137,7 +4660,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4159,7 +4682,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4181,7 +4704,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4203,7 +4726,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4330,7 +4853,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4352,7 +4875,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4374,7 +4897,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4396,7 +4919,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4418,7 +4941,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4545,7 +5068,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4567,7 +5090,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4589,7 +5112,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4611,7 +5134,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4633,7 +5156,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4760,7 +5283,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4782,7 +5305,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4804,7 +5327,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4826,7 +5349,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4848,7 +5371,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4975,7 +5498,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4997,7 +5520,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5019,7 +5542,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5041,7 +5564,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5063,7 +5586,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5190,7 +5713,7 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "description": "Bad Request — validation failed or invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5212,7 +5735,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "description": "Unauthorized — missing or invalid Bearer API key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5234,7 +5757,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5256,7 +5779,7 @@
             }
           },
           "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "description": "Not Found — verification does not exist for this tenant.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5278,7 +5801,7 @@
             }
           },
           "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
+            "description": "Internal Server Error — unexpected failure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5350,7 +5873,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "API Key",
-        "description": "Tenant API key from the VerifyAfrica dashboard (`VA-\u2026`). Send as `Authorization: Bearer <api_key>`. Do not use `X-API-KEY`."
+        "description": "Tenant API key from the VerifyAfrica dashboard (`VA-…`). Send as `Authorization: Bearer <api_key>`. Do not use `X-API-KEY`."
       }
     },
     "schemas": {

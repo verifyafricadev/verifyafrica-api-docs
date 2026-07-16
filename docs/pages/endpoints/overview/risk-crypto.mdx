@@ -20,6 +20,9 @@ Assess identity fraud risk and screen cryptocurrency wallets for illicit activit
 
 ## Getting Started
 
-Risk assessment and crypto wallet screening are **not available** on the public API (onsite-only).
+Create via product-scoped endpoints:
 
-You can still retrieve existing verifications with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/?verification_id={verification_id}`.
+- `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/risk_assessment/`
+- `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/crypto_wallet_screening/`
+
+Retrieve a verification with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/?verification_id={verification_id}`.

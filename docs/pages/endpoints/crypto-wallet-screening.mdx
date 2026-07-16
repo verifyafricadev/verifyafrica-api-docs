@@ -12,7 +12,7 @@ Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity,
 Jump directly to the interactive API docs:
 
 - [API reference](/api) — schemas, examples, and playground
-- Create: not available on the public API (onsite-only)
+- Create: `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`
 - Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
@@ -21,10 +21,6 @@ Jump directly to the interactive API docs:
 ```
 crypto_wallet_screening
 ```
-
-:::caution Not available on public create
-This verification type currently requires a hosted (`onsite`) flow and is **not supported** by the public product create endpoints.
-:::
 
 ## Use Cases
 
@@ -38,26 +34,71 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `wallet_address` | string | Yes | The cryptocurrency wallet address to screen. |
-| `blockchain` | string | Yes | Blockchain network (e.g., "bitcoin", "ethereum", "tron"). |
+| `email` | string | Yes | Customer's email address. |
+| `is_crypto_request` | boolean | Yes | Must be `true` for crypto wallet screening. |
+| `verification_mode` | string | Yes | Verification mode. Use `"any"`. |
+| `background_checks` | object | Yes | Crypto wallet screening configuration. See nested fields below. |
+
+### `background_checks` object
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | object | Yes | Wallet address details. See nested fields below. |
+| `filters` | array of string | No | Screening categories to run. See allowed values below. |
+
+### `background_checks.name` object
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `full_name` | string | Yes | Cryptocurrency wallet address to screen (EVM, Bitcoin, Tron, or Solana). |
+| `match_score` | integer | No | Matching threshold from `0` to `100`. A score of `100` applies the strictest accuracy. Defaults to `100`. |
+
+### Allowed `filters` values
+
+| Value | Label |
+| --- | --- |
+| `sanction` | SANCTION |
+| `warning` | WARNING |
+| `fitness-probity` | FITNESS PROBITY |
+| `SIP` | SIP |
+| `SIE` | SIE |
+| `Insolvency` | INSOLVENCY |
+| `pep` | PEP |
+| `pep-class-1` | PEP CLASS 1 |
 
 ## Making a Request
 
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/crypto_wallet_screening/`
 
-**Endpoint:** not available on the public API
-
-Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `crypto_wallet_screening`.
+Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
 
 ```json
 {
-  "verification_type": "crypto_wallet_screening",
-  "input_data": { /* see parameters above */ }
+  "input_data": {
+    "email": "customer@example.com",
+    "is_crypto_request": true,
+    "verification_mode": "any",
+    "background_checks": {
+      "name": {
+        "full_name": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "match_score": 100
+      },
+      "filters": [
+        "sanction",
+        "warning",
+        "fitness-probity",
+        "SIP",
+        "SIE",
+        "Insolvency",
+        "pep",
+        "pep-class-1"
+      ]
+    }
+  }
 }
 ```
-
-
 
 ## Example Error Responses
 
@@ -85,4 +126,5 @@ See the [Introduction](/) for the full set of status-code examples, or the inter
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [API reference](/api)
+- [Crypto Wallet Screening API reference](/api/single-risk-crypto#crypto-wallet-screening)
+- [All API endpoints](/api)

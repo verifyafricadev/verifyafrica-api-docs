@@ -25,6 +25,8 @@ TYPE_TO_PRODUCT: dict[str, str] = {
     "aml_screening": "aml_screening",
     "business_aml_screening": "business_aml_screening",
     "kyb_screening": "kyb",
+    "crypto_wallet_screening": "crypto_wallet_screening",
+    "risk_assessment": "risk_assessment",
 }
 
 GOV_TYPES = [
@@ -54,6 +56,8 @@ MDX_TO_PRODUCT: dict[str, str] = {
     "aml-screening": "aml_screening",
     "business-aml-screening": "business_aml_screening",
     "kyb-screening": "kyb",
+    "crypto-wallet-screening": "crypto_wallet_screening",
+    "risk-assessment": "risk_assessment",
     "za-said-verification": "government_registry_checks",
     "ng-bvn-verification": "government_registry_checks",
     "ng-nin-verification": "government_registry_checks",
@@ -72,7 +76,7 @@ MDX_TO_PRODUCT: dict[str, str] = {
     "ke-tax-pin-verification": "government_registry_checks",
 }
 
-UNSUPPORTED = {"risk-assessment", "crypto-wallet-screening"}
+UNSUPPORTED: set[str] = set()
 
 INFO_DESCRIPTION = """\
 Identity verification, compliance screening, and government registry checks across Africa.
@@ -97,6 +101,8 @@ Create via product-scoped endpoints:
 - `POST /api/v2/public/verifications/requests/aml_screening/`
 - `POST /api/v2/public/verifications/requests/business_aml_screening/`
 - `POST /api/v2/public/verifications/requests/kyb/`
+- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`
+- `POST /api/v2/public/verifications/requests/risk_assessment/`
 - `POST /api/v2/public/verifications/requests/government_registry_checks/`
 
 Retrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.
@@ -491,6 +497,8 @@ def update_introduction() -> None:
 | `POST /api/v2/public/verifications/requests/aml_screening/` | AML screening |
 | `POST /api/v2/public/verifications/requests/business_aml_screening/` | Business AML screening |
 | `POST /api/v2/public/verifications/requests/kyb/` | KYB (know your business) |
+| `POST /api/v2/public/verifications/requests/crypto_wallet_screening/` | Crypto wallet screening |
+| `POST /api/v2/public/verifications/requests/risk_assessment/` | Risk assessment |
 | `POST /api/v2/public/verifications/requests/government_registry_checks/` | Government registry checks (include `verification_type` in body) |
 | `GET /api/v2/public/verifications/requests/?verification_id={verification_id}` | Retrieve verification status and details |
 
@@ -528,8 +536,8 @@ def update_overviews_carefully() -> None:
         ),
         "address-verification.mdx": f"`POST {BASE}{REQUESTS}/address_verification/`",
         "risk-crypto.mdx": (
-            "Risk assessment and crypto wallet screening are **not available** on the public API "
-            "(onsite-only)."
+            f"`POST {BASE}{REQUESTS}/risk_assessment/` and "
+            f"`POST {BASE}{REQUESTS}/crypto_wallet_screening/`"
         ),
         "government-registry.mdx": f"`POST {BASE}{REQUESTS}/government_registry_checks/`",
     }
