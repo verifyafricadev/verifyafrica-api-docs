@@ -5928,9 +5928,6 @@
               "reference": {
                 "type": "string"
               },
-              "source": {
-                "type": "string"
-              },
               "by_api": {
                 "type": "boolean",
                 "nullable": true

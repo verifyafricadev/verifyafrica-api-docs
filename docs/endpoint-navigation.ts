@@ -13,6 +13,12 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 				icon: "star",
 			},
 			{
+				type: "doc",
+				file: "webhooks",
+				label: "Webhooks",
+				icon: "webhook",
+			},
+			{
 				type: "category",
 				label: "Endpoints",
 				icon: "layers",

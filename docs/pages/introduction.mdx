@@ -42,6 +42,12 @@ Do not send `X-API-KEY`. The API key identifies the tenant — no `X-TENANT-ID` 
 
 Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`). Public creates always use **direct (offsite)** mode.
 
+## Webhooks
+
+Receive `verification.completed` events at your own HTTPS endpoint when verification requests are processed. Configure the URL and optional auth token in the dashboard **API Keys** page.
+
+See the [Webhooks](/webhooks) guide for payload shape, authentication, response requirements, and automatic retries.
+
 
 ## Response format
 
@@ -149,4 +155,5 @@ curl -X POST https://api.verifyafrica.io/api/v2/public/verifications/requests/go
 ## Next Steps
 
 - Browse [endpoint guides](/endpoints/overview/identity-verification) to learn what each verification type does
+- Set up [Webhooks](/webhooks) to receive `verification.completed` events
 - Open the [API Reference](/api) for full schemas, parameters, and response codes
