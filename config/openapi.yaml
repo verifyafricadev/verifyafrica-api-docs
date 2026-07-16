@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\nPublic creates always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\nPublic creates always run in **direct (offsite)** mode and return immediately with `status: PENDING`. Provider work runs asynchronously — use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=…` for the final result. Hosted/link (`onsite`) flows are not available on this API.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema — `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=…`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -66,6 +66,11 @@
       "name": "single-gov-kenya",
       "description": "Government registry checks for Kenya.",
       "x-displayName": "Kenya"
+    },
+    {
+      "name": "webhooks",
+      "description": "Outbound webhook events VerifyAfrica sends to your endpoint. Schemas below are the source of truth for `event` names, `verification_type` values, and statuses.",
+      "x-displayName": "Webhooks"
     }
   ],
   "x-tagGroups": [
@@ -85,6 +90,12 @@
         "single-gov-nigeria",
         "single-gov-ghana",
         "single-gov-kenya"
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "tags": [
+        "webhooks"
       ]
     }
   ],
@@ -233,7 +244,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -255,7 +266,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -277,7 +288,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -299,7 +310,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -321,7 +332,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -343,18 +354,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "id_document",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -484,7 +495,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -506,7 +517,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -528,7 +539,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -550,7 +561,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -572,7 +583,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -594,18 +605,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "face_match",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -706,7 +717,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -728,7 +739,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -750,7 +761,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -772,7 +783,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -794,7 +805,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -816,18 +827,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "address_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -1032,7 +1043,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1054,7 +1065,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1076,7 +1087,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1098,7 +1109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1120,7 +1131,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1142,18 +1153,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "aml_screening",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -1347,7 +1358,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1369,7 +1380,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1391,7 +1402,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1413,7 +1424,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1435,7 +1446,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1457,18 +1468,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "business_aml_screening",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -1557,7 +1568,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1579,7 +1590,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1601,7 +1612,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1623,7 +1634,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1645,7 +1656,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1667,18 +1678,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "kyb_screening",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -1852,7 +1863,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1874,7 +1885,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1896,7 +1907,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1918,7 +1929,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1940,7 +1951,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -1962,18 +1973,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "crypto_wallet_screening",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {}
                       }
@@ -2085,7 +2096,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2107,7 +2118,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2129,7 +2140,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2151,7 +2162,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2173,7 +2184,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2195,18 +2206,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "risk_assessment",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {}
                       }
@@ -2260,7 +2271,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
@@ -2292,7 +2303,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2314,7 +2325,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2336,7 +2347,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2358,7 +2369,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2380,7 +2391,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2484,7 +2495,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2506,7 +2517,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2528,7 +2539,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2550,7 +2561,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2572,7 +2583,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2594,18 +2605,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -2707,7 +2718,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2729,7 +2740,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2751,7 +2762,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2773,7 +2784,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2795,7 +2806,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2817,18 +2828,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -2922,7 +2933,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2944,7 +2955,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2966,7 +2977,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -2988,7 +2999,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3010,7 +3021,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3032,18 +3043,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -3137,7 +3148,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3159,7 +3170,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3181,7 +3192,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3203,7 +3214,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3225,7 +3236,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3247,18 +3258,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -3352,7 +3363,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3374,7 +3385,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3396,7 +3407,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3418,7 +3429,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3440,7 +3451,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3462,18 +3473,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -3567,7 +3578,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3589,7 +3600,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3611,7 +3622,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3633,7 +3644,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3655,7 +3666,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3677,18 +3688,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -3782,7 +3793,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3804,7 +3815,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3826,7 +3837,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3848,7 +3859,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3870,7 +3881,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -3892,18 +3903,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -3997,7 +4008,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4019,7 +4030,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4041,7 +4052,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4063,7 +4074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4085,7 +4096,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4107,18 +4118,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -4212,7 +4223,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4234,7 +4245,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4256,7 +4267,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4278,7 +4289,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4300,7 +4311,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4322,18 +4333,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -4427,7 +4438,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4449,7 +4460,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4471,7 +4482,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4493,7 +4504,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4515,7 +4526,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4537,18 +4548,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -4642,7 +4653,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4664,7 +4675,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4686,7 +4697,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4708,7 +4719,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4730,7 +4741,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4752,18 +4763,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -4857,7 +4868,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4879,7 +4890,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4901,7 +4912,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4923,7 +4934,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4945,7 +4956,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -4967,18 +4978,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -5072,7 +5083,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5094,7 +5105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5116,7 +5127,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5138,7 +5149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5160,7 +5171,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5182,18 +5193,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -5287,7 +5298,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5309,7 +5320,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5331,7 +5342,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5353,7 +5364,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5375,7 +5386,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5397,18 +5408,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -5502,7 +5513,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5524,7 +5535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5546,7 +5557,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5568,7 +5579,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5590,7 +5601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5612,18 +5623,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -5717,7 +5728,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5739,7 +5750,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5761,7 +5772,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5783,7 +5794,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5805,7 +5816,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/Error Response"
                 },
                 "examples": {
                   "error": {
@@ -5827,18 +5838,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
+                  "$ref": "#/components/schemas/Success Response"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful verification",
                     "value": {
                       "success": true,
-                      "message": "Verification request created successfully.",
+                      "message": "Verification request accepted. Processing has started; listen for the verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
                       "data": {
                         "id": "ver_9gjzgc36t",
                         "verification_type": "za_said_verification",
-                        "status": "verified",
+                        "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
                           "first_name": "John",
@@ -5878,9 +5889,9 @@
     },
     "schemas": {
       "VerificationResponse": {
-        "$ref": "#/components/schemas/V2SuccessResponse"
+        "$ref": "#/components/schemas/Success Response"
       },
-      "V2SuccessResponse": {
+      "Success Response": {
         "type": "object",
         "required": [
           "success",
@@ -5896,67 +5907,11 @@
             "type": "string"
           },
           "data": {
-            "type": "object",
-            "description": "Verification request payload.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "verification_type": {
-                "type": "string"
-              },
-              "status": {
-                "type": "string"
-              },
-              "input_data": {
-                "type": "object"
-              },
-              "response_data": {
-                "type": "object"
-              },
-              "cost_charged": {
-                "type": "string"
-              },
-              "currency": {
-                "type": "string"
-              },
-              "created_at": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "reference": {
-                "type": "string"
-              },
-              "by_api": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "api_key_id": {
-                "type": "string",
-                "format": "uuid",
-                "nullable": true
-              },
-              "link": {
-                "type": "object",
-                "nullable": true
-              },
-              "email_sent_at": {
-                "type": "string",
-                "format": "date-time",
-                "nullable": true
-              },
-              "proofs_available": {
-                "type": "boolean"
-              },
-              "proofs": {
-                "type": "object"
-              }
-            }
+            "$ref": "#/components/schemas/VerificationRequestData"
           }
         }
       },
-      "V2ErrorResponse": {
+      "Error Response": {
         "type": "object",
         "required": [
           "success",
@@ -5986,6 +5941,408 @@
           "errors": [
             "Missing required parameters for 'ng_bvn_verification': bvn"
           ]
+        }
+      },
+      "WebhookEvent": {
+        "type": "string",
+        "title": "WebhookEvent",
+        "description": "Webhook event names emitted by VerifyAfrica to your endpoint.\n\nHandle unknown values defensively so future events do not break your integration.",
+        "enum": [
+          "verification.completed",
+          "verification.failed"
+        ],
+        "example": "verification.completed",
+        "x-enumDescriptions": {
+          "verification.completed": "Sent when a verification finishes successfully (`data.status` = `SUCCESS`).",
+          "verification.failed": "Sent when a verification does not complete successfully (`data.status` = `FAILED` or `ERROR`)."
+        }
+      },
+      "VerificationStatus": {
+        "type": "string",
+        "title": "VerificationStatus",
+        "description": "Lifecycle status of a verification request.\n\n- `SUCCESS` → webhook event `verification.completed`\n- `FAILED` / `ERROR` → webhook event `verification.failed`\n- Other statuses do not trigger a webhook.",
+        "enum": [
+          "PENDING",
+          "SUCCESS",
+          "FAILED",
+          "ERROR",
+          "ABANDONED",
+          "PARTIAL"
+        ],
+        "example": "PENDING",
+        "x-enumDescriptions": {
+          "PENDING": "Accepted / still processing. Does not trigger a webhook.",
+          "SUCCESS": "Verification completed successfully. Triggers `verification.completed`.",
+          "FAILED": "Verification completed but did not pass. Triggers `verification.failed`.",
+          "ERROR": "Processing failed. Triggers `verification.failed`.",
+          "ABANDONED": "Stale pending verification marked abandoned. Does not trigger a webhook.",
+          "PARTIAL": "Bulk batch mixed outcomes. Does not trigger a webhook."
+        }
+      },
+      "TerminalVerificationStatus": {
+        "type": "string",
+        "title": "TerminalVerificationStatus",
+        "description": "Statuses that trigger a terminal webhook (`verification.completed` or `verification.failed`).",
+        "enum": [
+          "SUCCESS",
+          "FAILED",
+          "ERROR"
+        ],
+        "example": "SUCCESS"
+      },
+      "PublicVerificationType": {
+        "type": "string",
+        "title": "PublicVerificationType",
+        "description": "Verification product types available on the public API.\n\nAppears in create/retrieve responses and webhook payloads as `data.verification_type`. For government registry checks, send this value in the create body; for other products it is locked by the URL path.",
+        "enum": [
+          "id_document",
+          "face_match",
+          "aml_screening",
+          "business_aml_screening",
+          "kyb_screening",
+          "address_verification",
+          "crypto_wallet_screening",
+          "risk_assessment",
+          "za_said_verification",
+          "ng_bvn_verification",
+          "ng_nin_verification",
+          "ng_virtual_nin_verification",
+          "ng_advanced_phone_number_verification",
+          "ng_phone_number_lookup",
+          "ng_cac_lookup",
+          "ng_passport_verification",
+          "gh_passport_lookup",
+          "gh_voter_card_lookup",
+          "gh_ssnit_lookup",
+          "gh_drivers_license_lookup",
+          "ke_passport_lookup",
+          "ke_national_id_lookup",
+          "ke_phone_number_lookup",
+          "ke_tax_pin_verification"
+        ],
+        "example": "id_document",
+        "x-enumDescriptions": {
+          "id_document": "Document verification (`POST .../document_verification/`)",
+          "face_match": "Facial screening (`POST .../facial_screening/`)",
+          "aml_screening": "AML screening (`POST .../aml_screening/`)",
+          "business_aml_screening": "Business AML screening (`POST .../business_aml_screening/`)",
+          "kyb_screening": "KYB (`POST .../kyb/`)",
+          "address_verification": "Address verification (`POST .../address_verification/`)",
+          "crypto_wallet_screening": "Crypto wallet screening (`POST .../crypto_wallet_screening/`)",
+          "risk_assessment": "Risk assessment (`POST .../risk_assessment/`)",
+          "za_said_verification": "South Africa ID (`POST .../government_registry_checks/`)",
+          "ng_bvn_verification": "Nigeria BVN (`POST .../government_registry_checks/`)",
+          "ng_nin_verification": "Nigeria NIN (`POST .../government_registry_checks/`)",
+          "ng_virtual_nin_verification": "Nigeria Virtual NIN (`POST .../government_registry_checks/`)",
+          "ng_advanced_phone_number_verification": "Nigeria advanced phone (`POST .../government_registry_checks/`)",
+          "ng_phone_number_lookup": "Nigeria phone lookup (`POST .../government_registry_checks/`)",
+          "ng_cac_lookup": "Nigeria CAC (`POST .../government_registry_checks/`)",
+          "ng_passport_verification": "Nigeria passport (`POST .../government_registry_checks/`)",
+          "gh_passport_lookup": "Ghana passport (`POST .../government_registry_checks/`)",
+          "gh_voter_card_lookup": "Ghana voter card (`POST .../government_registry_checks/`)",
+          "gh_ssnit_lookup": "Ghana SSNIT (`POST .../government_registry_checks/`)",
+          "gh_drivers_license_lookup": "Ghana driver's license (`POST .../government_registry_checks/`)",
+          "ke_passport_lookup": "Kenya passport (`POST .../government_registry_checks/`)",
+          "ke_national_id_lookup": "Kenya national ID (`POST .../government_registry_checks/`)",
+          "ke_phone_number_lookup": "Kenya phone lookup (`POST .../government_registry_checks/`)",
+          "ke_tax_pin_verification": "Kenya tax PIN (`POST .../government_registry_checks/`)"
+        }
+      },
+      "VerificationRequestData": {
+        "type": "object",
+        "title": "VerificationRequestData",
+        "description": "Public verification request payload returned by create/retrieve endpoints and included as `data` in webhook deliveries. Internal provider names are omitted.",
+        "required": [
+          "id",
+          "verification_type",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Verification request ID."
+          },
+          "verification_type": {
+            "$ref": "#/components/schemas/PublicVerificationType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VerificationStatus"
+          },
+          "input_data": {
+            "type": "object",
+            "description": "Input submitted for the check."
+          },
+          "response_data": {
+            "type": "object",
+            "description": "Result payload when available."
+          },
+          "cost_charged": {
+            "type": "string",
+            "description": "Amount charged for the request."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Charge currency (e.g. USD).",
+            "example": "USD"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Present when the request was part of a bulk batch."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Internal verification reference."
+          },
+          "link": {
+            "type": "object",
+            "nullable": true,
+            "description": "Hosted-link details when applicable."
+          },
+          "email_sent_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "by_api": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "true when created via the public API."
+          },
+          "api_key_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "API key used for public API creates."
+          },
+          "proofs_available": {
+            "type": "boolean",
+            "description": "Present on GET detail responses."
+          },
+          "proofs": {
+            "type": "object",
+            "description": "Present on GET detail responses when proofs are available."
+          }
+        }
+      },
+      "WebhookPayload": {
+        "type": "object",
+        "title": "WebhookPayload",
+        "description": "JSON body POSTed to your configured webhook URL.\n\nSource of truth for webhook `event` names and payload shape.\n\n- `event: verification.completed` with `status: success` when the check passed\n- `event: verification.failed` with `status: failure` when the check did not succeed",
+        "required": [
+          "status",
+          "event",
+          "data"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure"
+            ],
+            "description": "Envelope status aligned with the event: `success` for `verification.completed`, `failure` for `verification.failed`.",
+            "example": "success"
+          },
+          "event": {
+            "$ref": "#/components/schemas/WebhookEvent"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VerificationRequestData",
+            "description": "Verification details. For terminal webhooks, `data.status` is `SUCCESS`, `FAILED`, or `ERROR`."
+          }
+        },
+        "example": {
+          "status": "success",
+          "event": "verification.completed",
+          "data": {
+            "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "verification_type": "aml_screening",
+            "status": "SUCCESS",
+            "input_data": {},
+            "response_data": {},
+            "cost_charged": "1.00",
+            "currency": "USD",
+            "created_at": "2026-07-16T14:30:00.000Z",
+            "batch_id": null,
+            "reference": "VER-019abc...",
+            "link": null,
+            "email_sent_at": null,
+            "by_api": true,
+            "api_key_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "verification.completed": {
+      "post": {
+        "operationId": "webhook-verification-completed",
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "verification.completed",
+        "description": "VerifyAfrica POSTs this event to your dashboard-configured webhook URL when a verification finishes successfully (`data.status` = `SUCCESS`).\n\nFor unsuccessful outcomes, see `verification.failed`.\n\nPublic API creates return `PENDING` immediately — use these webhooks (or poll GET) for the final result.\n\n**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n**Your endpoint must return HTTP 200.** Non-200 responses are retried up to 3 times (30s delay).",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "description": "Present when webhook auth is enabled: `Bearer <webhook_token>`.",
+            "schema": {
+              "type": "string",
+              "example": "Bearer whsec_..."
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookPayload"
+              },
+              "examples": {
+                "default": {
+                  "summary": "Terminal verification result",
+                  "value": {
+                    "status": "success",
+                    "event": "verification.completed",
+                    "data": {
+                      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                      "verification_type": "id_document",
+                      "status": "SUCCESS",
+                      "input_data": {},
+                      "response_data": {},
+                      "cost_charged": "0.70",
+                      "currency": "USD",
+                      "created_at": "2026-07-16T14:30:00.000Z",
+                      "reference": "VER-019abc...",
+                      "by_api": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Acknowledge receipt. Any non-200 status is treated as a failed delivery and retried.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "verification.failed": {
+      "post": {
+        "operationId": "webhook-verification-failed",
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "verification.failed",
+        "description": "VerifyAfrica POSTs this event to your dashboard-configured webhook URL when a verification does not complete successfully (`data.status` = `FAILED` or `ERROR`).\n\nFor successful outcomes, see `verification.completed`.\n\n**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n**Your endpoint must return HTTP 200.** Non-200 responses are retried up to 3 times (30s delay).",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "description": "Present when webhook auth is enabled: `Bearer <webhook_token>`.",
+            "schema": {
+              "type": "string",
+              "example": "Bearer whsec_..."
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookPayload"
+              },
+              "examples": {
+                "default": {
+                  "summary": "Failed verification result",
+                  "value": {
+                    "status": "failure",
+                    "event": "verification.failed",
+                    "data": {
+                      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                      "verification_type": "id_document",
+                      "status": "FAILED",
+                      "input_data": {},
+                      "response_data": {},
+                      "cost_charged": "0.70",
+                      "currency": "USD",
+                      "created_at": "2026-07-16T14:30:00.000Z",
+                      "reference": "VER-019abc...",
+                      "by_api": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Acknowledge receipt. Any non-200 status is treated as a failed delivery and retried.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

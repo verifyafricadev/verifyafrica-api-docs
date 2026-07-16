@@ -40,11 +40,13 @@ Do not send `X-API-KEY`. The API key identifies the tenant — no `X-TENANT-ID` 
 | `POST /api/v2/public/verifications/requests/government_registry_checks/` | Government registry checks (include `verification_type` in body) |
 | `GET /api/v2/public/verifications/requests/?verification_id={verification_id}` | Retrieve verification status and details |
 
-Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`). Public creates always use **direct (offsite)** mode.
+Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`). Public creates always use **direct (offsite)** mode and return immediately with `PENDING` — use [Webhooks](/webhooks) or the GET endpoint for the final result.
 
 ## Webhooks
 
-Receive `verification.completed` events at your own HTTPS endpoint when verification requests are processed. Configure the URL and optional auth token in the dashboard **API Keys** page.
+Receive `verification.completed` or `verification.failed` events at your own HTTPS endpoint when a verification reaches a **terminal** status (`SUCCESS`, `FAILED`, or `ERROR`).
+
+Public API creates return immediately with `PENDING` — do not wait on the create response for the final result. Configure the webhook URL and optional auth token in the dashboard **API Keys** page.
 
 See the [Webhooks](/webhooks) guide for payload shape, authentication, response requirements, and automatic retries.
 
@@ -136,6 +138,8 @@ Explore the **Endpoints** section in the sidebar for detailed guides on each ver
 - **Risk & Crypto** — Fraud risk scoring and crypto wallet screening
 - **Government Registry Checks** — Official ID and registry lookups by country
 
+For the full list of webhook `event` names and `verification_type` values, see the OpenAPI schemas in the [Webhooks API reference](/api/webhooks) (`WebhookEvent`, `PublicVerificationType`, `VerificationStatus`).
+
 ## Quick Example
 
 ```bash
@@ -155,5 +159,5 @@ curl -X POST https://api.verifyafrica.io/api/v2/public/verifications/requests/go
 ## Next Steps
 
 - Browse [endpoint guides](/endpoints/overview/identity-verification) to learn what each verification type does
-- Set up [Webhooks](/webhooks) to receive `verification.completed` events
+- Set up [Webhooks](/webhooks) to receive `verification.completed` / `verification.failed` events
 - Open the [API Reference](/api) for full schemas, parameters, and response codes

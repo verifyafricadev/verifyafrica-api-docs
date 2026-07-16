@@ -109,11 +109,14 @@ def transform(spec: dict) -> dict:
     spec["security"] = [{"BearerAuth": []}]
 
     # Keep only single tags
-    tags = [t for t in spec.get("tags", []) if not str(t.get("name", "")).startswith("bulk-")]
+    tags = [t for t in spec.get("tags", []) if not str(
+        t.get("name", "")).startswith("bulk-")]
     for tag in tags:
         desc = tag.get("description", "")
-        tag["description"] = desc.replace(" — single verification requests.", " — create verification requests.")
-        tag["description"] = tag["description"].replace("Bulk government", "Government")
+        tag["description"] = desc.replace(
+            " — single verification requests.", " — create verification requests.")
+        tag["description"] = tag["description"].replace(
+            "Bulk government", "Government")
     spec["tags"] = tags
 
     # Single tag group only
@@ -123,7 +126,8 @@ def transform(spec: dict) -> dict:
     )
     if single_group:
         single_group["name"] = "Verifications"
-        single_group["tags"] = [t for t in single_group.get("tags", []) if not str(t).startswith("bulk-")]
+        single_group["tags"] = [t for t in single_group.get(
+            "tags", []) if not str(t).startswith("bulk-")]
         spec["x-tagGroups"] = [single_group]
     else:
         spec.pop("x-tagGroups", None)
@@ -134,7 +138,8 @@ def transform(spec: dict) -> dict:
         if "/bulk/" in path:
             continue
 
-        new_path = path.replace("/api/verifications/requests/", "/api/v2/public/verifications/requests/")
+        new_path = path.replace(
+            "/api/verifications/requests/", "/api/v2/public/verifications/requests/")
         op = methods.get("post") or next(iter(methods.values()), None)
         if op:
             # Drop bulk references from descriptions
@@ -171,7 +176,8 @@ def transform(spec: dict) -> dict:
                 schema["properties"].pop("method_type", None)
                 required = schema.get("required")
                 if isinstance(required, list):
-                    schema["required"] = [r for r in required if r not in ("is_test", "method_type")]
+                    schema["required"] = [
+                        r for r in required if r not in ("is_test", "method_type")]
 
             # Replace response schema refs
             for resp in responses.values():
@@ -179,7 +185,8 @@ def transform(spec: dict) -> dict:
                     continue
                 app = resp.get("content", {}).get("application/json", {})
                 if "schema" in app:
-                    app["schema"] = {"$ref": "#/components/schemas/V2SuccessResponse"}
+                    app["schema"] = {
+                        "$ref": "#/components/schemas/Success Response"}
                 examples = app.get("examples", {})
                 if isinstance(examples, dict):
                     for ex in examples.values():
@@ -225,7 +232,7 @@ def transform(spec: dict) -> dict:
                     "description": "Verification request retrieved successfully",
                     "content": {
                         "application/json": {
-                            "schema": {"$ref": "#/components/schemas/V2SuccessResponse"},
+                            "schema": {"$ref": "#/components/schemas/Success Response"},
                             "examples": {
                                 "success": {
                                     "summary": "Successful detail response",
@@ -281,7 +288,7 @@ def transform(spec: dict) -> dict:
     schemas = components.setdefault("schemas", {})
     schemas.pop("BulkVerificationRequest", None)
     schemas.pop("BulkVerificationResponse", None)
-    schemas["V2SuccessResponse"] = {
+    schemas["Success Response"] = {
         "type": "object",
         "required": ["success", "message", "data"],
         "properties": {
@@ -311,7 +318,7 @@ def transform(spec: dict) -> dict:
             },
         },
     }
-    schemas["V2ErrorResponse"] = {
+    schemas["Error Response"] = {
         "type": "object",
         "required": ["success", "message", "errors"],
         "properties": {
@@ -321,7 +328,8 @@ def transform(spec: dict) -> dict:
         },
     }
     # Keep VerificationResponse for backwards refs but point to v2 shape
-    schemas["VerificationResponse"] = {"$ref": "#/components/schemas/V2SuccessResponse"}
+    schemas["VerificationResponse"] = {
+        "$ref": "#/components/schemas/Success Response"}
 
     strip_is_test(spec)
     strip_method_type(spec)

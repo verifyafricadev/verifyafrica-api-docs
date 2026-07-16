@@ -1,15 +1,35 @@
 ---
 title: Webhooks
-description: Receive verification.completed events at your endpoint when verification requests are processed.
+description: Receive verification.completed and verification.failed events when a verification reaches a terminal status.
 sidebar_label: Webhooks
 sidebar_icon: webhook
 ---
 
 # Webhooks
 
-VerifyAfrica can POST verification events to your server so you do not need to poll for results.
+VerifyAfrica can POST verification events to your server so you do not need to hold open HTTP connections or poll for results.
 
 Webhooks fire for verifications created from the **dashboard**, **public API**, **bulk uploads**, and other internal flows — as long as your tenant webhook is configured and active.
+
+:::tip Source of truth
+Event names, `verification_type` values, statuses, and the full payload shape are defined in the OpenAPI schemas:
+
+- [Webhook events & payload](/api/webhooks) — `verification.completed` and `verification.failed`
+- Schemas: `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, `WebhookPayload`
+
+Prefer those schemas over copying examples from this page.
+:::
+
+## Public API + webhooks
+
+Public create endpoints return **immediately** with `status: PENDING`. Provider work runs in the background.
+
+Recommended flow:
+
+1. `POST` a product create endpoint
+2. Store the returned `data.id`
+3. Wait for `verification.completed` or `verification.failed` on your webhook URL
+4. Optionally poll `GET /api/v2/public/verifications/requests/?verification_id={id}` if needed
 
 ## Setup
 
@@ -21,94 +41,55 @@ Configure webhooks in the VerifyAfrica dashboard under **API Keys**:
 
 There is no public API endpoint to create or update webhooks — configuration is dashboard-only.
 
-## Event
+## Events & types
 
-| Field | Value |
-| --- | --- |
-| Event name | `verification.completed` |
-| HTTP method | `POST` |
-| Content-Type | `application/json` |
-| Timeout | 30 seconds |
+Each OpenAPI schema maps to a specific key in the webhook JSON body:
 
-Delivery happens after VerifyAfrica finishes initiating the verification with the provider. Check `data.status` for the current result (`pending`, `success`, `failed`, and other statuses). For some hosted flows the first delivery may arrive while the check is still `pending` — use `GET /api/v2/public/verifications/requests/?verification_id={id}` if you need a later refresh.
+| Schema | Payload key | What it defines |
+| --- | --- | --- |
+| `WebhookPayload` | *(root body)* | Full JSON object POSTed to your endpoint |
+| `WebhookEvent` | `event` | `verification.completed`, `verification.failed` |
+| — | `status` | Envelope status: `success` or `failure` (aligned with `event`) |
+| `VerificationRequestData` | `data` | Verification object nested under the root payload |
+| `PublicVerificationType` | `data.verification_type` | Every public-API product type value |
+| `VerificationStatus` | `data.status` | Lifecycle statuses (`PENDING`, `SUCCESS`, `FAILED`, `ERROR`, …) |
+| `TerminalVerificationStatus` | `data.status` (subset) | Statuses that trigger a terminal webhook (`SUCCESS`, `FAILED`, `ERROR`) |
 
-## Headers
-
-| Header | Description |
-| --- | --- |
-| `Content-Type` | Always `application/json` |
-| `Authorization` | Present when webhook auth is enabled: `Bearer <webhook_token>` |
-
-Verify the `Authorization` header against the token shown in the dashboard before trusting the payload.
-
-## Payload
+Example shape with those keys:
 
 ```json
 {
   "status": "success",
   "event": "verification.completed",
   "data": {
-    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "verification_type": "aml_screening",
-    "status": "success",
-    "input_data": {},
-    "response_data": {},
-    "cost_charged": "1.00",
-    "currency": "USD",
-    "created_at": "2026-07-16T14:30:00.000Z",
-    "batch_id": null,
-    "reference": "VER-019abc...",
-    "link": null,
-    "email_sent_at": null,
-    "by_api": true,
-    "api_key_id": "..."
+    "id": "...",
+    "verification_type": "id_document",
+    "status": "SUCCESS"
   }
 }
 ```
 
-### Top-level fields
+| Event (`event`) | When | Envelope `status` | Typical `data.status` |
+| --- | --- | --- | --- |
+| `verification.completed` | Verification finished successfully | `success` | `SUCCESS` |
+| `verification.failed` | Verification did not succeed | `failure` | `FAILED` or `ERROR` |
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `status` | string | Delivery envelope status. Always `"success"` when the event is sent. |
-| `event` | string | Always `"verification.completed"`. |
-| `data` | object | Verification request details (same shape as create/retrieve responses). |
+Open the [Webhooks API reference](/api/webhooks) to browse enums and examples.
 
-### `data` fields
+No webhook is sent while the verification is still `PENDING`.
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string (UUID) | Verification request ID. |
-| `verification_type` | string | Product type (e.g. `aml_screening`, `ng_bvn_verification`). |
-| `status` | string | Verification status (`pending`, `success`, `failed`, …). |
-| `input_data` | object | Input submitted for the check. |
-| `response_data` | object | Provider response payload when available. |
-| `cost_charged` | string | Amount charged for the request. |
-| `currency` | string | Charge currency (e.g. `USD`). |
-| `created_at` | string | ISO 8601 timestamp. |
-| `batch_id` | string \| null | Present when the request was part of a bulk batch. |
-| `reference` | string | Internal verification reference. |
-| `link` | object \| null | Hosted-link details when applicable. |
-| `by_api` | boolean | `true` when created via the public API. |
-| `api_key_id` | string \| null | API key used for public API creates. |
+## Delivery details
+
+| Field | Value |
+| --- | --- |
+| HTTP method | `POST` |
+| Content-Type | `application/json` |
+| Timeout | 30 seconds |
+| Auth header | `Authorization: Bearer <webhook_token>` when auth is enabled |
 
 ## Responding
 
-Your endpoint must return **HTTP 200** for the delivery to be considered successful.
-
-Any other status code (or a network/timeout failure) is treated as a failed delivery.
-
-## Retries
-
-Failed deliveries are retried automatically via Celery:
-
-| Setting | Value |
-| --- | --- |
-| Max retries | 3 |
-| Delay between attempts | 30 seconds |
-| Success condition | HTTP `200` from your endpoint |
-
-After all retries are exhausted, VerifyAfrica stops attempting that delivery. You can still fetch the verification with the public retrieve endpoint.
+Your endpoint must return **HTTP 200**. Any other status (or network/timeout failure) is retried up to **3** times with a **30s** delay.
 
 ## Example handler
 
@@ -128,12 +109,13 @@ app.post("/webhooks/verify-africa", (req, res) => {
 
   const { event, data } = req.body;
 
+  // event values: see schema WebhookEvent
   if (event === "verification.completed") {
-    // Handle the verification result
-    console.log(data.id, data.verification_type, data.status);
+    console.log("passed", data.id, data.verification_type, data.status);
+  } else if (event === "verification.failed") {
+    console.log("failed", data.id, data.verification_type, data.status);
   }
 
-  // Must return 200
   return res.status(200).json({ received: true });
 });
 ```
@@ -141,13 +123,13 @@ app.post("/webhooks/verify-africa", (req, res) => {
 ## Best practices
 
 - Use HTTPS endpoints only
-- Validate the `Authorization` bearer token when auth is enabled
-- Return `200` quickly; process heavy work asynchronously in your system
-- Treat `data.status` as the source of truth for the verification outcome
-- Idempotently handle retries using `data.id` (the same verification may be delivered more than once)
+- Validate the bearer token when auth is enabled
+- Return `200` quickly; process heavy work asynchronously
+- Switch on both `event` and `data.verification_type` using the OpenAPI enums
+- Idempotently handle retries with `data.id`
 
 ## Next steps
 
+- Browse [Webhook schemas](/api/webhooks) in the API Reference
 - Configure your webhook URL in the dashboard **API Keys** page
 - Create a verification via the [public API](/introduction)
-- Browse [endpoint guides](/endpoints/overview/identity-verification) for product-specific inputs

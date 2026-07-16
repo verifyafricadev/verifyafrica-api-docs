@@ -24,13 +24,15 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 	"/webhooks": {
 		title: "Webhooks",
 		description:
-			"Receive verification.completed events at your endpoint when verification requests are processed. Learn setup, payload shape, authentication, and retries.",
+			"Receive verification.completed and verification.failed events when a verification reaches a terminal status. Learn setup, async public API flow, payload shape, authentication, and retries.",
 		keywords: [
 			"webhooks",
 			"verification.completed",
+			"verification.failed",
 			"VerifyAfrica webhooks",
 			"webhook retries",
 			"event notifications",
+			"async verification",
 		],
 	},
 	"/endpoints/overview/identity-verification": {
