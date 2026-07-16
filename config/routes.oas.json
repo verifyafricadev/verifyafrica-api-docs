@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\n- **Create** \u2014 Submit one verification via `POST /api/v2/public/verifications/requests/`\n- **Detail** \u2014 Retrieve a verification via `GET /api/v2/public/verifications/requests/{verification_id}/detail/`\n\nPublic create requests always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\nPublic creates always run in **direct (offsite)** mode. Hosted/link (`onsite`) flows are not available on this API.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -22,6 +22,11 @@
     }
   ],
   "tags": [
+    {
+      "name": "public-verification-detail",
+      "description": "Retrieve an existing verification request by ID.",
+      "x-displayName": "Get verification detail"
+    },
     {
       "name": "single-identity-verification",
       "description": "Identity Verification \u2014 create verification requests.",
@@ -45,22 +50,22 @@
     {
       "name": "single-gov-south-africa",
       "description": "Government registry checks for South Africa.",
-      "x-displayName": "\ud83c\uddff\ud83c\udde6 South Africa (1)"
+      "x-displayName": "South Africa"
     },
     {
       "name": "single-gov-nigeria",
       "description": "Government registry checks for Nigeria.",
-      "x-displayName": "\ud83c\uddf3\ud83c\uddec Nigeria (7)"
+      "x-displayName": "Nigeria"
     },
     {
       "name": "single-gov-ghana",
       "description": "Government registry checks for Ghana.",
-      "x-displayName": "\ud83c\uddec\ud83c\udded Ghana (4)"
+      "x-displayName": "Ghana"
     },
     {
       "name": "single-gov-kenya",
       "description": "Government registry checks for Kenya.",
-      "x-displayName": "\ud83c\uddf0\ud83c\uddea Kenya (4)"
+      "x-displayName": "Kenya"
     }
   ],
   "x-tagGroups": [
@@ -70,7 +75,12 @@
         "single-identity-verification",
         "single-compliance-screening",
         "single-address-verification",
-        "single-risk-crypto",
+        "single-risk-crypto"
+      ]
+    },
+    {
+      "name": "Government Registry Checks",
+      "tags": [
         "single-gov-south-africa",
         "single-gov-nigeria",
         "single-gov-ghana",
@@ -79,11 +89,11 @@
     }
   ],
   "paths": {
-    "/api/v2/public/verifications/requests/id_document": {
+    "/api/v2/public/verifications/requests/document_verification/": {
       "post": {
         "summary": "Document Verification",
         "description": "Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.\n\nPublic API creates always use direct (offsite) mode. Submit the document image in `input_data.document.proof`.",
-        "operationId": "single-id_document",
+        "operationId": "public-document_verification",
         "tags": [
           "single-identity-verification"
         ],
@@ -99,17 +109,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "verification_type",
                   "input_data"
                 ],
                 "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "id_document"
-                    ]
-                  },
                   "input_data": {
                     "type": "object",
                     "required": [
@@ -162,11 +164,6 @@
                             "description": "true to require a back image, false to skip it. Defaults to false.",
                             "default": false
                           },
-                          "allow_offline": {
-                            "type": "boolean",
-                            "description": "Defaults to true.",
-                            "default": true
-                          },
                           "verification_mode": {
                             "type": "string",
                             "description": "Capture mode hint. Common value: \"any\".",
@@ -206,7 +203,6 @@
                 "default": {
                   "summary": "Sample request",
                   "value": {
-                    "verification_type": "id_document",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
@@ -216,7 +212,6 @@
                       "document": {
                         "proof": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
                         "backside_proof_required": false,
-                        "allow_offline": true,
                         "verification_mode": "any",
                         "fetch_enhanced_data": true,
                         "name": {
@@ -381,17 +376,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/document_verification/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/face_match": {
+    "/api/v2/public/verifications/requests/facial_screening/": {
       "post": {
         "summary": "Facial Screening",
         "description": "Perform real-time liveness detection and face match verification against a reference document.\n\nPublic API creates always use direct (offsite) mode. Submit the face image in `input_data.face.proof` with `input_data.face.verification_mode`.",
-        "operationId": "single-face_match",
+        "operationId": "public-facial_screening",
         "tags": [
           "single-identity-verification"
         ],
@@ -407,17 +402,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "verification_type",
                   "input_data"
                 ],
                 "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "face_match"
-                    ]
-                  },
                   "input_data": {
                     "type": "object",
                     "required": [
@@ -461,11 +448,6 @@
                             "description": "Capture type for the submitted face media.",
                             "example": "any"
                           },
-                          "allow_offline": {
-                            "type": "boolean",
-                            "description": "Defaults to false.",
-                            "default": false
-                          },
                           "check_duplicate_request": {
                             "type": "boolean",
                             "description": "true to flag duplicate faces, false to allow. Defaults to false.",
@@ -481,14 +463,12 @@
                 "default": {
                   "summary": "Sample request",
                   "value": {
-                    "verification_type": "face_match",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
                       "face": {
                         "proof": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
                         "verification_mode": "any",
-                        "allow_offline": false,
                         "check_duplicate_request": false
                       }
                     }
@@ -647,17 +627,239 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/facial_screening/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/aml_screening": {
+    "/api/v2/public/verifications/requests/address_verification/": {
+      "post": {
+        "summary": "Address Verification",
+        "description": "Verify physical address records against government and utility databases across Africa.\n\nPublic API creates always use direct (offsite) mode.",
+        "operationId": "public-address_verification",
+        "tags": [
+          "single-address-verification"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input_data"
+                ],
+                "properties": {
+                  "input_data": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Full street address."
+                      },
+                      "city": {
+                        "type": "string",
+                        "description": "City or town name."
+                      },
+                      "state": {
+                        "type": "string",
+                        "description": "State or province."
+                      },
+                      "country": {
+                        "type": "string",
+                        "description": "ISO 3166-1 alpha-2 country code."
+                      }
+                    },
+                    "required": [
+                      "address",
+                      "city",
+                      "country"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "default": {
+                  "summary": "Sample request",
+                  "value": {
+                    "input_data": {
+                      "address": "15 Adeola Odeku Street",
+                      "city": "Lagos",
+                      "state": "Lagos",
+                      "country": "NG"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
+                      "errors": [
+                        "Missing required parameters for 'ng_bvn_verification': bvn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found \u2014 verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error \u2014 unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Verification created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2SuccessResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful verification",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request created successfully.",
+                      "data": {
+                        "id": "ver_9gjzgc36t",
+                        "verification_type": "address_verification",
+                        "status": "verified",
+                        "created_at": "2026-02-09T08:01:42.891Z",
+                        "response_data": {
+                          "first_name": "John",
+                          "last_name": "Doe",
+                          "date_of_birth": "1990-01-15",
+                          "gender": "Male"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/address_verification/"
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/requests/aml_screening/": {
       "post": {
         "summary": "AML Screening",
         "description": "Screen individuals against global sanctions lists, PEP databases, and adverse media sources.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `background_checks.filters` and precision with `background_checks.match_score` (0\u2013100).",
-        "operationId": "single-aml_screening",
+        "operationId": "public-aml_screening",
         "tags": [
           "single-compliance-screening"
         ],
@@ -673,17 +875,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "verification_type",
                   "input_data"
                 ],
                 "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "aml_screening"
-                    ]
-                  },
                   "input_data": {
                     "type": "object",
                     "required": [
@@ -799,7 +993,6 @@
                 "default": {
                   "summary": "Sample request",
                   "value": {
-                    "verification_type": "aml_screening",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
@@ -982,17 +1175,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/aml_screening/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/business_aml_screening": {
+    "/api/v2/public/verifications/requests/business_aml_screening/": {
       "post": {
         "summary": "Business AML Screening",
         "description": "Screen businesses and corporate entities against global sanctions lists and adverse media.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `aml_for_businesses.filters` and precision with `aml_for_businesses.match_score` (0\u2013100).",
-        "operationId": "single-business_aml_screening",
+        "operationId": "public-business_aml_screening",
         "tags": [
           "single-compliance-screening"
         ],
@@ -1008,17 +1201,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "verification_type",
                   "input_data"
                 ],
                 "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "business_aml_screening"
-                    ]
-                  },
                   "input_data": {
                     "type": "object",
                     "required": [
@@ -1125,7 +1310,6 @@
                 "default": {
                   "summary": "Sample request",
                   "value": {
-                    "verification_type": "business_aml_screening",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
@@ -1306,17 +1490,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/business_aml_screening/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/kyb_screening": {
+    "/api/v2/public/verifications/requests/kyb/": {
       "post": {
         "summary": "KYB - Know Your Business",
         "description": "Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-kyb_screening",
+        "operationId": "public-kyb",
         "tags": [
           "single-compliance-screening"
         ],
@@ -1332,17 +1516,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "verification_type",
                   "input_data"
                 ],
                 "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "kyb_screening"
-                    ]
-                  },
                   "input_data": {
                     "type": "object",
                     "properties": {
@@ -1365,7 +1541,6 @@
                 "default": {
                   "summary": "Sample request",
                   "value": {
-                    "verification_type": "kyb_screening",
                     "input_data": {
                       "rc_number": "RC789012",
                       "company_name": "TechStart Nigeria Ltd"
@@ -1525,105 +1700,64 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/kyb/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/address_verification": {
-      "post": {
-        "summary": "Address Verification",
-        "description": "Verify physical address records against government and utility databases across Africa.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-address_verification",
+    "/api/v2/public/verifications/requests/": {
+      "get": {
+        "summary": "Get verification detail",
+        "description": "Retrieve a verification request belonging to the API key's tenant, including optional Shufti proof metadata when available.",
+        "operationId": "public-verification-detail",
         "tags": [
-          "single-address-verification"
+          "public-verification-detail"
         ],
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "verification_type",
-                  "input_data"
-                ],
-                "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "address_verification"
-                    ]
-                  },
-                  "input_data": {
-                    "type": "object",
-                    "properties": {
-                      "address": {
-                        "type": "string",
-                        "description": "Full street address."
-                      },
-                      "city": {
-                        "type": "string",
-                        "description": "City or town name."
-                      },
-                      "state": {
-                        "type": "string",
-                        "description": "State or province."
-                      },
-                      "country": {
-                        "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code."
-                      }
-                    },
-                    "required": [
-                      "address",
-                      "city",
-                      "country"
-                    ]
-                  }
-                }
-              },
-              "examples": {
-                "default": {
-                  "summary": "Sample request",
-                  "value": {
-                    "verification_type": "address_verification",
-                    "input_data": {
-                      "address": "15 Adeola Odeku Street",
-                      "city": "Lagos",
-                      "state": "Lagos",
-                      "country": "NG"
-                    }
-                  }
-                }
-              }
-            }
+        "parameters": [
+          {
+            "name": "verification_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Verification request ID returned from create."
           }
-        },
+        ],
         "responses": {
-          "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
+          "200": {
+            "description": "Verification request retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
+                  "$ref": "#/components/schemas/V2SuccessResponse"
                 },
                 "examples": {
-                  "error": {
-                    "summary": "Validation error",
+                  "success": {
+                    "summary": "Successful detail response",
                     "value": {
-                      "success": false,
-                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
-                      "errors": [
-                        "Missing required parameters for 'ng_bvn_verification': bvn"
-                      ]
+                      "success": true,
+                      "message": "Verification request retrieved successfully.",
+                      "data": {
+                        "id": "06a4f688-4de4-70ad-8000-ada533c461f4",
+                        "verification_type": "ng_bvn_verification",
+                        "status": "SUCCESS",
+                        "input_data": {
+                          "bvn": "22222222222"
+                        },
+                        "response_data": {},
+                        "by_api": true,
+                        "api_key_id": "06a4f688-4a96-7027-8000-089b60351c6c",
+                        "proofs_available": false,
+                        "proofs": {}
+                      }
                     }
                   }
                 }
@@ -1645,28 +1779,6 @@
                       "message": "Invalid API key.",
                       "errors": [
                         "Invalid API key."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "KYC incomplete",
-                    "value": {
-                      "success": false,
-                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
-                      "errors": [
-                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
                       ]
                     }
                   }
@@ -1718,122 +1830,6 @@
               }
             }
           },
-          "201": {
-            "description": "Verification created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
-                },
-                "examples": {
-                  "success": {
-                    "summary": "Successful verification",
-                    "value": {
-                      "success": true,
-                      "message": "Verification request created successfully.",
-                      "data": {
-                        "id": "ver_9gjzgc36t",
-                        "verification_type": "address_verification",
-                        "status": "verified",
-                        "created_at": "2026-02-09T08:01:42.891Z",
-                        "response_data": {
-                          "first_name": "John",
-                          "last_name": "Doe",
-                          "date_of_birth": "1990-01-15",
-                          "gender": "Male"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "urlForwardHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/public/verifications/requests/risk_assessment": {
-      "post": {
-        "summary": "Risk Assessment",
-        "description": "Assess the fraud and identity risk score for a given individual based on their identity data.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-risk_assessment",
-        "tags": [
-          "single-risk-crypto"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "verification_type",
-                  "input_data"
-                ],
-                "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "risk_assessment"
-                    ]
-                  },
-                  "input_data": {
-                    "type": "object",
-                    "properties": {
-                      "id_number": {
-                        "type": "string",
-                        "description": "The identity number to assess."
-                      },
-                      "id_type": {
-                        "type": "string",
-                        "description": "Type of ID (e.g., \"national_id\", \"passport\", \"bvn\")."
-                      },
-                      "country": {
-                        "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code."
-                      }
-                    },
-                    "required": [
-                      "id_number",
-                      "id_type",
-                      "country"
-                    ]
-                  }
-                }
-              },
-              "examples": {
-                "default": {
-                  "summary": "Sample request",
-                  "value": {
-                    "verification_type": "risk_assessment",
-                    "input_data": {
-                      "id_number": "22222222222",
-                      "id_type": "bvn",
-                      "country": "NG"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
           "400": {
             "description": "Bad Request \u2014 validation failed or invalid parameters.",
             "content": {
@@ -1849,28 +1845,6 @@
                       "message": "Missing required parameters for 'ng_bvn_verification': bvn",
                       "errors": [
                         "Missing required parameters for 'ng_bvn_verification': bvn"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Invalid API key",
-                    "value": {
-                      "success": false,
-                      "message": "Invalid API key.",
-                      "errors": [
-                        "Invalid API key."
                       ]
                     }
                   }
@@ -1899,81 +1873,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Resource not found",
-                    "value": {
-                      "success": false,
-                      "message": "Resource not found.",
-                      "errors": [
-                        "Resource not found."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Unexpected error",
-                    "value": {
-                      "success": false,
-                      "message": "An unexpected error occurred.",
-                      "errors": [
-                        "An unexpected error occurred."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Verification created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
-                },
-                "examples": {
-                  "success": {
-                    "summary": "Successful verification",
-                    "value": {
-                      "success": true,
-                      "message": "Verification request created successfully.",
-                      "data": {
-                        "id": "ver_9gjzgc36t",
-                        "verification_type": "risk_assessment",
-                        "status": "verified",
-                        "created_at": "2026-02-09T08:01:42.891Z",
-                        "response_data": {
-                          "first_name": "John",
-                          "last_name": "Doe",
-                          "date_of_birth": "1990-01-15",
-                          "gender": "Male"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
           }
         },
         "x-zuplo-route": {
@@ -1988,231 +1887,11 @@
         }
       }
     },
-    "/api/v2/public/verifications/requests/crypto_wallet_screening": {
-      "post": {
-        "summary": "Crypto Wallet Screening",
-        "description": "Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity, and illicit fund sources.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-crypto_wallet_screening",
-        "tags": [
-          "single-risk-crypto"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "verification_type",
-                  "input_data"
-                ],
-                "properties": {
-                  "verification_type": {
-                    "type": "string",
-                    "description": "The verification type identifier.",
-                    "enum": [
-                      "crypto_wallet_screening"
-                    ]
-                  },
-                  "input_data": {
-                    "type": "object",
-                    "properties": {
-                      "wallet_address": {
-                        "type": "string",
-                        "description": "The cryptocurrency wallet address to screen."
-                      },
-                      "blockchain": {
-                        "type": "string",
-                        "description": "Blockchain network (e.g., \"bitcoin\", \"ethereum\", \"tron\")."
-                      }
-                    },
-                    "required": [
-                      "wallet_address",
-                      "blockchain"
-                    ]
-                  }
-                }
-              },
-              "examples": {
-                "default": {
-                  "summary": "Sample request",
-                  "value": {
-                    "verification_type": "crypto_wallet_screening",
-                    "input_data": {
-                      "wallet_address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf",
-                      "blockchain": "bitcoin"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Validation error",
-                    "value": {
-                      "success": false,
-                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
-                      "errors": [
-                        "Missing required parameters for 'ng_bvn_verification': bvn"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Invalid API key",
-                    "value": {
-                      "success": false,
-                      "message": "Invalid API key.",
-                      "errors": [
-                        "Invalid API key."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "KYC incomplete",
-                    "value": {
-                      "success": false,
-                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
-                      "errors": [
-                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Resource not found",
-                    "value": {
-                      "success": false,
-                      "message": "Resource not found.",
-                      "errors": [
-                        "Resource not found."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Unexpected error",
-                    "value": {
-                      "success": false,
-                      "message": "An unexpected error occurred.",
-                      "errors": [
-                        "An unexpected error occurred."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Verification created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
-                },
-                "examples": {
-                  "success": {
-                    "summary": "Successful verification",
-                    "value": {
-                      "success": true,
-                      "message": "Verification request created successfully.",
-                      "data": {
-                        "id": "ver_9gjzgc36t",
-                        "verification_type": "crypto_wallet_screening",
-                        "status": "verified",
-                        "created_at": "2026-02-09T08:01:42.891Z",
-                        "response_data": {
-                          "first_name": "John",
-                          "last_name": "Doe",
-                          "date_of_birth": "1990-01-15",
-                          "gender": "Male"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "urlForwardHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/public/verifications/requests/za_said_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/za_said_verification": {
       "post": {
         "summary": "South Africa ID Verification",
-        "description": "Verify South African ID numbers against the Department of Home Affairs registry.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-za_said_verification",
+        "description": "South Africa ID Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `za_said_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-za_said_verification",
         "tags": [
           "single-gov-south-africa"
         ],
@@ -2234,36 +1913,35 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "za_said_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `za_said_verification`.",
                     "properties": {
                       "id_number": {
-                        "type": "string",
-                        "description": "13-digit South African ID number."
+                        "type": "string"
                       },
                       "first_name": {
-                        "type": "string",
-                        "description": "Subject's first name for cross-validation."
+                        "type": "string"
                       },
                       "last_name": {
-                        "type": "string",
-                        "description": "Subject's last name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "id_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "South Africa ID Verification",
                   "value": {
                     "verification_type": "za_said_verification",
                     "input_data": {
@@ -2426,17 +2104,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_bvn_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_bvn_verification": {
       "post": {
         "summary": "Nigeria BVN Verification",
-        "description": "Verify Nigerian Bank Verification Numbers against the NIBSS database.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_bvn_verification",
+        "description": "Nigeria BVN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_bvn_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_bvn_verification",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -2458,40 +2136,35 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_bvn_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_bvn_verification`.",
                     "properties": {
                       "bvn": {
-                        "type": "string",
-                        "description": "11-digit Bank Verification Number."
+                        "type": "string"
                       },
                       "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       },
                       "last_name": {
-                        "type": "string",
-                        "description": "Last name for cross-validation."
-                      },
-                      "date_of_birth": {
-                        "type": "string",
-                        "description": "Date of birth (YYYY-MM-DD)."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "bvn"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria BVN Verification",
                   "value": {
                     "verification_type": "ng_bvn_verification",
                     "input_data": {
@@ -2631,7 +2304,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_bvn_verification",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -2654,17 +2327,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_nin_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_nin_verification": {
       "post": {
         "summary": "Nigeria NIN Verification",
-        "description": "Verify Nigerian National Identification Numbers against the NIMC database.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_nin_verification",
+        "description": "Nigeria NIN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_nin_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_nin_verification",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -2686,36 +2359,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_nin_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_nin_verification`.",
                     "properties": {
                       "nin": {
-                        "type": "string",
-                        "description": "11-digit National Identification Number."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
-                      },
-                      "last_name": {
-                        "type": "string",
-                        "description": "Last name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "nin"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria NIN Verification",
                   "value": {
                     "verification_type": "ng_nin_verification",
                     "input_data": {
@@ -2853,7 +2519,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_nin_verification",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -2876,17 +2542,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_virtual_nin_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_virtual_nin_verification": {
       "post": {
         "summary": "Nigeria Virtual NIN",
-        "description": "Verify Nigerian Virtual National Identification Numbers issued by NIMC.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_virtual_nin_verification",
+        "description": "Nigeria Virtual NIN.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_virtual_nin_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_virtual_nin_verification",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -2908,28 +2574,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_virtual_nin_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_virtual_nin_verification`.",
                     "properties": {
                       "vnin": {
-                        "type": "string",
-                        "description": "16-character Virtual NIN."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "vnin"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria Virtual NIN",
                   "value": {
                     "verification_type": "ng_virtual_nin_verification",
                     "input_data": {
@@ -3067,7 +2734,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_virtual_nin_verification",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -3090,17 +2757,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_advanced_phone_number_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_advanced_phone_number_verification": {
       "post": {
         "summary": "Nigeria Phone Verification",
-        "description": "Verify Nigerian phone numbers with advanced carrier and identity validation.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_advanced_phone_number_verification",
+        "description": "Nigeria Phone Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_advanced_phone_number_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_advanced_phone_number_verification",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -3122,36 +2789,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_advanced_phone_number_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_advanced_phone_number_verification`.",
                     "properties": {
                       "phone_number": {
-                        "type": "string",
-                        "description": "Nigerian phone number (e.g., 08012345678)."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
-                      },
-                      "last_name": {
-                        "type": "string",
-                        "description": "Last name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "phone_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria Phone Verification",
                   "value": {
                     "verification_type": "ng_advanced_phone_number_verification",
                     "input_data": {
@@ -3289,7 +2949,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_advanced_phone_number_verification",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -3312,17 +2972,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_phone_number_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_phone_number_lookup": {
       "post": {
         "summary": "Nigeria Phone Lookup",
-        "description": "Lookup subscriber information associated with a Nigerian phone number.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_phone_number_lookup",
+        "description": "Nigeria Phone Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_phone_number_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_phone_number_lookup",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -3344,28 +3004,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_phone_number_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_phone_number_lookup`.",
                     "properties": {
                       "phone_number": {
-                        "type": "string",
-                        "description": "Nigerian phone number to look up."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "phone_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria Phone Lookup",
                   "value": {
                     "verification_type": "ng_phone_number_lookup",
                     "input_data": {
@@ -3503,7 +3164,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_phone_number_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -3526,17 +3187,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_cac_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_cac_lookup": {
       "post": {
         "summary": "Nigeria CAC Lookup",
-        "description": "Lookup company records from the Nigerian Corporate Affairs Commission (CAC).\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_cac_lookup",
+        "description": "Nigeria CAC Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_cac_lookup",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -3558,32 +3219,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_cac_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_cac_lookup`.",
                     "properties": {
                       "rc_number": {
-                        "type": "string",
-                        "description": "CAC registration number (e.g., RC123456)."
-                      },
-                      "company_name": {
-                        "type": "string",
-                        "description": "Company name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "rc_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria CAC Lookup",
                   "value": {
                     "verification_type": "ng_cac_lookup",
                     "input_data": {
@@ -3721,7 +3379,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_cac_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -3744,17 +3402,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ng_passport_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ng_passport_verification": {
       "post": {
         "summary": "Nigeria Passport Verification",
-        "description": "Verify Nigerian international passport numbers against NIS records.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ng_passport_verification",
+        "description": "Nigeria Passport Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_passport_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ng_passport_verification",
         "tags": [
           "single-gov-nigeria"
         ],
@@ -3776,40 +3434,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ng_passport_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ng_passport_verification`.",
                     "properties": {
                       "passport_number": {
-                        "type": "string",
-                        "description": "Passport number (e.g., A12345678)."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
-                      },
-                      "last_name": {
-                        "type": "string",
-                        "description": "Last name for cross-validation."
-                      },
-                      "date_of_birth": {
-                        "type": "string",
-                        "description": "Date of birth (YYYY-MM-DD)."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "passport_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Nigeria Passport Verification",
                   "value": {
                     "verification_type": "ng_passport_verification",
                     "input_data": {
@@ -3947,7 +3594,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ng_passport_verification",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -3970,17 +3617,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/gh_passport_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/gh_passport_lookup": {
       "post": {
         "summary": "Ghana Passport Lookup",
-        "description": "Lookup Ghanaian international passport records.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-gh_passport_lookup",
+        "description": "Ghana Passport Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_passport_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-gh_passport_lookup",
         "tags": [
           "single-gov-ghana"
         ],
@@ -4002,32 +3649,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "gh_passport_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `gh_passport_lookup`.",
                     "properties": {
                       "passport_number": {
-                        "type": "string",
-                        "description": "Ghana passport number (e.g., G1234567)."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "passport_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Ghana Passport Lookup",
                   "value": {
                     "verification_type": "gh_passport_lookup",
                     "input_data": {
@@ -4165,7 +3809,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "gh_passport_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -4188,17 +3832,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/gh_voter_card_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/gh_voter_card_lookup": {
       "post": {
         "summary": "Ghana Voter Card Lookup",
-        "description": "Lookup Ghanaian voter identification card records.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-gh_voter_card_lookup",
+        "description": "Ghana Voter Card Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-gh_voter_card_lookup",
         "tags": [
           "single-gov-ghana"
         ],
@@ -4220,32 +3864,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "gh_voter_card_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `gh_voter_card_lookup`.",
                     "properties": {
                       "voter_id": {
-                        "type": "string",
-                        "description": "Ghana voter ID number."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "voter_id"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Ghana Voter Card Lookup",
                   "value": {
                     "verification_type": "gh_voter_card_lookup",
                     "input_data": {
@@ -4383,7 +4024,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "gh_voter_card_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -4406,17 +4047,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/gh_ssnit_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/gh_ssnit_lookup": {
       "post": {
         "summary": "Ghana SSNIT Lookup",
-        "description": "Lookup Ghana Social Security and National Insurance Trust (SSNIT) records.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-gh_ssnit_lookup",
+        "description": "Ghana SSNIT Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_ssnit_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-gh_ssnit_lookup",
         "tags": [
           "single-gov-ghana"
         ],
@@ -4438,32 +4079,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "gh_ssnit_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `gh_ssnit_lookup`.",
                     "properties": {
                       "ssnit_number": {
-                        "type": "string",
-                        "description": "SSNIT number."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "ssnit_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Ghana SSNIT Lookup",
                   "value": {
                     "verification_type": "gh_ssnit_lookup",
                     "input_data": {
@@ -4601,7 +4239,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "gh_ssnit_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -4624,17 +4262,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/gh_drivers_license_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/gh_drivers_license_lookup": {
       "post": {
-        "summary": "Ghana Driver's License",
-        "description": "Lookup Ghanaian driver's license records from the DVLA registry.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-gh_drivers_license_lookup",
+        "summary": "Ghana Drivers License Lookup",
+        "description": "Ghana Drivers License Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_drivers_license_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-gh_drivers_license_lookup",
         "tags": [
           "single-gov-ghana"
         ],
@@ -4656,32 +4294,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "gh_drivers_license_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `gh_drivers_license_lookup`.",
                     "properties": {
                       "license_number": {
-                        "type": "string",
-                        "description": "Driver's license number."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "license_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Ghana Drivers License Lookup",
                   "value": {
                     "verification_type": "gh_drivers_license_lookup",
                     "input_data": {
@@ -4819,7 +4454,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "gh_drivers_license_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -4842,17 +4477,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ke_passport_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ke_passport_lookup": {
       "post": {
         "summary": "Kenya Passport Lookup",
-        "description": "Lookup Kenyan international passport records from immigration registries.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ke_passport_lookup",
+        "description": "Kenya Passport Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_passport_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ke_passport_lookup",
         "tags": [
           "single-gov-kenya"
         ],
@@ -4874,32 +4509,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ke_passport_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ke_passport_lookup`.",
                     "properties": {
                       "passport_number": {
-                        "type": "string",
-                        "description": "Kenya passport number (e.g., A1234567)."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "passport_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Kenya Passport Lookup",
                   "value": {
                     "verification_type": "ke_passport_lookup",
                     "input_data": {
@@ -5037,7 +4669,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ke_passport_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -5060,17 +4692,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ke_national_id_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ke_national_id_lookup": {
       "post": {
         "summary": "Kenya National ID Lookup",
-        "description": "Lookup Kenyan national ID records from the National Registration Bureau.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ke_national_id_lookup",
+        "description": "Kenya National ID Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_national_id_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ke_national_id_lookup",
         "tags": [
           "single-gov-kenya"
         ],
@@ -5092,32 +4724,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ke_national_id_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ke_national_id_lookup`.",
                     "properties": {
                       "id_number": {
-                        "type": "string",
-                        "description": "Kenya national ID number."
-                      },
-                      "first_name": {
-                        "type": "string",
-                        "description": "First name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "id_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Kenya National ID Lookup",
                   "value": {
                     "verification_type": "ke_national_id_lookup",
                     "input_data": {
@@ -5255,7 +4884,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ke_national_id_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -5278,17 +4907,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ke_phone_number_lookup": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ke_phone_number_lookup": {
       "post": {
         "summary": "Kenya Phone Lookup",
-        "description": "Lookup subscriber information associated with a Kenyan phone number.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ke_phone_number_lookup",
+        "description": "Kenya Phone Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_phone_number_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ke_phone_number_lookup",
         "tags": [
           "single-gov-kenya"
         ],
@@ -5310,28 +4939,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ke_phone_number_lookup"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ke_phone_number_lookup`.",
                     "properties": {
                       "phone_number": {
-                        "type": "string",
-                        "description": "Kenyan phone number (e.g., 0712345678)."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "phone_number"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Kenya Phone Lookup",
                   "value": {
                     "verification_type": "ke_phone_number_lookup",
                     "input_data": {
@@ -5469,7 +5099,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ke_phone_number_lookup",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -5492,17 +5122,17 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }
       }
     },
-    "/api/v2/public/verifications/requests/ke_tax_pin_verification": {
+    "/api/v2/public/verifications/requests/government_registry_checks/ke_tax_pin_verification": {
       "post": {
         "summary": "Kenya Tax PIN Verification",
-        "description": "Verify Kenyan KRA Personal Identification Numbers.\n\nPublic API creates always use direct (offsite) mode.",
-        "operationId": "single-ke_tax_pin_verification",
+        "description": "Kenya Tax PIN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_tax_pin_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "operationId": "public-gov-ke_tax_pin_verification",
         "tags": [
           "single-gov-kenya"
         ],
@@ -5524,32 +5154,29 @@
                 "properties": {
                   "verification_type": {
                     "type": "string",
-                    "description": "The verification type identifier.",
+                    "description": "Must match this check.",
                     "enum": [
                       "ke_tax_pin_verification"
                     ]
                   },
                   "input_data": {
                     "type": "object",
+                    "description": "Input fields for `ke_tax_pin_verification`.",
                     "properties": {
                       "tax_pin": {
-                        "type": "string",
-                        "description": "Kenya Revenue Authority PIN (e.g., A123456789B)."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Taxpayer name for cross-validation."
+                        "type": "string"
                       }
                     },
                     "required": [
                       "tax_pin"
-                    ]
+                    ],
+                    "additionalProperties": true
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Kenya Tax PIN Verification",
                   "value": {
                     "verification_type": "ke_tax_pin_verification",
                     "input_data": {
@@ -5687,7 +5314,7 @@
                       "message": "Verification request created successfully.",
                       "data": {
                         "id": "ver_9gjzgc36t",
-                        "verification_type": "ke_tax_pin_verification",
+                        "verification_type": "za_said_verification",
                         "status": "verified",
                         "created_at": "2026-02-09T08:01:42.891Z",
                         "response_data": {
@@ -5710,188 +5337,7 @@
             "export": "urlForwardHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/public/verifications/requests/{verification_id}/detail/": {
-      "get": {
-        "summary": "Get verification detail",
-        "description": "Retrieve a verification request belonging to the API key's tenant, including optional Shufti proof metadata when available.",
-        "operationId": "public-verification-detail",
-        "tags": [
-          "single-identity-verification"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "verification_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Verification request ID returned from create."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Verification request retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2SuccessResponse"
-                },
-                "examples": {
-                  "success": {
-                    "summary": "Successful detail response",
-                    "value": {
-                      "success": true,
-                      "message": "Verification request retrieved successfully.",
-                      "data": {
-                        "id": "06a4f688-4de4-70ad-8000-ada533c461f4",
-                        "verification_type": "ng_bvn_verification",
-                        "status": "SUCCESS",
-                        "input_data": {
-                          "bvn": "22222222222"
-                        },
-                        "response_data": {},
-                        "by_api": true,
-                        "api_key_id": "06a4f688-4a96-7027-8000-089b60351c6c",
-                        "proofs_available": false,
-                        "proofs": {}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer API key.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Invalid API key",
-                    "value": {
-                      "success": false,
-                      "message": "Invalid API key.",
-                      "errors": [
-                        "Invalid API key."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found \u2014 verification does not exist for this tenant.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Resource not found",
-                    "value": {
-                      "success": false,
-                      "message": "Resource not found.",
-                      "errors": [
-                        "Resource not found."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error \u2014 unexpected failure.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Unexpected error",
-                    "value": {
-                      "success": false,
-                      "message": "An unexpected error occurred.",
-                      "errors": [
-                        "An unexpected error occurred."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request \u2014 validation failed or invalid parameters.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Validation error",
-                    "value": {
-                      "success": false,
-                      "message": "Missing required parameters for 'ng_bvn_verification': bvn",
-                      "errors": [
-                        "Missing required parameters for 'ng_bvn_verification': bvn"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden \u2014 tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "KYC incomplete",
-                    "value": {
-                      "success": false,
-                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
-                      "errors": [
-                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "urlForwardHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/"
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
             }
           }
         }

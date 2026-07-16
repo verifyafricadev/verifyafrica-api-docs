@@ -20,12 +20,6 @@ Assess identity fraud risk and screen cryptocurrency wallets for illicit activit
 
 ## Getting Started
 
-All endpoints in this category use the public v2 create endpoint:
+Risk assessment and crypto wallet screening are **not available** on the public API (onsite-only).
 
-`POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
-
-Retrieve results with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/{verification_id}/detail/`.
-
-Authenticate with `Authorization: Bearer <VA-…api-key>`.
-
-Set `verification_type` to the identifier for the check you need. See each endpoint page for required `input_data` fields.
+You can still retrieve existing verifications with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/?verification_id={verification_id}`.

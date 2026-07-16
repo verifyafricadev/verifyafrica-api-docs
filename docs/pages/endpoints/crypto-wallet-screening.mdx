@@ -12,8 +12,8 @@ Screen cryptocurrency wallet addresses for sanctions exposure, darknet activity,
 Jump directly to the interactive API docs:
 
 - [API reference](/api) — schemas, examples, and playground
-- Create: `POST /api/v2/public/verifications/requests/`
-- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
+- Create: not available on the public API (onsite-only)
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
 ## Verification Type
@@ -23,7 +23,7 @@ crypto_wallet_screening
 ```
 
 :::caution Not available on public create
-This verification type currently requires a hosted (`onsite`) flow and is **not supported** by `POST /api/v2/public/verifications/requests/` (which always uses direct/offsite mode).
+This verification type currently requires a hosted (`onsite`) flow and is **not supported** by the public product create endpoints.
 :::
 
 ## Use Cases
@@ -46,7 +46,7 @@ Pass these fields inside `input_data` in your request body.
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+**Endpoint:** not available on the public API
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `crypto_wallet_screening`.
 

@@ -11,9 +11,9 @@ Screen businesses and corporate entities against global sanctions lists and adve
 :::tip API Reference
 Jump directly to the interactive API docs:
 
-- [API reference](/api/single-compliance-screening#business-aml-screening) — schemas, examples, and playground
-- Create: `POST /api/v2/public/verifications/requests/`
-- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
+- [API reference](/api) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/business_aml_screening/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
 ## Verification Type
@@ -68,13 +68,12 @@ Pass these fields inside `input_data` in your request body.
 
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/business_aml_screening/`
 
-Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `business_aml_screening`.
+Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
 
 ```json
 {
-  "verification_type": "business_aml_screening",
   "input_data": {
     "email": "customer@example.com",
     "language": "EN",

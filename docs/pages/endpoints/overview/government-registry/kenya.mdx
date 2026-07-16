@@ -10,11 +10,17 @@ Official government registry checks for Kenya.
 
 ## API Reference
 
-- [API Reference](/api)
+- [Country operations](/api/single-gov-kenya)
+
+All checks in this country use the same product endpoint:
+
+`POST /api/v2/public/verifications/requests/government_registry_checks/`
+
+Set `verification_type` to the identifier for the check you need. Retrieve results with `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.
 
 ## Endpoints
 
-- [Kenya Passport Lookup](../ke-passport-lookup) — Lookup Kenyan international passport records from immigration registries. ([API](/api))
-- [Kenya National ID Lookup](../ke-national-id-lookup) — Lookup Kenyan national ID records from the National Registration Bureau. ([API](/api))
-- [Kenya Phone Lookup](../ke-phone-number-lookup) — Lookup subscriber information associated with a Kenyan phone number. ([API](/api))
-- [Kenya Tax PIN Verification](../ke-tax-pin-verification) — Verify Kenyan KRA Personal Identification Numbers. ([API](/api))
+- [Kenya Passport Lookup](../../ke-passport-lookup) — [API](/api/single-gov-kenya#kenya-passport-lookup)
+- [Kenya National ID Lookup](../../ke-national-id-lookup) — [API](/api/single-gov-kenya#kenya-national-id-lookup)
+- [Kenya Phone Lookup](../../ke-phone-number-lookup) — [API](/api/single-gov-kenya#kenya-phone-lookup)
+- [Kenya Tax PIN Verification](../../ke-tax-pin-verification) — [API](/api/single-gov-kenya#kenya-tax-pin-verification)

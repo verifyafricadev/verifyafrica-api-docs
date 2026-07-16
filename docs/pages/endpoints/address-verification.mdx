@@ -12,8 +12,8 @@ Verify physical address records against government and utility databases across 
 Jump directly to the interactive API docs:
 
 - [API reference](/api) — schemas, examples, and playground
-- Create: `POST /api/v2/public/verifications/requests/`
-- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
+- Create: `POST /api/v2/public/verifications/requests/address_verification/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
 ## Verification Type
@@ -44,13 +44,12 @@ Pass these fields inside `input_data` in your request body.
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+**Endpoint:** POST https://api.verifyafrica.io/api/v2/public/verifications/requests/address_verification/address_verification/`
 
-Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `address_verification`.
+Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
 
 ```json
 {
-  "verification_type": "address_verification",
   "input_data": { /* see parameters above */ }
 }
 ```

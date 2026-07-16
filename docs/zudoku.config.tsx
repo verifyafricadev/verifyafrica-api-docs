@@ -58,6 +58,26 @@ const config: ZudokuConfig = {
 			path: "api",
 		},
 	],
+	// Show "Get verification detail" as a single root item (no nested folders).
+	// OpenAPI would otherwise render tag → operation nesting.
+	navigationRules: [
+		{
+			type: "insert",
+			match: "API Reference/0",
+			position: "after",
+			items: [
+				{
+					type: "link",
+					label: "Get verification detail",
+					to: "/api/public-verification-detail",
+				},
+			],
+		},
+		{
+			type: "remove",
+			match: "API Reference/Get verification detail",
+		},
+	],
 	theme: {
 		light: {
 			primary: "#009688",

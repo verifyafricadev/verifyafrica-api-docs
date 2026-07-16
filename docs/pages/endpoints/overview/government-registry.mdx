@@ -18,4 +18,10 @@ Verify identity and registry records against official government databases acros
 
 ## Getting Started
 
-Government registry checks query official databases in each country. Select a country below, then choose the verification type that matches the identity document or record you need to validate.
+Government registry checks use one product endpoint, organized by country in the [API Reference](/api):
+
+`POST /api/v2/public/verifications/requests/government_registry_checks/`
+
+Include `verification_type` in the body to select the specific check (for example `ng_bvn_verification`).
+
+Browse a country below, then open the check you need.

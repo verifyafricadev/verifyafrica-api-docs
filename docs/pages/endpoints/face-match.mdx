@@ -11,9 +11,9 @@ Perform real-time liveness detection and face match verification against a refer
 :::tip API Reference
 Jump directly to the interactive API docs:
 
-- [API reference](/api/single-identity-verification#facial-screening) — schemas, examples, and playground
-- Create: `POST /api/v2/public/verifications/requests/`
-- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
+- [API reference](/api) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/facial_screening/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
 ## Verification Type
@@ -45,27 +45,24 @@ Pass these fields inside `input_data` in your request body.
 | --- | --- | --- | --- |
 | `proof` | string | Yes | Face image. Accepts a base64 data URI (`data:image/jpeg;base64,...`) or an HTTPS URL to a `jpeg`/`jpg`/`png` file. |
 | `verification_mode` | string | Yes | Capture type. One of: `"any"`, `"image_only"`, `"video_only"`. |
-| `allow_offline` | boolean | No | Defaults to `false`. |
 | `check_duplicate_request` | boolean | No | `true` to flag duplicate faces, `false` to allow. Defaults to `false`. |
 
 ## Making a Request
 
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/facial_screening/`
 
-Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `face_match`.
+Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
 
 ```json
 {
-  "verification_type": "face_match",
   "input_data": {
     "email": "customer@example.com",
     "language": "EN",
     "face": {
       "proof": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
       "verification_mode": "any",
-      "allow_offline": false,
       "check_duplicate_request": false
     }
   }

@@ -29,10 +29,17 @@ Do not send `X-API-KEY`. The API key identifies the tenant — no `X-TENANT-ID` 
 
 | Endpoint | Description |
 | --- | --- |
-| `POST /api/v2/public/verifications/requests/` | Create and run a single verification (direct/offsite) |
-| `GET /api/v2/public/verifications/requests/{verification_id}/detail/` | Retrieve verification status and details |
+| `POST /api/v2/public/verifications/requests/document_verification/` | Document verification |
+| `POST /api/v2/public/verifications/requests/facial_screening/` | Facial screening |
+| `POST /api/v2/public/verifications/requests/address_verification/` | Address verification |
+| `POST /api/v2/public/verifications/requests/aml_screening/` | AML screening |
+| `POST /api/v2/public/verifications/requests/business_aml_screening/` | Business AML screening |
+| `POST /api/v2/public/verifications/requests/kyb/` | KYB (know your business) |
+| `POST /api/v2/public/verifications/requests/government_registry_checks/` | Government registry checks (include `verification_type` in body) |
+| `GET /api/v2/public/verifications/requests/?verification_id={verification_id}` | Retrieve verification status and details |
 
-Every create request includes a `verification_type` that selects which check to run, plus an `input_data` object with the fields required for that check. Public creates always use **direct (offsite)** mode.
+Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`). Public creates always use **direct (offsite)** mode.
+
 
 ## Response format
 
@@ -124,7 +131,7 @@ Explore the **Endpoints** section in the sidebar for detailed guides on each ver
 ## Quick Example
 
 ```bash
-curl -X POST https://api.verifyafrica.io/api/v2/public/verifications/requests/ \
+curl -X POST https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/ \
   -H "Authorization: Bearer VA-your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{

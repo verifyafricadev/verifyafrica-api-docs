@@ -11,9 +11,9 @@ Lookup subscriber information associated with a Nigerian phone number.
 :::tip API Reference
 Jump directly to the interactive API docs:
 
-- [API reference](/api) — schemas, examples, and playground
-- Create: `POST /api/v2/public/verifications/requests/`
-- Detail: `GET /api/v2/public/verifications/requests/{verification_id}/detail/`
+- [API reference](/api/single-gov-nigeria#nigeria-phone-lookup) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/government_registry_checks/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
 ## Verification Type
@@ -40,7 +40,7 @@ Pass these fields inside `input_data` in your request body.
 Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
 
 
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/`
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/`
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ng_phone_number_lookup`.
 
@@ -79,4 +79,4 @@ See the [Introduction](/) for the full set of status-code examples, or the inter
 
 View the full request/response schemas, response codes, and interactive playground:
 
-- [API reference](/api)
+- [API reference](/api/single-gov-nigeria#nigeria-phone-lookup)
