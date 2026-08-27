@@ -46,7 +46,7 @@ address_verification
 
 Send top-level `mode`:
 
-- **`link`** — Config only (`address.full_address`, capture options). Response includes `data.link.url`. Optional `send_email` / `allow_file_upload`. Do **not** send `address.proof`.
+- **`link`** — Config only (`address.full_address`, capture options). Response includes `data.link.url` for the hosted VerifyAfrica capture page (same app as document verification). Optional `send_email` / `allow_file_upload`. Do **not** send `address.proof`.
 - **`direct`** — Send `address.proof` as an HTTPS URL plus `full_address`. Verification starts in the background. Do **not** send `send_email`, `allow_file_upload`, or `ttl`.
 
 If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
