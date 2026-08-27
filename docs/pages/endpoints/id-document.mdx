@@ -1,12 +1,25 @@
 ---
 title: Document Verification
-description: Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.
+description: Verify passports, national IDs, and driver's licenses via hosted link mode or direct proof upload.
 sidebar_label: Document Verification
 ---
 
 # Document Verification
 
-Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.
+Verify government-issued IDs (passport, national ID, driver's license) in either **link** or **direct** mode.
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | Config only — no proof files | `data.link.url` for the customer | After the customer completes capture on the hosted page |
+| `direct` | HTTPS proof URLs + config | Accepted request (`PENDING`) | After provider processing completes |
+
+Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
+
+In the field tables below:
+
+- **Required** — must be sent for that mode
+- **Optional** — accepted for that mode
+- **—** — not used in that mode (omit it)
 
 :::tip API Reference
 Jump directly to the interactive API docs:
@@ -14,6 +27,7 @@ Jump directly to the interactive API docs:
 - [API reference](/api) — schemas, examples, and playground
 - Create: `POST /api/v2/public/verifications/requests/document_verification/`
 - Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
+- Supported countries: `GET /api/v2/public/verifications/supported-countries/?verification_type=id_document`
 :::
 
 ## Verification Type
@@ -26,52 +40,144 @@ id_document
 
 - Onboard customers with government-issued ID validation
 - Support passports, national IDs, and driver's licenses
-- Validate government-issued IDs with direct document proofs
+- Hosted capture when the customer must take the photo themselves (`link`)
+- Server-side verification when you already hold the ID image (`direct`)
 
-## Input Parameters
+## Choosing a mode
 
-Pass these fields inside `input_data` in your request body.
+Send top-level `mode`:
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `email` | string | Yes | Customer's email address. |
-| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
-| `document` | object | Yes | Document proof and matching options. See nested fields below. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g. `"NG"`, `"ZA"`, `"GH"`, `"KE"`). |
-| `first_name` | string | No | Customer's first name for cross-validation. |
-| `last_name` | string | No | Customer's last name for cross-validation. |
+- **`link`** — Accept capture settings only. Response includes `data.link.url`. Redirect the customer (or email the link with `send_email`). Do **not** send `document.proof`.
+- **`direct`** — You already have the ID image at a public HTTPS URL. Send `document.proof`. Verification starts immediately in the background. Do **not** send `send_email`, `allow_file_upload`, or `ttl`.
 
-### `document` object
+If `mode` is omitted, it defaults to `link`.
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `proof` | string | Yes | HTTPS URL to the front of the identity document (`jpeg`/`jpg`/`png`/`pdf`). Base64 data URIs are **not** accepted on the public API. |
-| `backside_proof` | string | No | HTTPS URL to the back of the document, same formats as `proof`. |
-| `backside_proof_required` | boolean | No | `true` to require a back image, `false` to skip it. Defaults to `false`. |
-| `verification_mode` | string | No | Capture mode hint. Common value: `"any"`. |
-| `fetch_enhanced_data` | boolean | No | `true` to return enhanced OCR/extracted fields, `false` to skip. Defaults to `true`. |
-| `name` | object | No | Optional name matching details for the document owner. |
+Do not send internal `method_type` or `verification_type` — the product path selects the type.
 
-### `document.name` object
+## Required fields at a glance
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `first_name` | string | No | Expected first name on the document. |
-| `last_name` | string | No | Expected last name on the document. |
-| `fuzzy_match` | boolean | No | `true` to allow fuzzy name matching, `false` for exact match. Defaults to `true`. |
+### Link mode (`mode: "link"` or omitted)
 
-## Making a Request
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `input_data` | **Yes** | Customer details and capture options |
+| `input_data.email` | **Yes** | Used for notifications and the hosted session |
+| `input_data.document` | No | Defaults applied if omitted |
+| `send_email` | No | Link only — emails `data.link.url` to `input_data.email` |
+| `allow_file_upload` | No | Link only — overrides tenant camera vs file-upload setting |
 
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
+**Do not send in link mode:** `input_data.document.proof`, `backside_proof`, `additional_proof`
 
-The create response returns immediately with `status: PENDING`. Use [Webhooks](/webhooks) or the GET detail endpoint for the final result. GET and webhook payloads echo your original `document.proof` URL in both `input_data` and top-level `proofs`.
+### Direct mode (`mode: "direct"`)
+
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `input_data` | **Yes** | Customer details and proof URLs |
+| `input_data.email` | **Yes** | Customer identifier |
+| `input_data.document` | **Yes** | Must include `proof` |
+| `input_data.document.proof` | **Yes** | HTTPS URL of the front-of-ID image |
+
+**Do not send in direct mode:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.collect`, `input_data.allow_file_upload`, any `document.*proof*` except the URLs you are submitting
+
+## Request body
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `input_data` | object | Required | Required | Customer details and document options. See below. |
+| `send_email` | boolean | Optional (default `false`) | — | `true` to email the hosted link to `input_data.email`. |
+| `allow_file_upload` | boolean | Optional (tenant default `true`) | — | Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only. |
+
+### `input_data`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Required | Required | Customer's email address. |
+| `language` | string | Optional (default `"EN"`) | Optional (default `"EN"`) | Language code (e.g. `"EN"`, `"FR"`). |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. One of `15`, `30`, `60`, `120`, `240`. |
+| `country` | string | Optional | Optional | ISO 3166-1 alpha-2 issuing country (e.g. `"NG"`). |
+| `first_name` | string | Optional | Optional | Customer's first name for cross-validation. |
+| `last_name` | string | Optional | Optional | Customer's last name for cross-validation. |
+| `allow_file_upload` | boolean | Optional | — | Same as the top-level override. Top-level wins if both are sent. |
+| `document` | object | Optional (defaults applied) | Required | Document matching, proof, and capture options. |
+| `collect` | object | Optional | — | Extra fields the customer must provide on the hosted page. |
+
+### `input_data.document`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `proof` | string (URL) | — | Required | HTTPS URL of the front-of-ID image. Base64 data URIs are rejected. |
+| `backside_proof` | string (URL) | — | Optional | HTTPS URL of the back of the ID when needed. |
+| `additional_proof` | string (URL) | — | Optional | Optional extra HTTPS proof URL. |
+| `backside_proof_required` | boolean | Optional (default `false`) | — | `true` to require the back of the ID during capture. |
+| `verification_mode` | string | Optional (default `"any"`) | Optional (default `"any"`) | Capture / processing hint. |
+| `fetch_enhanced_data` | boolean | Optional (default `true`) | Optional | `true` to return enhanced OCR/extracted fields. |
+| `name` | object | Optional | Optional | Optional name matching details for the document owner. |
+
+Do not send `allow_online` or `allow_offline` — the API sets those from `allow_file_upload` (link) or defaults (direct).
+
+### `input_data.document.name`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `first_name` | string | Optional | Optional | Expected first name on the document. |
+| `last_name` | string | Optional | Optional | Expected last name on the document. |
+| `fuzzy_match` | boolean | Optional (default `true`) | Optional (default `true`) | `true` to allow fuzzy name matching. |
+
+### `input_data.collect` (link only)
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `dob` | boolean | Optional (default `false`) | — | Require date of birth during capture. |
+| `age` | boolean | Optional (default `false`) | — | Require age during capture. |
+| `gender` | boolean | Optional (default `false`) | — | Require gender during capture. |
+| `backside_proof_required` | boolean | Optional (default `false`) | — | Require the back of the document. |
+| `verification_instructions` | string | Optional | — | Custom instructions shown on the capture screen. |
+
+## Link mode example
 
 **Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/document_verification/`
 
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
+```json
+{
+  "mode": "link",
+  "send_email": false,
+  "allow_file_upload": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "ttl": 60,
+    "country": "NG",
+    "first_name": "John",
+    "last_name": "Doe",
+    "document": {
+      "backside_proof_required": false,
+      "verification_mode": "any",
+      "fetch_enhanced_data": true,
+      "name": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "fuzzy_match": true
+      }
+    },
+    "collect": {
+      "dob": false,
+      "age": false,
+      "gender": false,
+      "backside_proof_required": false,
+      "verification_instructions": ""
+    }
+  }
+}
+```
+
+Create returns `status: PENDING`, `data.link.url` (redirect the customer), and `data.config` (resolved settings including `mode: "link"`).
+
+## Direct mode example
 
 ```json
 {
+  "mode": "direct",
   "input_data": {
     "email": "customer@example.com",
     "language": "EN",
@@ -79,8 +185,8 @@ Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path sele
     "first_name": "John",
     "last_name": "Doe",
     "document": {
-      "proof": "https://cdn.example.com/documents/id-front.jpg",
-      "backside_proof_required": false,
+      "proof": "https://cdn.example.com/id-front.jpg",
+      "backside_proof": "https://cdn.example.com/id-back.jpg",
       "verification_mode": "any",
       "fetch_enhanced_data": true,
       "name": {
@@ -93,6 +199,15 @@ Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path sele
 }
 ```
 
+Create returns `status: PENDING` immediately while verification runs. There is no capture `link`. Listen for `verification.completed` / `verification.failed`, or poll GET detail. `data.config.mode` is `"direct"` and `data.proofs` / `input_data.document.proof` echo your HTTPS URLs.
+
+## Supported countries
+
+```
+GET https://api.verifyafrica.io/api/v2/public/verifications/supported-countries/?verification_type=id_document
+```
+
+No authentication required. Returns `{ "verification_type": "id_document", "countries": [{ "name": "Nigeria", "code": "NG" }, ...] }`.
 
 ## Example Error Responses
 
@@ -109,18 +224,8 @@ Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["�
 ```json
 {
   "success": false,
-  "message": "Missing required parameters for 'id_document': …",
-  "errors": ["Missing required parameters for 'id_document': …"]
-}
-```
-
-```json
-{
-  "success": false,
-  "message": "…",
-  "errors": [
-    "input_data.document.proof: Must be an http(s) URL to the proof file. Base64 data URIs are not accepted."
-  ]
+  "message": "Missing required nested parameters for 'id_document': document.proof",
+  "errors": ["Missing required nested parameters for 'id_document': document.proof"]
 }
 ```
 

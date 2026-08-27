@@ -25,4 +25,6 @@ Use the product create endpoint:
 
 Retrieve results with `GET https://api.verifyafrica.io/api/v2/public/verifications/requests/?verification_id={verification_id}`.
 
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`. See the endpoint page for required `input_data` fields.
+Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
+
+Supports **`mode=link`** (default; returns a hosted capture URL) and **`mode=direct`** (send HTTPS proof URLs). See the endpoint page for required fields per mode.

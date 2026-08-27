@@ -1,12 +1,25 @@
 ---
 title: Facial Screening
-description: Perform real-time liveness detection and face match verification against a reference document.
+description: Run liveness and face match via hosted link mode or direct proof upload.
 sidebar_label: Facial Screening
 ---
 
 # Facial Screening
 
-Perform real-time liveness detection and face match verification against a reference document.
+Run liveness / face match in either **link** or **direct** mode.
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | Config only — no face image | `data.link.url` for the customer | After the customer completes capture on the hosted page |
+| `direct` | HTTPS face proof URL + config | Accepted request (`PENDING`) | After provider processing completes |
+
+Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
+
+In the field tables below:
+
+- **Required** — must be sent for that mode
+- **Optional** — accepted for that mode
+- **—** — not used in that mode (omit it)
 
 :::tip API Reference
 Jump directly to the interactive API docs:
@@ -24,46 +37,89 @@ face_match
 
 ## Use Cases
 
-- Confirm the person presenting an ID is the document holder
+- Confirm the person presenting is a live person
 - Detect presentation attacks with liveness checks
-- Combine with document verification for stronger KYC
+- Hosted capture in your onboarding flow (`link`)
+- Verify a selfie you already collected (`direct`)
 
-## Input Parameters
+## Choosing a mode
 
-Pass these fields inside `input_data` in your request body.
+Send top-level `mode`:
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `face` | object | Yes | Face image and verification options. See nested fields below. |
-| `email` | string | No | Customer's email address. |
-| `language` | string | No | Language code (e.g. `"EN"`, `"FR"`). Defaults to `"EN"`. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code (e.g. `"NG"`, `"ZA"`, `"GH"`, `"KE"`). |
+- **`link`** — Config only. Response includes `data.link.url`. Optional `send_email` / `allow_file_upload`. Do **not** send `face.proof`.
+- **`direct`** — Send `face.proof` as an HTTPS URL. Verification starts in the background. Do **not** send `send_email`, `allow_file_upload`, or `ttl`.
 
-### `face` object
+If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `proof` | string | Yes | HTTPS URL to the face image (`jpeg`/`jpg`/`png`). Base64 data URIs are **not** accepted on the public API. |
-| `verification_mode` | string | Yes | Capture type. One of: `"any"`, `"image_only"`, `"video_only"`. |
-| `check_duplicate_request` | boolean | No | `true` to flag duplicate faces, `false` to allow. Defaults to `false`. |
+## Required fields at a glance
 
-## Making a Request
+### Link mode (`mode: "link"` or omitted)
 
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `input_data` | **Yes** | Customer and face capture options |
+| `input_data.face` | **Yes** | Capture settings (no proof URL) |
+| `input_data.email` | When `send_email: true` | Required to deliver the hosted link by email |
+| `send_email` | No | Link only — defaults to `false` |
+| `allow_file_upload` | No | Link only — overrides tenant camera vs file-upload setting |
 
-The create response returns immediately with `status: PENDING`. Use [Webhooks](/webhooks) or the GET detail endpoint for the final result. GET and webhook payloads echo your original `face.proof` URL in both `input_data` and top-level `proofs`.
+**Do not send in link mode:** `input_data.face.proof`
+
+### Direct mode (`mode: "direct"`)
+
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `input_data` | **Yes** | Customer and face proof |
+| `input_data.face` | **Yes** | Must include `proof` |
+| `input_data.face.proof` | **Yes** | HTTPS URL of the selfie / face image |
+| `input_data.email` | No | Optional identifier |
+
+**Do not send in direct mode:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.allow_file_upload`
+
+## Request body
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `input_data` | object | Required | Required | Customer and face options. |
+| `send_email` | boolean | Optional (default `false`) | — | `true` to email the hosted link to `input_data.email`. |
+| `allow_file_upload` | boolean | Optional (tenant default `true`) | — | Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only. |
+
+### `input_data`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Required when `send_email` is true; otherwise optional | Optional | Customer's email. Required when `send_email: true`. |
+| `language` | string | Optional (default `"EN"`) | Optional (default `"EN"`) | Language code (e.g. `"EN"`, `"FR"`). |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. One of `15`, `30`, `60`, `120`, `240`. |
+| `country` | string | Optional | Optional | ISO 3166-1 alpha-2 country code. |
+| `allow_file_upload` | boolean | Optional | — | Same override as the top-level field. |
+| `face` | object | Required | Required | Face capture / proof options. |
+
+### `input_data.face`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `proof` | string (URL) | — | Required | HTTPS URL of the face image / selfie. Base64 data URIs are rejected. |
+| `verification_mode` | string | Optional (default `"any"`) | Optional (default `"any"`) | `"any"`, `"image_only"`, or `"video_only"`. |
+| `check_duplicate_request` | boolean | Optional (default `false`) | Optional (default `false`) | `true` to flag duplicate faces. |
+
+Do not send `allow_online` or `allow_offline`.
+
+## Link mode example
 
 **Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/facial_screening/`
 
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
-
 ```json
 {
+  "mode": "link",
+  "send_email": false,
+  "allow_file_upload": true,
   "input_data": {
     "email": "customer@example.com",
     "language": "EN",
+    "ttl": 60,
     "face": {
-      "proof": "https://cdn.example.com/faces/selfie.jpg",
       "verification_mode": "any",
       "check_duplicate_request": false
     }
@@ -71,6 +127,26 @@ Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path sele
 }
 ```
 
+Create returns `status: PENDING` and `data.link.url`. Redirect the customer.
+
+## Direct mode example
+
+```json
+{
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "face": {
+      "proof": "https://cdn.example.com/selfie.jpg",
+      "verification_mode": "any",
+      "check_duplicate_request": false
+    }
+  }
+}
+```
+
+Create returns `status: PENDING` while verification runs. No capture `link`. Use webhooks or GET for the terminal result.
 
 ## Example Error Responses
 
@@ -84,19 +160,8 @@ Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["�
 }
 ```
 
-```json
-{
-  "success": false,
-  "message": "Missing required parameters for 'face_match': …",
-  "errors": ["Missing required parameters for 'face_match': …"]
-}
-```
-
 See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
 
 ## API Reference
 
-View the full request/response schemas, response codes, and interactive playground:
-
-- [Facial Screening API reference](/api/single-identity-verification#facial-screening)
-- [All API endpoints](/api)
+- [API reference](/api)

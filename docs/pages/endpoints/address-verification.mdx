@@ -1,12 +1,25 @@
 ---
 title: Address Verification
-description: Verify physical address records against government and utility databases across Africa.
+description: Verify proof of address via hosted link mode or direct proof upload.
 sidebar_label: Address Verification
 ---
 
 # Address Verification
 
-Verify physical address records against government and utility databases across Africa.
+Verify proof of address in either **link** or **direct** mode.
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | Address config only — no proof file | `data.link.url` for the customer | After the customer completes capture on the hosted page |
+| `direct` | HTTPS proof URL + address details | Accepted request (`PENDING`) | After provider processing completes |
+
+Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
+
+In the field tables below:
+
+- **Required** — must be sent for that mode
+- **Optional** — accepted for that mode
+- **—** — not used in that mode (omit it)
 
 :::tip API Reference
 Jump directly to the interactive API docs:
@@ -26,35 +39,121 @@ address_verification
 
 - Proof-of-address checks during KYC
 - Delivery and logistics address validation
-- Utility and government record matching
+- Hosted capture when the customer uploads a utility bill (`link`)
+- Server-side checks when you already have the document (`direct`)
 
-## Input Parameters
+## Choosing a mode
 
-Pass these fields inside `input_data` in your request body.
+Send top-level `mode`:
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `address` | string | Yes | Full street address. |
-| `city` | string | Yes | City or town name. |
-| `state` | string | No | State or province. |
-| `country` | string | Yes | ISO 3166-1 alpha-2 country code. |
+- **`link`** — Config only (`address.full_address`, capture options). Response includes `data.link.url`. Optional `send_email` / `allow_file_upload`. Do **not** send `address.proof`.
+- **`direct`** — Send `address.proof` as an HTTPS URL plus `full_address`. Verification starts in the background. Do **not** send `send_email`, `allow_file_upload`, or `ttl`.
 
-## Making a Request
+If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
+## Required fields at a glance
 
+### Link mode (`mode: "link"` or omitted)
 
-**Endpoint:** POST https://api.verifyafrica.io/api/v2/public/verifications/requests/address_verification/address_verification/`
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `input_data` | **Yes** | Customer and address capture options |
+| `input_data.email` | **Yes** | Used for notifications and the hosted session |
+| `input_data.address` | **Yes** | Address to verify |
+| `input_data.address.full_address` | **Yes** | Street address to match against the proof |
+| `send_email` | No | Link only — emails `data.link.url` to `input_data.email` |
+| `allow_file_upload` | No | Link only — overrides tenant camera vs file-upload setting |
 
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
+**Do not send in link mode:** `input_data.address.proof`
+
+### Direct mode (`mode: "direct"`)
+
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `input_data` | **Yes** | Customer, address, and proof |
+| `input_data.email` | **Yes** | Customer identifier |
+| `input_data.address` | **Yes** | Address and proof URLs |
+| `input_data.address.full_address` | **Yes** | Street address to match |
+| `input_data.address.proof` | **Yes** | HTTPS URL of the proof-of-address document |
+
+**Do not send in direct mode:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.allow_file_upload`
+
+## Request body
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `input_data` | object | Required | Required | Customer email, address details, and options. |
+| `send_email` | boolean | Optional (default `false`) | — | `true` to email the hosted link to `input_data.email`. |
+| `allow_file_upload` | boolean | Optional (tenant default `true`) | — | Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only. |
+
+### `input_data`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Required | Required | Customer's email address. |
+| `language` | string | Optional (default `"EN"`) | Optional (default `"EN"`) | Language code (e.g. `"EN"`, `"FR"`). |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. One of `15`, `30`, `60`, `120`, `240`. |
+| `country` | string | Optional | Optional | ISO 3166-1 alpha-2 country code. |
+| `allow_file_upload` | boolean | Optional | — | Same override as the top-level field. |
+| `address` | object | Required | Required | Address to verify and proof / capture options. |
+
+### `input_data.address`
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `full_address` | string | Required | Required | Full street address to match against the proof. |
+| `proof` | string (URL) | — | Required | HTTPS URL of the proof-of-address document/image. Base64 data URIs are rejected. |
+| `address_fuzzy_match` | boolean | Optional (default `true`) | Optional (default `true`) | `true` to allow fuzzy address matching. |
+| `verification_mode` | string | Optional (default `"any"`) | Optional (default `"any"`) | Capture / processing hint. |
+
+Do not send `allow_online` or `allow_offline`.
+
+## Link mode example
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/address_verification/`
 
 ```json
 {
-  "input_data": { /* see parameters above */ }
+  "mode": "link",
+  "send_email": false,
+  "allow_file_upload": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "ttl": 60,
+    "country": "NG",
+    "address": {
+      "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
+      "address_fuzzy_match": true,
+      "verification_mode": "any"
+    }
+  }
 }
 ```
 
+Create returns `status: PENDING` and `data.link.url`. Redirect the customer.
 
+## Direct mode example
+
+```json
+{
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "address": {
+      "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
+      "proof": "https://cdn.example.com/utility-bill.pdf",
+      "address_fuzzy_match": true,
+      "verification_mode": "any"
+    }
+  }
+}
+```
+
+Create returns `status: PENDING` while verification runs. No capture `link`. Use webhooks or GET for the terminal result.
 
 ## Example Error Responses
 
@@ -71,15 +170,13 @@ Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["�
 ```json
 {
   "success": false,
-  "message": "Missing required parameters for 'address_verification': …",
-  "errors": ["Missing required parameters for 'address_verification': …"]
+  "message": "Missing required nested parameters for 'address_verification': address.full_address",
+  "errors": ["Missing required nested parameters for 'address_verification': address.full_address"]
 }
 ```
 
 See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
 
 ## API Reference
-
-View the full request/response schemas, response codes, and interactive playground:
 
 - [API reference](/api)

@@ -39,14 +39,30 @@ Do not send `X-API-KEY`. The API key identifies the tenant — no `X-TENANT-ID` 
 | `POST /api/v2/public/verifications/requests/risk_assessment/` | Risk assessment |
 | `POST /api/v2/public/verifications/requests/government_registry_checks/` | Government registry checks (include `verification_type` in body) |
 | `GET /api/v2/public/verifications/requests/?verification_id={verification_id}` | Retrieve verification status and details |
+| `GET /api/v2/public/verifications/supported-countries/?verification_type=id_document` | Supported countries for document verification |
 
-Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`). Public creates always use **direct (offsite)** mode and return immediately with `PENDING` — use [Webhooks](/webhooks) or the GET endpoint for the final result.
+Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`).
+
+**Document, facial, and address** support two modes via top-level `mode`:
+
+- **`link`** (default) — Send config only. Create returns `data.link.url` for customer capture. Optional `send_email` emails that link. Optional `allow_file_upload` overrides the tenant product setting for camera vs file upload.
+- **`direct`** — Send HTTPS proof URLs (`document.proof`, `face.proof`, or `address.proof`). Verification starts immediately in the background. No capture link.
+
+| Product | Link mode — required | Direct mode — required | Link only (omit in direct) |
+| --- | --- | --- | --- |
+| Document | `input_data.email` | `input_data.email`, `input_data.document.proof` | `send_email`, `allow_file_upload`, `ttl`, `collect`, proof URLs |
+| Facial | `input_data.face` | `input_data.face`, `input_data.face.proof` | `send_email`, `allow_file_upload`, `ttl` |
+| Address | `input_data.email`, `input_data.address.full_address` | `input_data.email`, `input_data.address.full_address`, `input_data.address.proof` | `send_email`, `allow_file_upload`, `ttl` |
+
+See each [endpoint page](/endpoints/overview/identity-verification) for the full field reference with Link / Direct columns.
+
+**Other products** always behave like direct mode: create returns `PENDING` while provider work runs. Use [Webhooks](/webhooks) or the GET endpoint for the final result.
 
 ## Webhooks
 
 Receive `verification.completed` or `verification.failed` events at your own HTTPS endpoint when a verification reaches a **terminal** status (`SUCCESS`, `FAILED`, or `ERROR`).
 
-Public API creates return immediately with `PENDING` — do not wait on the create response for the final result. Configure the webhook URL and optional auth token in the dashboard **API Keys** page.
+Public API creates return immediately with `PENDING` — do not treat the create response as the final KYC result. Configure the webhook URL and optional auth token in the dashboard **API Keys** page.
 
 See the [Webhooks](/webhooks) guide for payload shape, authentication, response requirements, and automatic retries.
 
@@ -55,9 +71,10 @@ See the [Webhooks](/webhooks) guide for payload shape, authentication, response 
 Create, GET, and webhook payloads share the same public shape:
 
 - **Provider-agnostic** — internal provider names and hosted provider URLs are never exposed
-- **Proofs are HTTPS URLs** — send `document.proof` / `face.proof` as `https://…` links (base64 data URIs are rejected)
-- **`input_data` proofs** — returned as the same URLs you submitted at create time
-- **`proofs` / `proofs_available`** — echo those original URLs on GET and webhooks
+- **`mode`** — for document / facial / address, `config.mode` is `"link"` or `"direct"`
+- **Link mode** — create returns `data.link.url` for customer capture; proofs appear on GET/webhooks after submit
+- **Direct mode** — create accepts HTTPS proof URLs; `proofs` / `input_data.*.proof` echo those URLs
+- **`config`** — resolved settings for the request (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect`, nested document/face/address flags without proofs)
 - **`response_data`** — verification result only; access tokens, provider proof links, and similar upstream artifacts are stripped
 
 ## Response format

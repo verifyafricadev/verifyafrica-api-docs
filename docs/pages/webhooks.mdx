@@ -22,12 +22,15 @@ Prefer those schemas over copying examples from this page.
 
 ## Public API + webhooks
 
-Public create endpoints return **immediately** with `status: PENDING`. Provider work runs in the background.
+Public create endpoints return **immediately** with `status: PENDING`.
+
+- **Link mode** (document / facial / address with `mode: "link"`) — customer still needs to open `data.link.url`. Terminal webhook fires after they finish capture and processing completes.
+- **Direct mode** (proof URLs, or any other product) — provider work starts in the background. Terminal webhook fires when verification completes.
 
 Recommended flow:
 
-1. `POST` a product create endpoint
-2. Store the returned `data.id`
+1. `POST` a product create endpoint (include `mode` for document / facial / address)
+2. Store the returned `data.id` (and `data.link.url` when using link mode)
 3. Wait for `verification.completed` or `verification.failed` on your webhook URL
 4. Optionally poll `GET /api/v2/public/verifications/requests/?verification_id={id}` if needed
 
@@ -68,8 +71,9 @@ Webhook `data` uses the same public shape as GET detail responses. It is **provi
 
 - No internal provider names
 - No provider-hosted proof URLs, access tokens, or verification links
-- `input_data.*.proof` is the **original HTTPS URL** you sent at create time (never base64)
-- Top-level `proofs` echoes those same URLs when available
+- `config` echoes the resolved settings used for the request (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect`, and nested capture flags without proofs)
+- For link-mode identity products, `link.url` is the customer capture URL
+- For direct mode, `proofs` / `input_data.*.proof` echo the HTTPS URLs you submitted
 - `response_data` contains the verification result with upstream artifacts stripped
 
 Example terminal payload:
@@ -86,12 +90,28 @@ Example terminal payload:
     "input_data": {
       "email": "customer@example.com",
       "language": "EN",
-      "country": "NG",
+      "ttl": 60,
+      "allow_file_upload": true,
+      "send_email": false
+    },
+    "config": {
+      "allow_file_upload": true,
+      "send_email": false,
+      "ttl": 60,
+      "language": "EN",
+      "email": "customer@example.com",
+      "collect": {
+        "dob": false,
+        "age": false,
+        "gender": false,
+        "backside_proof_required": false,
+        "verification_instructions": ""
+      },
       "document": {
-        "proof": "https://cdn.example.com/documents/id-front.jpg",
         "verification_mode": "any",
         "backside_proof_required": "0",
-        "fetch_enhanced_data": "1"
+        "fetch_enhanced_data": "1",
+        "allow_offline": "1"
       }
     },
     "response_data": {

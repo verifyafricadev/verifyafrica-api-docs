@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\nPublic creates always run in **direct (offsite)** mode and return immediately with `status: PENDING`. Provider work runs asynchronously \u2014 use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026` for the final result. Hosted/link (`onsite`) flows are not available on this API.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema \u2014 `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, and address** support `mode=link` (default; returns `data.link.url` for customer capture) or `mode=direct` (send HTTPS proof URLs; verification runs asynchronously). All other products behave like direct mode.\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema \u2014 `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -103,7 +103,7 @@
     "/api/v2/public/verifications/requests/document_verification/": {
       "post": {
         "summary": "Document Verification",
-        "description": "Verify government-issued identity documents such as passports, national IDs, and driver's licenses across 47+ African countries.\n\nPublic API creates always use direct (offsite) mode. Submit the document image in `input_data.document.proof`.",
+        "description": "Create a document verification in **link** or **direct** mode.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.collect`, nested document flags\n**Do not send:** `input_data.document.proof` (or any proof URLs)\n**Returns:** `data.link.url` for customer capture\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, `input_data.document.proof` (HTTPS URL)\n**Optional:** `input_data.document.backside_proof`, `additional_proof`, nested document flags\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.collect`\n**Returns:** accepted request (`PENDING`); verification runs asynchronously\n\nDo not send internal `method_type`. Listen for `verification.completed` / `verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-document_verification",
         "tags": [
           "single-identity-verification"
@@ -123,27 +123,47 @@
                   "input_data"
                 ],
                 "properties": {
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted capture link to `input_data.email`. Defaults to `false`."
+                  },
+                  "allow_file_upload": {
+                    "type": "boolean",
+                    "description": "Link mode only. Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only. Tenant default is `true` when omitted."
+                  },
                   "input_data": {
                     "type": "object",
                     "required": [
-                      "email",
-                      "language",
-                      "document"
+                      "email"
                     ],
                     "properties": {
                       "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "Customer's email address."
+                        "description": "Both modes. Customer's email address."
                       },
                       "language": {
                         "type": "string",
-                        "description": "Language code (e.g. \"EN\", \"FR\").",
-                        "example": "EN"
+                        "description": "Both modes. Language code (e.g. \"EN\", \"FR\"). Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. One of 15, 30, 60, 120, 240. Defaults to 60. Omit in direct mode."
                       },
                       "country": {
                         "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code (e.g. \"NG\", \"ZA\", \"GH\", \"KE\").",
+                        "description": "Both modes. ISO 3166-1 alpha-2 issuing country (e.g. \"NG\").",
                         "example": "NG"
                       },
                       "first_name": {
@@ -154,75 +174,115 @@
                         "type": "string",
                         "description": "Customer's last name for cross-validation."
                       },
+                      "allow_file_upload": {
+                        "type": "boolean",
+                        "description": "Link mode only. Same override as top-level `allow_file_upload`. Top-level wins if both are sent."
+                      },
                       "document": {
                         "type": "object",
-                        "required": [
-                          "proof"
-                        ],
-                        "description": "Document proof and matching options.",
+                        "description": "Both modes. Document matching and capture options. Direct mode must include `proof`.",
                         "properties": {
-                          "proof": {
-                            "type": "string",
-                            "description": "HTTPS URL to the front of the identity document (`jpeg`/`jpg`/`png`/`pdf`). Base64 data URIs are not accepted on the public API.",
-                            "example": "https://cdn.example.com/documents/id-front.jpg"
-                          },
-                          "backside_proof": {
-                            "type": "string",
-                            "description": "HTTPS URL to the back of the document, same formats as `proof`. Base64 is not accepted.",
-                            "example": "https://cdn.example.com/documents/id-back.jpg"
-                          },
                           "backside_proof_required": {
                             "type": "boolean",
-                            "description": "true to require a back image, false to skip it. Defaults to false.",
-                            "default": false
+                            "default": false,
+                            "description": "Link mode only. `true` to require a back image during hosted capture."
                           },
                           "verification_mode": {
                             "type": "string",
-                            "description": "Capture mode hint. Common value: \"any\".",
-                            "example": "any"
+                            "description": "Capture mode hint.",
+                            "example": "any",
+                            "default": "any"
                           },
                           "fetch_enhanced_data": {
                             "type": "boolean",
-                            "description": "true to return enhanced OCR/extracted fields, false to skip. Defaults to true.",
-                            "default": true
+                            "default": true,
+                            "description": "true to return enhanced OCR/extracted fields."
                           },
                           "name": {
                             "type": "object",
-                            "description": "Optional name matching details for the document owner.",
                             "properties": {
                               "first_name": {
-                                "type": "string",
-                                "description": "Expected first name on the document."
+                                "type": "string"
                               },
                               "last_name": {
-                                "type": "string",
-                                "description": "Expected last name on the document."
+                                "type": "string"
                               },
                               "fuzzy_match": {
                                 "type": "boolean",
-                                "description": "true to allow fuzzy name matching, false for exact match. Defaults to true.",
                                 "default": true
                               }
                             }
+                          },
+                          "proof": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Direct mode only. Required in direct mode. HTTPS URL of the front-of-ID image. Base64 data URIs are rejected."
+                          },
+                          "backside_proof": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Direct mode only. Optional HTTPS URL of the back of the ID."
+                          },
+                          "additional_proof": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Direct mode only. Optional extra HTTPS proof URL."
+                          }
+                        }
+                      },
+                      "collect": {
+                        "type": "object",
+                        "description": "Link mode only. Extra fields the customer must provide on the hosted page. Omit in direct mode.",
+                        "properties": {
+                          "dob": {
+                            "type": "boolean",
+                            "default": false
+                          },
+                          "age": {
+                            "type": "boolean",
+                            "default": false
+                          },
+                          "gender": {
+                            "type": "boolean",
+                            "default": false
+                          },
+                          "backside_proof_required": {
+                            "type": "boolean",
+                            "default": false
+                          },
+                          "verification_instructions": {
+                            "type": "string",
+                            "default": ""
                           }
                         }
                       }
                     }
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Both modes (defaults to `link`). `link` returns a hosted capture URL; `direct` accepts HTTPS proof URLs and runs verification asynchronously."
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Hosted document verification link",
                   "value": {
+                    "send_email": false,
+                    "allow_file_upload": true,
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
+                      "ttl": 60,
                       "country": "NG",
                       "first_name": "John",
                       "last_name": "Doe",
                       "document": {
-                        "proof": "https://cdn.example.com/documents/id-front.jpg",
                         "backside_proof_required": false,
                         "verification_mode": "any",
                         "fetch_enhanced_data": true,
@@ -231,6 +291,58 @@
                           "last_name": "Doe",
                           "fuzzy_match": true
                         }
+                      },
+                      "collect": {
+                        "dob": false,
+                        "age": false,
+                        "gender": false,
+                        "backside_proof_required": false,
+                        "verification_instructions": ""
+                      }
+                    }
+                  }
+                },
+                "link": {
+                  "summary": "Link mode \u2014 hosted capture",
+                  "value": {
+                    "mode": "link",
+                    "send_email": false,
+                    "allow_file_upload": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "country": "NG",
+                      "document": {
+                        "backside_proof_required": false,
+                        "verification_mode": "any",
+                        "fetch_enhanced_data": true,
+                        "name": {
+                          "first_name": "John",
+                          "last_name": "Doe",
+                          "fuzzy_match": true
+                        }
+                      },
+                      "collect": {
+                        "dob": false,
+                        "age": false,
+                        "gender": false
+                      }
+                    }
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode \u2014 proof URL",
+                  "value": {
+                    "mode": "direct",
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "country": "NG",
+                      "document": {
+                        "proof": "https://cdn.example.com/id-front.jpg",
+                        "verification_mode": "any",
+                        "fetch_enhanced_data": true
                       }
                     }
                   }
@@ -394,7 +506,7 @@
     "/api/v2/public/verifications/requests/facial_screening/": {
       "post": {
         "summary": "Facial Screening",
-        "description": "Perform real-time liveness detection and face match verification against a reference document.\n\nPublic API creates always use direct (offsite) mode. Submit the face image in `input_data.face.proof` with `input_data.face.verification_mode`.",
+        "description": "Create a facial screening verification in **link** or **direct** mode.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.face`\n**Required when `send_email: true`:** `input_data.email`\n**Optional:** `send_email`, `allow_file_upload`, `input_data.ttl`, nested face flags\n**Do not send:** `input_data.face.proof`\n**Returns:** `data.link.url` for customer capture\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.face`, `input_data.face.proof` (HTTPS URL)\n**Optional:** `input_data.email`, nested face flags\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`); verification runs asynchronously\n\nDo not send internal `method_type`. Listen for `verification.completed` / `verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-facial_screening",
         "tags": [
           "single-identity-verification"
@@ -414,6 +526,15 @@
                   "input_data"
                 ],
                 "properties": {
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted capture link to `input_data.email`. Defaults to `false`."
+                  },
+                  "allow_file_upload": {
+                    "type": "boolean",
+                    "description": "Link mode only. Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only."
+                  },
                   "input_data": {
                     "type": "object",
                     "required": [
@@ -423,30 +544,37 @@
                       "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "Customer's email address."
+                        "description": "Link mode: required when `send_email` is `true`; otherwise optional. Direct mode: optional."
                       },
                       "language": {
                         "type": "string",
-                        "description": "Language code (e.g. \"EN\", \"FR\"). Defaults to \"EN\".",
-                        "example": "EN"
+                        "example": "EN",
+                        "default": "EN",
+                        "description": "Both modes. Language code. Defaults to \"EN\"."
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
                       "country": {
                         "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code (e.g. \"NG\", \"ZA\", \"GH\", \"KE\")."
+                        "description": "Both modes. ISO 3166-1 alpha-2 country code."
+                      },
+                      "allow_file_upload": {
+                        "type": "boolean",
+                        "description": "Link mode only. Same override as top-level `allow_file_upload`."
                       },
                       "face": {
                         "type": "object",
-                        "required": [
-                          "proof",
-                          "verification_mode"
-                        ],
-                        "description": "Face image and verification options.",
                         "properties": {
-                          "proof": {
-                            "type": "string",
-                            "description": "HTTPS URL to the face image (`jpeg`/`jpg`/`png`). Base64 data URIs are not accepted on the public API.",
-                            "example": "https://cdn.example.com/faces/selfie.jpg"
-                          },
                           "verification_mode": {
                             "type": "string",
                             "enum": [
@@ -454,31 +582,79 @@
                               "image_only",
                               "video_only"
                             ],
-                            "description": "Capture type for the submitted face media.",
-                            "example": "any"
+                            "default": "any",
+                            "description": "Both modes. `\"any\"`, `\"image_only\"`, or `\"video_only\"`. Defaults to `\"any\"`."
                           },
                           "check_duplicate_request": {
                             "type": "boolean",
-                            "description": "true to flag duplicate faces, false to allow. Defaults to false.",
-                            "default": false
+                            "default": false,
+                            "description": "Both modes. `true` to flag duplicate faces. Defaults to `false`."
+                          },
+                          "proof": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Direct mode only. Required in direct mode. HTTPS URL of the face image / selfie. Base64 data URIs are rejected."
                           }
-                        }
+                        },
+                        "description": "Both modes. Required. Direct mode must include `proof`."
                       }
                     }
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Both modes (defaults to `link`). `link` returns a hosted capture URL; `direct` accepts HTTPS proof URLs."
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Hosted facial screening link",
                   "value": {
+                    "send_email": false,
+                    "allow_file_upload": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "face": {
+                        "verification_mode": "any",
+                        "check_duplicate_request": false
+                      }
+                    }
+                  }
+                },
+                "link": {
+                  "summary": "Link mode \u2014 hosted capture",
+                  "value": {
+                    "mode": "link",
+                    "send_email": false,
+                    "allow_file_upload": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "face": {
+                        "verification_mode": "any",
+                        "check_duplicate_request": false
+                      }
+                    }
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode \u2014 face proof URL",
+                  "value": {
+                    "mode": "direct",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
                       "face": {
-                        "proof": "https://cdn.example.com/faces/selfie.jpg",
-                        "verification_mode": "any",
-                        "check_duplicate_request": false
+                        "proof": "https://cdn.example.com/selfie.jpg",
+                        "verification_mode": "any"
                       }
                     }
                   }
@@ -642,7 +818,7 @@
     "/api/v2/public/verifications/requests/address_verification/": {
       "post": {
         "summary": "Address Verification",
-        "description": "Verify physical address records against government and utility databases across Africa.\n\nPublic API creates always use direct (offsite) mode.",
+        "description": "Create an address verification in **link** or **direct** mode.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`, `input_data.address.full_address`\n**Optional:** `send_email`, `allow_file_upload`, `input_data.ttl`, nested address flags\n**Do not send:** `input_data.address.proof`\n**Returns:** `data.link.url` for customer capture\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, `input_data.address.full_address`, `input_data.address.proof` (HTTPS URL)\n**Optional:** nested address flags\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`); verification runs asynchronously\n\nDo not send internal `method_type`. Listen for `verification.completed` / `verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-address_verification",
         "tags": [
           "single-address-verification"
@@ -662,43 +838,148 @@
                   "input_data"
                 ],
                 "properties": {
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted capture link to `input_data.email`. Defaults to `false`."
+                  },
+                  "allow_file_upload": {
+                    "type": "boolean",
+                    "description": "Link mode only. Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only."
+                  },
                   "input_data": {
                     "type": "object",
+                    "required": [
+                      "email",
+                      "address"
+                    ],
                     "properties": {
-                      "address": {
+                      "email": {
                         "type": "string",
-                        "description": "Full street address."
+                        "format": "email",
+                        "description": "Both modes. Customer's email address."
                       },
-                      "city": {
+                      "language": {
                         "type": "string",
-                        "description": "City or town name."
+                        "example": "EN",
+                        "default": "EN",
+                        "description": "Both modes. Language code. Defaults to \"EN\"."
                       },
-                      "state": {
-                        "type": "string",
-                        "description": "State or province."
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
                       "country": {
                         "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code."
+                        "example": "NG",
+                        "description": "Both modes. ISO 3166-1 alpha-2 country code."
+                      },
+                      "allow_file_upload": {
+                        "type": "boolean",
+                        "description": "Link mode only. Same override as top-level `allow_file_upload`."
+                      },
+                      "address": {
+                        "type": "object",
+                        "required": [
+                          "full_address"
+                        ],
+                        "properties": {
+                          "full_address": {
+                            "type": "string",
+                            "description": "Both modes. Required. Full street address to match against the proof."
+                          },
+                          "address_fuzzy_match": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Both modes. `true` to allow fuzzy address matching. Defaults to `true`."
+                          },
+                          "verification_mode": {
+                            "type": "string",
+                            "default": "any",
+                            "example": "any",
+                            "description": "Both modes. Capture / processing hint. Defaults to `\"any\"`."
+                          },
+                          "proof": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Direct mode only. Required in direct mode. HTTPS URL of the proof-of-address document. Base64 data URIs are rejected."
+                          }
+                        },
+                        "description": "Both modes. Required. Must include `full_address`. Direct mode must also include `proof`."
                       }
-                    },
-                    "required": [
-                      "address",
-                      "city",
-                      "country"
-                    ]
+                    }
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Both modes (defaults to `link`). `link` returns a hosted capture URL; `direct` accepts HTTPS proof URLs."
                   }
                 }
               },
               "examples": {
                 "default": {
-                  "summary": "Sample request",
+                  "summary": "Hosted address verification link",
                   "value": {
+                    "send_email": false,
+                    "allow_file_upload": true,
                     "input_data": {
-                      "address": "15 Adeola Odeku Street",
-                      "city": "Lagos",
-                      "state": "Lagos",
-                      "country": "NG"
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "country": "NG",
+                      "address": {
+                        "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
+                        "address_fuzzy_match": true,
+                        "verification_mode": "any"
+                      }
+                    }
+                  }
+                },
+                "link": {
+                  "summary": "Link mode \u2014 hosted capture",
+                  "value": {
+                    "mode": "link",
+                    "send_email": false,
+                    "allow_file_upload": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "country": "NG",
+                      "address": {
+                        "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
+                        "address_fuzzy_match": true,
+                        "verification_mode": "any"
+                      }
+                    }
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode \u2014 address proof URL",
+                  "value": {
+                    "mode": "direct",
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "country": "NG",
+                      "address": {
+                        "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
+                        "proof": "https://cdn.example.com/utility-bill.pdf",
+                        "address_fuzzy_match": true,
+                        "verification_mode": "any"
+                      }
                     }
                   }
                 }
@@ -5835,6 +6116,75 @@
           }
         }
       }
+    },
+    "/api/v2/public/verifications/supported-countries/": {
+      "get": {
+        "summary": "Supported countries",
+        "description": "Return supported countries for a verification type. Currently `id_document` only. No authentication required.",
+        "operationId": "public-supported-countries",
+        "tags": [
+          "single-identity-verification"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "verification_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id_document"
+              ]
+            },
+            "description": "Verification type whose coverage list to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supported countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success Response"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Document verification countries",
+                    "value": {
+                      "success": true,
+                      "message": "Supported countries retrieved successfully.",
+                      "data": {
+                        "verification_type": "id_document",
+                        "countries": [
+                          {
+                            "name": "Nigeria",
+                            "code": "NG"
+                          },
+                          {
+                            "name": "Ghana",
+                            "code": "GH"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6062,7 +6412,44 @@
           "link": {
             "type": "object",
             "nullable": true,
-            "description": "VerifyAfrica hosted-link details when applicable. Provider-hosted `inner_link` URLs are never exposed."
+            "description": "Hosted capture link. Use `url` to redirect the customer. Provider-hosted inner_link URLs are never exposed.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "link": {
+                "type": "string",
+                "description": "Opaque link token."
+              },
+              "url": {
+                "type": "string",
+                "description": "Full hosted capture URL for customer redirect."
+              },
+              "link_type": {
+                "type": "string"
+              },
+              "ttl_minutes": {
+                "type": "integer",
+                "nullable": true
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "verification_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "verification_reference": {
+                "type": "string"
+              }
+            }
           },
           "email_sent_at": {
             "type": "string",
@@ -6092,6 +6479,15 @@
                 "proof": "https://cdn.example.com/documents/id-front.jpg"
               }
             }
+          },
+          "config": {
+            "type": "object",
+            "description": "Resolved settings used for this verification (mode, allow_file_upload, send_email, ttl, collect, nested capture flags). Proof URLs are omitted."
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         }
       },
