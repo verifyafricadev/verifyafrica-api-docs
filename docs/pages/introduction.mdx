@@ -45,7 +45,7 @@ Product paths lock the check for single-type products. For `government_registry_
 
 **Document, facial, and address** support two modes via top-level `mode`:
 
-- **`link`** (default) — Send config only. Create returns `data.link.url` for customer capture. Optional `send_email` emails that link. Optional `allow_file_upload` overrides the tenant product setting for camera vs file upload.
+- **`link`** (default) — Send `input_data` only (no proof URLs). Create returns `data.link.url` for customer capture. Optional `send_email` emails that link. Optional `allow_file_upload` overrides the tenant product setting for camera vs file upload.
 - **`direct`** — Send HTTPS proof URLs (`document.proof`, `face.proof`, or `address.proof`). Verification starts immediately in the background. No capture link.
 
 | Product | Link mode — required | Direct mode — required | Link only (omit in direct) |
@@ -71,10 +71,10 @@ See the [Webhooks](/webhooks) guide for payload shape, authentication, response 
 Create, GET, and webhook payloads share the same public shape:
 
 - **Provider-agnostic** — internal provider names and hosted provider URLs are never exposed
-- **`mode`** — for document / facial / address, `config.mode` is `"link"` or `"direct"`
+- **`mode`** — for document / facial / address, `input_data.mode` is `"link"` or `"direct"`
 - **Link mode** — create returns `data.link.url` for customer capture; proofs appear on GET/webhooks after submit
 - **Direct mode** — create accepts HTTPS proof URLs; `proofs` / `input_data.*.proof` echo those URLs
-- **`config`** — resolved settings for the request (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect`, nested document/face/address flags without proofs)
+- **`input_data`** — resolved request for the check (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect` on documents, nested document/face/address). Document `collect` is omitted for address. Proof URLs are the originals you sent.
 - **`response_data`** — verification result only; access tokens, provider proof links, and similar upstream artifacts are stripped
 
 ## Response format

@@ -10,7 +10,7 @@ Verify proof of address in either **link** or **direct** mode.
 
 | Mode | What you send | What create returns | When verification finishes |
 | --- | --- | --- | --- |
-| `link` (default) | Address config only — no proof file | `data.link.url` for the customer | After the customer completes capture on the hosted page |
+| `link` (default) | `input_data` only — no proof file | `data.link.url` for the customer | After the customer completes capture on the hosted page |
 | `direct` | HTTPS proof URL + address details | Accepted request (`PENDING`) | After provider processing completes |
 
 Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
@@ -46,7 +46,7 @@ address_verification
 
 Send top-level `mode`:
 
-- **`link`** — Config only (`address.full_address`, capture options). Response includes `data.link.url` for the hosted VerifyAfrica capture page (same app as document verification). Optional `send_email` / `allow_file_upload`. Do **not** send `address.proof`.
+- **`link`** — `input_data` only (`address.full_address`, capture options). Response includes `data.link.url` for the hosted VerifyAfrica capture page (same app as document verification). Optional `send_email` / `allow_file_upload`. Do **not** send `address.proof`.
 - **`direct`** — Send `address.proof` as an HTTPS URL plus `full_address`. Verification starts in the background. Do **not** send `send_email`, `allow_file_upload`, or `ttl`.
 
 If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
@@ -61,6 +61,7 @@ If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 | `input_data.email` | **Yes** | Used for notifications and the hosted session |
 | `input_data.address` | **Yes** | Address to verify |
 | `input_data.address.full_address` | **Yes** | Street address to match against the proof |
+| `input_data.address.supported_types` | No | Allowed proof document types. Omit to accept every type below |
 | `send_email` | No | Link only — emails `data.link.url` to `input_data.email` |
 | `allow_file_upload` | No | Link only — overrides tenant camera vs file-upload setting |
 
@@ -75,6 +76,7 @@ If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 | `input_data.address` | **Yes** | Address and proof URLs |
 | `input_data.address.full_address` | **Yes** | Street address to match |
 | `input_data.address.proof` | **Yes** | HTTPS URL of the proof-of-address document |
+| `input_data.address.supported_types` | No | Allowed proof document types. Omit to accept every type below |
 
 **Do not send in direct mode:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.allow_file_upload`
 
@@ -104,10 +106,46 @@ If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 | --- | --- | --- | --- | --- |
 | `full_address` | string | Required | Required | Full street address to match against the proof. |
 | `proof` | string (URL) | — | Required | HTTPS URL of the proof-of-address document/image. Base64 data URIs are rejected. |
+| `supported_types` | string[] | Optional | Optional | Restricts which proof-of-address document types are accepted. Omit to allow every type listed below. |
 | `address_fuzzy_match` | boolean | Optional (default `true`) | Optional (default `true`) | `true` to allow fuzzy address matching. |
 | `verification_mode` | string | Optional (default `"any"`) | Optional (default `"any"`) | Capture / processing hint. |
 
 Do not send `allow_online` or `allow_offline`.
+
+### Accepted `supported_types`
+
+All of the following values are accepted. Omit the field to allow every type.
+
+**Recommended**
+
+| Value | Label |
+| --- | --- |
+| `utility_bill` | Utility Bill |
+| `bank_statement` | Bank Statement |
+| `rent_agreement` | Rent Agreement |
+| `lease_agreement` | Lease Agreement |
+| `tax_bill` | Tax Bill |
+| `employer_letter` | Employer Letter |
+
+**More**
+
+| Value | Label |
+| --- | --- |
+| `id_card` | Id Card |
+| `passport` | Passport |
+| `driving_license` | Driving License |
+| `insurance_agreement` | Insurance Agreement |
+| `envelope` | Envelope |
+| `cpr_smart_card_reader_copy` | Cpr Smart Card Reader Copy |
+| `property_tax` | Property Tax |
+| `insurance_card` | Insurance Card |
+| `permanent_residence_permit` | Permanent Residence Permit |
+| `credit_card_statement` | Credit Card Statement |
+| `insurance_policy` | Insurance Policy |
+| `e_commerce_receipt` | E Commerce Receipt |
+| `bank_letter_receipt` | Bank Letter Receipt |
+| `birth_certificate` | Birth Certificate |
+| `salary_slip` | Salary Slip |
 
 ## Link mode example
 
@@ -126,7 +164,15 @@ Do not send `allow_online` or `allow_offline`.
     "address": {
       "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
       "address_fuzzy_match": true,
-      "verification_mode": "any"
+      "verification_mode": "any",
+      "supported_types": [
+        "utility_bill",
+        "bank_statement",
+        "rent_agreement",
+        "lease_agreement",
+        "tax_bill",
+        "employer_letter"
+      ]
     }
   }
 }
@@ -147,7 +193,8 @@ Create returns `status: PENDING` and `data.link.url`. Redirect the customer.
       "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
       "proof": "https://cdn.example.com/utility-bill.pdf",
       "address_fuzzy_match": true,
-      "verification_mode": "any"
+      "verification_mode": "any",
+      "supported_types": ["utility_bill", "bank_statement"]
     }
   }
 }

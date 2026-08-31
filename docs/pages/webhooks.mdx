@@ -71,7 +71,7 @@ Webhook `data` uses the same public shape as GET detail responses. It is **provi
 
 - No internal provider names
 - No provider-hosted proof URLs, access tokens, or verification links
-- `config` echoes the resolved settings used for the request (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect`, and nested capture flags without proofs)
+- `input_data` is the resolved request (mode, capture flags, collect for documents, nested document/face/address). Proof HTTPS URLs you submitted are kept; provider-hosted assets are not.
 - For link-mode identity products, `link.url` is the customer capture URL
 - For direct mode, `proofs` / `input_data.*.proof` echo the HTTPS URLs you submitted
 - `response_data` contains the verification result with upstream artifacts stripped
@@ -92,14 +92,7 @@ Example terminal payload:
       "language": "EN",
       "ttl": 60,
       "allow_file_upload": true,
-      "send_email": false
-    },
-    "config": {
-      "allow_file_upload": true,
       "send_email": false,
-      "ttl": 60,
-      "language": "EN",
-      "email": "customer@example.com",
       "collect": {
         "dob": false,
         "age": false,

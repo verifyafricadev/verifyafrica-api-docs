@@ -10,8 +10,8 @@ Verify government-issued IDs (passport, national ID, driver's license) in either
 
 | Mode | What you send | What create returns | When verification finishes |
 | --- | --- | --- | --- |
-| `link` (default) | Config only — no proof files | `data.link.url` for the customer | After the customer completes capture on the hosted page |
-| `direct` | HTTPS proof URLs + config | Accepted request (`PENDING`) | After provider processing completes |
+| `link` (default) | `input_data` only — no proof files | `data.link.url` for the customer | After the customer completes capture on the hosted page |
+| `direct` | HTTPS proof URLs in `input_data` | Accepted request (`PENDING`) | After provider processing completes |
 
 Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
 
@@ -171,7 +171,7 @@ Do not send `allow_online` or `allow_offline` — the API sets those from `allow
 }
 ```
 
-Create returns `status: PENDING`, `data.link.url` (redirect the customer), and `data.config` (resolved settings including `mode: "link"`).
+Create returns `status: PENDING`, `data.link.url` (redirect the customer), and resolved `data.input_data` including `mode: "link"`.
 
 ## Direct mode example
 
@@ -199,7 +199,7 @@ Create returns `status: PENDING`, `data.link.url` (redirect the customer), and `
 }
 ```
 
-Create returns `status: PENDING` immediately while verification runs. There is no capture `link`. Listen for `verification.completed` / `verification.failed`, or poll GET detail. `data.config.mode` is `"direct"` and `data.proofs` / `input_data.document.proof` echo your HTTPS URLs.
+Create returns `status: PENDING` immediately while verification runs. There is no capture `link`. Listen for `verification.completed` / `verification.failed`, or poll GET detail. `data.input_data.mode` is `"direct"` and `data.proofs` / `input_data.document.proof` echo your HTTPS URLs.
 
 ## Supported countries
 

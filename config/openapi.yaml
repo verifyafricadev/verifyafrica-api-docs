@@ -818,7 +818,7 @@
     "/api/v2/public/verifications/requests/address_verification/": {
       "post": {
         "summary": "Address Verification",
-        "description": "Create an address verification in **link** or **direct** mode.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`, `input_data.address.full_address`\n**Optional:** `send_email`, `allow_file_upload`, `input_data.ttl`, nested address flags\n**Do not send:** `input_data.address.proof`\n**Returns:** `data.link.url` for customer capture\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, `input_data.address.full_address`, `input_data.address.proof` (HTTPS URL)\n**Optional:** nested address flags\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`); verification runs asynchronously\n\nDo not send internal `method_type`. Listen for `verification.completed` / `verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create an address verification in **link** or **direct** mode.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`, `input_data.address.full_address`\n**Optional:** `send_email`, `allow_file_upload`, `input_data.ttl`, nested address flags, `input_data.address.supported_types`\n**Do not send:** `input_data.address.proof`\n**Returns:** `data.link.url` for customer capture\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, `input_data.address.full_address`, `input_data.address.proof` (HTTPS URL)\n**Optional:** nested address flags, `input_data.address.supported_types`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`); verification runs asynchronously\n\n`address.supported_types` accepts every listed proof type. Omit it to allow all. Recommended: `utility_bill`, `bank_statement`, `rent_agreement`, `lease_agreement`, `tax_bill`, `employer_letter`. More: `id_card`, `passport`, `driving_license`, `insurance_agreement`, `envelope`, `cpr_smart_card_reader_copy`, `property_tax`, `insurance_card`, `permanent_residence_permit`, `credit_card_statement`, `insurance_policy`, `e_commerce_receipt`, `bank_letter_receipt`, `birth_certificate`, `salary_slip`.\n\nDo not send internal `method_type`. Listen for `verification.completed` / `verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-address_verification",
         "tags": [
           "single-address-verification"
@@ -907,6 +907,36 @@
                             "example": "any",
                             "description": "Both modes. Capture / processing hint. Defaults to `\"any\"`."
                           },
+                          "supported_types": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "utility_bill",
+                                "bank_statement",
+                                "rent_agreement",
+                                "lease_agreement",
+                                "tax_bill",
+                                "employer_letter",
+                                "id_card",
+                                "passport",
+                                "driving_license",
+                                "insurance_agreement",
+                                "envelope",
+                                "cpr_smart_card_reader_copy",
+                                "property_tax",
+                                "insurance_card",
+                                "permanent_residence_permit",
+                                "credit_card_statement",
+                                "insurance_policy",
+                                "e_commerce_receipt",
+                                "bank_letter_receipt",
+                                "birth_certificate",
+                                "salary_slip"
+                              ]
+                            },
+                            "description": "Both modes. Optional. Restricts which proof-of-address document types are accepted. Omit to allow every type below. Recommended: `utility_bill`, `bank_statement`, `rent_agreement`, `lease_agreement`, `tax_bill`, `employer_letter`. More: `id_card`, `passport`, `driving_license`, `insurance_agreement`, `envelope`, `cpr_smart_card_reader_copy`, `property_tax`, `insurance_card`, `permanent_residence_permit`, `credit_card_statement`, `insurance_policy`, `e_commerce_receipt`, `bank_letter_receipt`, `birth_certificate`, `salary_slip`."
+                          },
                           "proof": {
                             "type": "string",
                             "format": "uri",
@@ -942,7 +972,15 @@
                       "address": {
                         "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
                         "address_fuzzy_match": true,
-                        "verification_mode": "any"
+                        "verification_mode": "any",
+                        "supported_types": [
+                          "utility_bill",
+                          "bank_statement",
+                          "rent_agreement",
+                          "lease_agreement",
+                          "tax_bill",
+                          "employer_letter"
+                        ]
                       }
                     }
                   }
@@ -961,7 +999,15 @@
                       "address": {
                         "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
                         "address_fuzzy_match": true,
-                        "verification_mode": "any"
+                        "verification_mode": "any",
+                        "supported_types": [
+                          "utility_bill",
+                          "bank_statement",
+                          "rent_agreement",
+                          "lease_agreement",
+                          "tax_bill",
+                          "employer_letter"
+                        ]
                       }
                     }
                   }
@@ -978,7 +1024,11 @@
                         "full_address": "15 Adeola Odeku Street, Victoria Island, Lagos",
                         "proof": "https://cdn.example.com/utility-bill.pdf",
                         "address_fuzzy_match": true,
-                        "verification_mode": "any"
+                        "verification_mode": "any",
+                        "supported_types": [
+                          "utility_bill",
+                          "bank_statement"
+                        ]
                       }
                     }
                   }
@@ -6380,7 +6430,7 @@
           },
           "input_data": {
             "type": "object",
-            "description": "Input submitted for the check. Proof fields (`document.proof`, `face.proof`, etc.) are the original HTTPS URLs you sent at create time \u2014 never base64 and never provider-hosted URLs."
+            "description": "Resolved request for the check (`mode`, capture flags, `collect` for documents, nested document/face/address). Proof fields (`document.proof`, `face.proof`, etc.) are the original HTTPS URLs you sent at create time \u2014 never base64 and never provider-hosted URLs. Internal `method_type` is omitted."
           },
           "response_data": {
             "type": "object",
@@ -6479,10 +6529,6 @@
                 "proof": "https://cdn.example.com/documents/id-front.jpg"
               }
             }
-          },
-          "config": {
-            "type": "object",
-            "description": "Resolved settings used for this verification (mode, allow_file_upload, send_email, ttl, collect, nested capture flags). Proof URLs are omitted."
           },
           "submitted_at": {
             "type": "string",
