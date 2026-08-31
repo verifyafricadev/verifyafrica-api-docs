@@ -114,7 +114,7 @@ Do not send internal `method_type` or `verification_type` — the product path s
 | `fetch_enhanced_data` | boolean | Optional (default `true`) | Optional | `true` to return enhanced OCR/extracted fields. |
 | `name` | object | Optional | Optional | Optional name matching details for the document owner. |
 
-Do not send `allow_online` or `allow_offline` — the API sets those from `allow_file_upload` (link) or defaults (direct).
+Do not send `allow_online`, `allow_offline`, or any field not listed above. Extra keys on the request or inside `input_data` / `document` / `collect` are rejected.
 
 ### `input_data.document.name`
 
