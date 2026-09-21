@@ -1,19 +1,32 @@
 ---
 title: KYB - Know Your Business
-description: Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data.
+description: Search, document, and document-purchase Know Your Business checks.
 sidebar_label: KYB - Know Your Business
 ---
 
 # KYB - Know Your Business
 
-Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data.
+KYB supports three bases. Set `input_data.kyb.base` to choose one. Link and direct modes both work for every base. The backend stores Shufti coverage per jurisdiction and rejects unsupported identifiers, document labels, and purchase documents. Fields that do not belong to the selected base are stripped before the provider request.
+
+| Base | What it does |
+| --- | --- |
+| `search` (default) | Enhanced registry lookup |
+| `document` | Customer or merchant supplies a supported business document |
+| `document_purchase` | Retrieve official registry documents. Results arrive on your tenant webhook — do not send `callback_url` |
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | Email plus optional locks | `data.link.url` | After the customer completes the hosted form |
+| `direct` | Base-specific company fields | Accepted request (`PENDING`) | After Shufti finishes (webhook) |
+
+Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`
+
+Use [Webhooks](/webhooks) for `verification.completed` / `verification.failed`.
 
 :::tip API Reference
-Jump directly to the interactive API docs:
-
-- [API reference](/api) — schemas, examples, and playground
+- [KYB](/api/single-compliance-screening#kyb-know-your-business) — schemas, examples, and playground
 - Create: `POST /api/v2/public/verifications/requests/kyb/`
-- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
+- Coverage: [Supported countries](/api/single-identity-verification#supported-countries)
 :::
 
 ## Verification Type
@@ -22,62 +35,101 @@ Jump directly to the interactive API docs:
 kyb_screening
 ```
 
-## Use Cases
+## `input_data.kyb`
 
-- Verify company registration and status
-- Retrieve directors and ownership data
-- Support merchant and corporate onboarding
+| Parameter | Bases | Description |
+| --- | --- | --- |
+| `base` | all | `search`, `document`, or `document_purchase`. Defaults to `search`. |
+| `advanced_search` | search | `"1"` / `"0"`. Defaults to `"1"`. |
+| `company_name` | search | Used when the jurisdiction supports `company_name`. |
+| `company_registration_number` | search, document_purchase | Registration / RC number. |
+| `company_jurisdiction_code` | search, document_purchase | Jurisdiction code. US states use `US_AL`. Purchase is sent to Shufti as a lowercase ISO code. |
+| `search_type` | search | `fuzzy` (default), `contains`, or `start_with`. |
+| `search_by` | search | Must be a coverage identifier for that country (`vat_number`, `trn_number`, …). |
+| `search_word` | search | Value for `search_by` when it is not company name or registration number. |
+| `ai_business_insights` | search | Optional `"1"` / `"0"`. |
+| `document_proof` | document | HTTPS URL of the business document. |
+| `additional_proof_labels` | document | Labels from document coverage for that country. |
+| `validate_document` | document | `"1"` requires exactly one proof. |
+| `required_documents` | document_purchase | Payload names from purchase coverage. Empty means all supported documents. |
 
-## Input Parameters
+`callback_url` is injected server-side. Do not send it.
 
-Pass these fields inside `input_data` in your request body.
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `rc_number` | string | Yes | Company registration number. |
-| `company_name` | string | No | Legal name of the business (used for cross-validation). |
-
-## Making a Request
-
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
-
-
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/kyb/`
-
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
+## Direct search example
 
 ```json
 {
-  "input_data": { /* see parameters above */ }
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "kyb": {
+      "base": "search",
+      "company_name": "Acme Limited",
+      "company_registration_number": "RC123456",
+      "company_jurisdiction_code": "NG",
+      "search_type": "fuzzy",
+      "advanced_search": true
+    }
+  }
 }
 ```
 
+Saudi VAT search uses `search_by` / `search_word` because `vat_number` is a coverage identifier for that country. Egypt only supports `company_name`.
 
-
-## Example Error Responses
-
-Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+## Link mode example
 
 ```json
 {
-  "success": false,
-  "message": "Invalid API key.",
-  "errors": ["Invalid API key."]
+  "mode": "link",
+  "send_email": false,
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "ttl": 60,
+    "country": "NG",
+    "kyb": {
+      "base": "search"
+    }
+  }
 }
 ```
+
+## Direct document example
 
 ```json
 {
-  "success": false,
-  "message": "Missing required parameters for 'kyb_screening': …",
-  "errors": ["Missing required parameters for 'kyb_screening': …"]
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "kyb": {
+      "base": "document",
+      "document_proof": "https://files.example.com/cac-certificate.pdf",
+      "additional_proof_labels": ["certificate_of_incorporation"],
+      "validate_document": "1"
+    }
+  }
 }
 ```
 
-See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
+## Direct document purchase example
 
-## API Reference
-
-View the full request/response schemas, response codes, and interactive playground:
-
-- [API reference](/api)
+```json
+{
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "kyb": {
+      "base": "document_purchase",
+      "company_registration_number": "RC123456",
+      "company_jurisdiction_code": "NG",
+      "required_documents": []
+    }
+  }
+}
+```

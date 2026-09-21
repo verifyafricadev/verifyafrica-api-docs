@@ -1,19 +1,29 @@
 ---
 title: Business AML Screening
-description: Screen businesses and corporate entities against global sanctions lists and adverse media.
+description: Screen businesses against global sanctions lists and adverse media.
 sidebar_label: Business AML Screening
 ---
 
 # Business AML Screening
 
-Screen businesses and corporate entities against global sanctions lists and adverse media.
+Screen companies, organisations, vessels, and aircraft against sanctions, warnings, fitness and probity, adverse media, SIE, and insolvency records.
+
+Shufti Business AML is name-based. There is no customer document upload.
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | Email plus optional countries, business name, incorporation date, and filters | `data.link.url` | After the customer confirms or enters the business name |
+| `direct` | Business name plus screening config | Accepted request (`PENDING`) | After provider processing completes |
+
+If you send `countries` (or a single `country`) or `business_incorporation_date` in **link** mode, those values are locked. An optional `business_name` is shown to the customer and can still be edited.
+
+Place screening categories in a top-level `filters` object.
+
+Use [Webhooks](/webhooks) for `verification.completed` / `verification.failed`. Error payloads include `internal_error_provider` and `internal_error_message`.
 
 :::tip API Reference
-Jump directly to the interactive API docs:
-
-- [API reference](/api) — schemas, examples, and playground
+- [Business AML Screening](/api/single-compliance-screening#business-aml-screening) — schemas, examples, and playground
 - Create: `POST /api/v2/public/verifications/requests/business_aml_screening/`
-- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
 
 ## Verification Type
@@ -22,109 +32,81 @@ Jump directly to the interactive API docs:
 business_aml_screening
 ```
 
-## Use Cases
+## Request body
 
-- Vendor and partner due diligence
-- Corporate sanctions screening
-- B2B onboarding compliance
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `input_data` | object | Required | Required | Business details and screening options. |
+| `send_email` | boolean | Optional | — | Email the hosted link. |
 
-## Input Parameters
+### `input_data`
 
-Pass these fields inside `input_data` in your request body.
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Required | Required | Customer's email. |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. |
+| `country` | string | Optional | Optional | ISO 3166-1 alpha-2. Compatibility alias for a single code; prefer `aml_for_businesses.countries`. Locks countries in link mode. |
+| `filters` | object | Optional | Optional | `{ "filters": [...], "match_score": 100, "rca_search": true, "alias_search": true }`. |
+| `aml_for_businesses` | object | Optional | Required | Direct mode requires `business_name`. |
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `email` | string | Yes | Customer's email address. |
-| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
-| `aml_for_businesses` | object | Yes | Business AML screening configuration. See nested fields below. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code for the request context (e.g. `"NG"`). |
+### `aml_for_businesses`
 
-### `aml_for_businesses` object
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `business_name` | string | Optional | Required | Shown to the customer in link mode; they can still change it. |
+| `business_incorporation_date` | string | Optional | Optional | `YYYY-MM-DD`. Locks the date in link mode. |
+| `countries` | array of string | Optional | Optional | ISO 3166-1 alpha-2 codes. Leave empty for a global screen. Any values lock countries in link mode. |
+| `biometric_search_image` | string | Optional | Optional | HTTPS URL of a JPEG or PNG (max 5MB) for biometric matching. Do not send base64. |
+| `individual_face` | string | Optional | Optional | HTTPS URL of a JPEG, PNG, or PDF (max 16MB). Do not send base64. |
+| `context` | string | Optional | Optional | Extra context used when assessing matches. |
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `business_name` | string | Yes | Full registered name of the business. |
-| `filters` | array of string | No | Screening categories to run. See allowed values below. |
-| `match_score` | integer | No | Matching threshold from `0` to `100`. A score of `100` applies the strictest accuracy. Defaults to `100`. |
-| `business_incorporation_date` | string | No | Incorporation date in `YYYY-MM-DD` format. Improves match precision. |
-| `countries` | array of string | No | ISO alpha-2 country codes to restrict the screening to (e.g. `["NG", "GH"]`). |
-| `rca_search` | boolean | No | Include relative and close associate (RCA) search. Defaults to `true` in the product UI. |
-| `alias_search` | boolean | No | Include alias search. Defaults to `true` in the product UI. |
+Allowed filter values match [AML Screening](/endpoints/aml-screening).
 
-### Allowed `filters` values
+`rca_search` includes relatives and close associates. `alias_search` matches known aliases. Both default to `true`.
 
-| Value | Label |
-| --- | --- |
-| `sanction` | SANCTION |
-| `warning` | WARNING |
-| `fitness-probity` | FITNESS PROBITY |
-| `pep` | PEP |
-| `pep-class-1` | PEP CLASS 1 |
-| `pep-class-2` | PEP CLASS 2 |
-| `pep-class-3` | PEP CLASS 3 |
-| `pep-class-4` | PEP CLASS 4 |
-
-## Making a Request
-
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
-
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/business_aml_screening/`
-
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
+## Link mode example
 
 ```json
 {
+  "mode": "link",
   "input_data": {
     "email": "customer@example.com",
     "language": "EN",
-    "country": "NG",
+    "ttl": 60,
+    "filters": {
+      "filters": ["sanction", "warning"],
+      "match_score": 100
+    },
     "aml_for_businesses": {
-      "business_name": "Acme Corp Ltd",
-      "business_incorporation_date": "2010-06-15",
-      "filters": [
-        "sanction",
-        "warning",
-        "fitness-probity",
-        "pep",
-        "pep-class-1",
-        "pep-class-2",
-        "pep-class-3",
-        "pep-class-4"
-      ],
-      "match_score": 100,
-      "countries": ["NG"],
-      "rca_search": true,
-      "alias_search": true
+      "business_name": "Acme Corp Ltd"
     }
   }
 }
 ```
 
-## Example Error Responses
-
-Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+## Direct mode example
 
 ```json
 {
-  "success": false,
-  "message": "Invalid API key.",
-  "errors": ["Invalid API key."]
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "filters": {
+      "filters": ["sanction", "warning"],
+      "match_score": 100,
+      "rca_search": true,
+      "alias_search": true
+    },
+    "aml_for_businesses": {
+      "business_name": "Acme Corp Ltd",
+      "business_incorporation_date": "2010-06-15",
+      "countries": ["NG", "GH"],
+      "biometric_search_image": "https://files.example.com/subject-face.jpg",
+      "individual_face": "https://files.example.com/ubo-face.pdf",
+      "context": "Onboarding for a regulated account"
+    }
+  }
 }
 ```
-
-```json
-{
-  "success": false,
-  "message": "Missing required parameters for 'business_aml_screening': aml_for_businesses",
-  "errors": ["Missing required parameters for 'business_aml_screening': aml_for_businesses"]
-}
-```
-
-See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
-
-## API Reference
-
-View the full request/response schemas, response codes, and interactive playground:
-
-- [Business AML Screening API reference](/api/single-compliance-screening#business-aml-screening)
-- [All API endpoints](/api)

@@ -39,24 +39,27 @@ Do not send `X-API-KEY`. The API key identifies the tenant — no `X-TENANT-ID` 
 | `POST /api/v2/public/verifications/requests/risk_assessment/` | Risk assessment |
 | `POST /api/v2/public/verifications/requests/government_registry_checks/` | Government registry checks (include `verification_type` in body) |
 | `GET /api/v2/public/verifications/requests/?verification_id={verification_id}` | Retrieve verification status and details |
-| `GET /api/v2/public/verifications/supported-countries/?verification_type=id_document` | Supported countries for document verification |
+| `GET /api/v2/public/verifications/supported-countries/?verification_type=id_document` | Supported countries (`id_document`, `aml_screening`, `business_aml_screening`, `kyb_screening`; KYB also takes `kyb_base`) |
 
 Product paths lock the check for single-type products. For `government_registry_checks`, send `verification_type` in the body (e.g. `ng_bvn_verification`).
 
-**Document, facial, and address** support two modes via top-level `mode`:
+**Document, facial, address, AML, Business AML, and KYB** support two modes via top-level `mode`:
 
-- **`link`** (default) — Send `input_data` only (no proof URLs). Create returns `data.link.url` for customer capture. Optional `send_email` emails that link. Optional `allow_file_upload` overrides the tenant product setting for camera vs file upload.
-- **`direct`** — Send HTTPS proof URLs (`document.proof`, `face.proof`, or `address.proof`). Verification starts immediately in the background. No capture link.
+- **`link`** (default) — Create returns `data.link.url` for the hosted page. Optional `send_email` emails that link. Optional `allow_file_upload` applies to capture products (document, facial, address, KYB document).
+- **`direct`** — You send the required fields (and proof URLs where applicable). Verification starts immediately in the background. No capture link.
 
 | Product | Link mode — required | Direct mode — required | Link only (omit in direct) |
 | --- | --- | --- | --- |
 | Document | `input_data.email` | `input_data.email`, `input_data.document.proof` | `send_email`, `allow_file_upload`, `ttl`, `collect`, proof URLs |
 | Facial | `input_data.face` | `input_data.face`, `input_data.face.proof` | `send_email`, `allow_file_upload`, `ttl` |
 | Address | `input_data.email`, `input_data.address.full_address` | `input_data.email`, `input_data.address.full_address`, `input_data.address.proof` | `send_email`, `allow_file_upload`, `ttl` |
+| AML | `input_data.email` | `input_data.email`, `background_checks.name.full_name` | `send_email`, `ttl` |
+| Business AML | `input_data.email` | `input_data.email`, `aml_for_businesses.business_name` | `send_email`, `ttl` |
+| KYB | `input_data.email` | `input_data.email`, base-specific `kyb` fields | `send_email`, `ttl` |
 
-See each [endpoint page](/endpoints/overview/identity-verification) for the full field reference with Link / Direct columns.
+See each endpoint page for the full field reference with Link / Direct columns.
 
-**Other products** always behave like direct mode: create returns `PENDING` while provider work runs. Use [Webhooks](/webhooks) or the GET endpoint for the final result.
+**Crypto, risk, and government registry** always behave like direct mode: create returns `PENDING` while provider work runs. Use [Webhooks](/webhooks) or the GET endpoint for the final result.
 
 ## Webhooks
 
@@ -71,7 +74,7 @@ See the [Webhooks](/webhooks) guide for payload shape, authentication, response 
 Create, GET, and webhook payloads share the same public shape:
 
 - **Provider-agnostic** — internal provider names and hosted provider URLs are never exposed
-- **`mode`** — for document / facial / address, `input_data.mode` is `"link"` or `"direct"`
+- **`mode`** — for document / facial / address / AML / Business AML / KYB, `input_data.mode` is `"link"` or `"direct"`
 - **Link mode** — create returns `data.link.url` for customer capture; proofs appear on GET/webhooks after submit
 - **Direct mode** — create accepts HTTPS proof URLs; `proofs` / `input_data.*.proof` echo those URLs
 - **`input_data`** — resolved request for the check (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect` on documents, nested document/face/address). Document `collect` is omitted for address. Proof URLs are the originals you sent.

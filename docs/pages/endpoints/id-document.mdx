@@ -109,7 +109,10 @@ Do not send internal `method_type` or `verification_type` — the product path s
 | `proof` | string (URL) | — | Required | HTTPS URL of the front-of-ID image. Base64 data URIs are rejected. |
 | `backside_proof` | string (URL) | — | Optional | HTTPS URL of the back of the ID when needed. |
 | `additional_proof` | string (URL) | — | Optional | Optional extra HTTPS proof URL. |
-| `backside_proof_required` | boolean | Optional (default `false`) | — | `true` to require the back of the ID during capture. |
+| `backside_proof_required` | boolean | Optional (default `false`) | Optional | `true` to require the back of the ID during capture (link) or to mark a backside proof as required (direct). |
+| `dob` | string | — | Optional | Date of birth (`YYYY-MM-DD`) for cross-validation. |
+| `age` | string | — | Optional | Age for cross-validation. |
+| `gender` | string | — | Optional | `"M"` or `"F"` for cross-validation. |
 | `verification_mode` | string | Optional (default `"any"`) | Optional (default `"any"`) | Capture / processing hint. |
 | `fetch_enhanced_data` | boolean | Optional (default `true`) | Optional | `true` to return enhanced OCR/extracted fields. |
 | `name` | object | Optional | Optional | Optional name matching details for the document owner. |

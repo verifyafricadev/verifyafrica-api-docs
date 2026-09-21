@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, and address** support `mode=link` (default; returns `data.link.url` for customer capture) or `mode=direct` (send HTTPS proof URLs; verification runs asynchronously). All other products behave like direct mode.\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema \u2014 `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key \u2014 no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, address, AML, Business AML, and KYB** support `mode=link` (default; returns `data.link.url`) or `mode=direct` (verification runs asynchronously). KYB uses `input_data.kyb.base`: `search`, `document`, or `document_purchase`. Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`. Crypto, risk, and government registry creates behave like direct mode.\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema \u2014 `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=\u2026`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -34,7 +34,7 @@
     },
     {
       "name": "single-compliance-screening",
-      "description": "Compliance & Screening \u2014 create verification requests.",
+      "description": "Compliance & Screening \u2014 create AML, Business AML, and KYB requests. All three support `mode=link` (hosted) and `mode=direct`.",
       "x-displayName": "Compliance & Screening"
     },
     {
@@ -252,7 +252,8 @@
                           },
                           "verification_instructions": {
                             "type": "string",
-                            "default": ""
+                            "default": null,
+                            "description": "Link mode only. Verification instructions for the customer."
                           }
                         }
                       }
@@ -1192,7 +1193,7 @@
     "/api/v2/public/verifications/requests/aml_screening/": {
       "post": {
         "summary": "AML Screening",
-        "description": "Screen individuals against global sanctions lists, PEP databases, and adverse media sources.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `background_checks.filters` and precision with `background_checks.match_score` (0\u2013100).",
+        "description": "Screen individuals against global sanctions, PEP, watchlist, and adverse media sources in **link** or **direct** mode. Shufti Individual AML is name-based \u2014 there is no customer document upload.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** `send_email`, `input_data.ttl`, `filters`, `background_checks.countries`, `background_checks.dob`, biometric image\n**Do not send:** `background_checks.name` (collected on the hosted page). Locked country/DOB values cannot be changed by the customer.\n**Returns:** `data.link.url`\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, `input_data.background_checks.name.full_name`\n**Optional:** `filters`, countries, DOB, biometric image, `context`\n**Do not send:** `send_email`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`)\n\nPlace screening categories in a top-level `filters` object (`filters`, `match_score`, `rca_search`, `alias_search`). Allowed filter values: `sanction`, `warning`, `fitness-probity`, `pep`, `pep-class-1`\u2013`4`, `adverse-media`.\n\nListen for `verification.completed` / `verification.failed` or poll GET for the terminal result.",
         "operationId": "public-aml_screening",
         "tags": [
           "single-compliance-screening"
@@ -1212,50 +1213,58 @@
                   "input_data"
                 ],
                 "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Defaults to `link`. `link` returns `data.link.url` for the hosted page; `direct` submits the screening immediately and returns `PENDING`."
+                  },
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted link to `input_data.email`. Defaults to `false`."
+                  },
                   "input_data": {
                     "type": "object",
                     "required": [
-                      "email",
-                      "language",
-                      "background_checks"
+                      "email"
                     ],
                     "properties": {
                       "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "Customer's email address."
+                        "description": "Both modes. Customer's email address."
                       },
                       "language": {
                         "type": "string",
-                        "description": "Language code (e.g. \"EN\", \"FR\").",
-                        "example": "EN"
+                        "description": "Both modes. Language code (e.g. \"EN\", \"FR\"). Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
                       },
                       "country": {
                         "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code for the request context (e.g. \"NG\").",
+                        "description": "ISO 3166-1 alpha-2. Compatibility alias for a single code; prefer `background_checks.countries`. Locks countries in link mode.",
                         "example": "NG"
                       },
-                      "background_checks": {
+                      "filters": {
                         "type": "object",
-                        "required": [
-                          "name"
-                        ],
-                        "description": "AML screening configuration.",
+                        "description": "Both modes. Screening categories and search options. The same filters are applied to the nested screening object before the provider request. Defaults: RCA and alias search on; match_score 100.",
                         "properties": {
-                          "name": {
-                            "type": "object",
-                            "required": [
-                              "full_name"
-                            ],
-                            "description": "Subject name details.",
-                            "properties": {
-                              "full_name": {
-                                "type": "string",
-                                "description": "Subject's full name.",
-                                "example": "John Doe"
-                              }
-                            }
-                          },
                           "filters": {
                             "type": "array",
                             "description": "Screening categories to run.",
@@ -1269,18 +1278,14 @@
                                 "pep-class-1",
                                 "pep-class-2",
                                 "pep-class-3",
-                                "pep-class-4"
+                                "pep-class-4",
+                                "adverse-media"
                               ]
                             },
                             "example": [
                               "sanction",
-                              "warning",
-                              "fitness-probity",
                               "pep",
-                              "pep-class-1",
-                              "pep-class-2",
-                              "pep-class-3",
-                              "pep-class-4"
+                              "adverse-media"
                             ]
                           },
                           "match_score": {
@@ -1288,18 +1293,45 @@
                             "minimum": 0,
                             "maximum": 100,
                             "default": 100,
-                            "description": "Matching threshold from 0 to 100. A score of 100 applies the strictest accuracy.",
+                            "description": "Matching threshold from 0 to 100. 100 is strictest.",
                             "example": 100
+                          },
+                          "rca_search": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Include relatives and close associates. Defaults to true."
+                          },
+                          "alias_search": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Match known aliases. Defaults to true."
+                          }
+                        }
+                      },
+                      "background_checks": {
+                        "type": "object",
+                        "description": "Subject details. Optional in link mode (name is collected on the hosted page). Required in direct mode with `name.full_name`.",
+                        "properties": {
+                          "name": {
+                            "type": "object",
+                            "description": "Direct mode: required. Link mode: collected on the hosted page.",
+                            "properties": {
+                              "full_name": {
+                                "type": "string",
+                                "description": "Subject's full name. Required in direct mode.",
+                                "example": "John Doe"
+                              }
+                            }
                           },
                           "dob": {
                             "type": "string",
                             "format": "date",
-                            "description": "Subject's date of birth in YYYY-MM-DD format.",
+                            "description": "YYYY-MM-DD. If sent in link mode, DOB is locked for the customer.",
                             "example": "1990-01-15"
                           },
                           "countries": {
                             "type": "array",
-                            "description": "ISO alpha-2 country codes to restrict the screening to.",
+                            "description": "ISO 3166-1 alpha-2 codes. Leave empty for a global screen. Any values lock countries in link mode. Prefer this over top-level `country`.",
                             "items": {
                               "type": "string"
                             },
@@ -1307,15 +1339,39 @@
                               "NG"
                             ]
                           },
-                          "rca_search": {
-                            "type": "boolean",
-                            "description": "Include relative and close associate (RCA) search.",
-                            "default": true
+                          "filters": {
+                            "type": "array",
+                            "description": "Screening categories. Prefer the top-level `filters` object.",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "sanction",
+                                "warning",
+                                "fitness-probity",
+                                "pep",
+                                "pep-class-1",
+                                "pep-class-2",
+                                "pep-class-3",
+                                "pep-class-4",
+                                "adverse-media"
+                              ]
+                            }
                           },
-                          "alias_search": {
-                            "type": "boolean",
-                            "description": "Include alias search.",
-                            "default": true
+                          "match_score": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "description": "Prefer the top-level `filters` object."
+                          },
+                          "biometric_search_image": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Both modes. HTTPS URL of a JPEG or PNG (max 5MB) for biometric matching. Do not send base64; the API fetches the URL and encodes it for the provider."
+                          },
+                          "context": {
+                            "type": "string",
+                            "description": "Extra context used when assessing matches.",
+                            "example": "Onboarding for a regulated account"
                           }
                         }
                       }
@@ -1324,34 +1380,59 @@
                 }
               },
               "examples": {
-                "default": {
-                  "summary": "Sample request",
+                "link": {
+                  "summary": "Link mode \u2014 hosted name capture",
                   "value": {
+                    "mode": "link",
+                    "send_email": false,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "filters": {
+                        "filters": [
+                          "sanction",
+                          "pep",
+                          "adverse-media"
+                        ],
+                        "match_score": 80,
+                        "rca_search": true,
+                        "alias_search": true
+                      },
+                      "background_checks": {
+                        "biometric_search_image": "https://files.example.com/subject-face.jpg"
+                      }
+                    }
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode \u2014 name + filters",
+                  "value": {
+                    "mode": "direct",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
                       "country": "NG",
+                      "filters": {
+                        "filters": [
+                          "sanction",
+                          "pep",
+                          "adverse-media"
+                        ],
+                        "match_score": 100,
+                        "rca_search": false,
+                        "alias_search": true
+                      },
                       "background_checks": {
                         "name": {
                           "full_name": "John Doe"
                         },
-                        "filters": [
-                          "sanction",
-                          "warning",
-                          "fitness-probity",
-                          "pep",
-                          "pep-class-1",
-                          "pep-class-2",
-                          "pep-class-3",
-                          "pep-class-4"
-                        ],
-                        "match_score": 100,
                         "dob": "1990-01-15",
                         "countries": [
                           "NG"
                         ],
-                        "rca_search": true,
-                        "alias_search": true
+                        "biometric_search_image": "https://files.example.com/subject-face.jpg",
+                        "context": "Onboarding for a regulated account"
                       }
                     }
                   }
@@ -1494,6 +1575,26 @@
                         "proofs_available": false
                       }
                     }
+                  },
+                  "link": {
+                    "summary": "Link mode \u2014 hosted URL",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request created. Redirect the customer to data.link.url.",
+                      "data": {
+                        "id": "ver_9gjzgc36t",
+                        "verification_type": "aml_screening",
+                        "status": "PENDING",
+                        "created_at": "2026-02-09T08:01:42.891Z",
+                        "link": {
+                          "url": "https://verify.verifyafrica.io/v/ver_9gjzgc36t",
+                          "expires_at": "2026-02-09T09:01:42.891Z"
+                        },
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
                   }
                 }
               }
@@ -1515,7 +1616,7 @@
     "/api/v2/public/verifications/requests/business_aml_screening/": {
       "post": {
         "summary": "Business AML Screening",
-        "description": "Screen businesses and corporate entities against global sanctions lists and adverse media.\n\nPublic API creates always use direct (offsite) mode. Configure screening categories with `aml_for_businesses.filters` and precision with `aml_for_businesses.match_score` (0\u2013100).",
+        "description": "Screen companies, organisations, vessels, and aircraft against sanctions, warnings, fitness and probity, adverse media, SIE, and insolvency records in **link** or **direct** mode. Shufti Business AML is name-based \u2014 there is no customer document upload.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** `send_email`, `input_data.ttl`, `filters`, `aml_for_businesses.business_name` (shown, still editable), countries, incorporation date (locked if sent)\n**Returns:** `data.link.url`\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, `input_data.aml_for_businesses.business_name`\n**Optional:** `filters`, countries, incorporation date, biometric image, `individual_face`, `context`\n**Do not send:** `send_email`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`)\n\nPlace screening categories in a top-level `filters` object. Allowed values match AML Screening.\n\nListen for `verification.completed` / `verification.failed` or poll GET for the terminal result.",
         "operationId": "public-business_aml_screening",
         "tags": [
           "single-compliance-screening"
@@ -1535,41 +1636,58 @@
                   "input_data"
                 ],
                 "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Defaults to `link`. `link` returns `data.link.url` for the hosted page; `direct` submits the screening immediately and returns `PENDING`."
+                  },
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted link to `input_data.email`. Defaults to `false`."
+                  },
                   "input_data": {
                     "type": "object",
                     "required": [
-                      "email",
-                      "language",
-                      "aml_for_businesses"
+                      "email"
                     ],
                     "properties": {
                       "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "Customer's email address."
+                        "description": "Both modes. Customer's email address."
                       },
                       "language": {
                         "type": "string",
-                        "description": "Language code (e.g. \"EN\", \"FR\").",
-                        "example": "EN"
+                        "description": "Both modes. Language code (e.g. \"EN\", \"FR\"). Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
                       },
                       "country": {
                         "type": "string",
-                        "description": "ISO 3166-1 alpha-2 country code for the request context (e.g. \"NG\").",
+                        "description": "ISO 3166-1 alpha-2. Compatibility alias for a single code; prefer `aml_for_businesses.countries`. Locks countries in link mode.",
                         "example": "NG"
                       },
-                      "aml_for_businesses": {
+                      "filters": {
                         "type": "object",
-                        "required": [
-                          "business_name"
-                        ],
-                        "description": "Business AML screening configuration.",
+                        "description": "Both modes. Screening categories and search options. The same filters are applied to the nested screening object before the provider request. Defaults: RCA and alias search on; match_score 100.",
                         "properties": {
-                          "business_name": {
-                            "type": "string",
-                            "description": "Full registered name of the business.",
-                            "example": "Acme Corp Ltd"
-                          },
                           "filters": {
                             "type": "array",
                             "description": "Screening categories to run.",
@@ -1583,18 +1701,14 @@
                                 "pep-class-1",
                                 "pep-class-2",
                                 "pep-class-3",
-                                "pep-class-4"
+                                "pep-class-4",
+                                "adverse-media"
                               ]
                             },
                             "example": [
                               "sanction",
-                              "warning",
-                              "fitness-probity",
                               "pep",
-                              "pep-class-1",
-                              "pep-class-2",
-                              "pep-class-3",
-                              "pep-class-4"
+                              "adverse-media"
                             ]
                           },
                           "match_score": {
@@ -1602,34 +1716,84 @@
                             "minimum": 0,
                             "maximum": 100,
                             "default": 100,
-                            "description": "Matching threshold from 0 to 100. A score of 100 applies the strictest accuracy.",
+                            "description": "Matching threshold from 0 to 100. 100 is strictest.",
                             "example": 100
+                          },
+                          "rca_search": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Include relatives and close associates. Defaults to true."
+                          },
+                          "alias_search": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Match known aliases. Defaults to true."
+                          }
+                        }
+                      },
+                      "aml_for_businesses": {
+                        "type": "object",
+                        "description": "Business screening details. Optional in link mode. Required in direct mode with `business_name`.",
+                        "properties": {
+                          "business_name": {
+                            "type": "string",
+                            "description": "Full registered name. Required in direct mode. In link mode an optional value is shown to the customer and can still be edited.",
+                            "example": "Acme Corp Ltd"
                           },
                           "business_incorporation_date": {
                             "type": "string",
                             "format": "date",
-                            "description": "Incorporation date in YYYY-MM-DD format.",
+                            "description": "YYYY-MM-DD. If sent in link mode, the date is locked.",
                             "example": "2010-06-15"
                           },
                           "countries": {
                             "type": "array",
-                            "description": "ISO alpha-2 country codes to restrict the screening to.",
+                            "description": "ISO 3166-1 alpha-2 codes. Leave empty for a global screen. Any values lock countries in link mode. Prefer this over top-level `country`.",
                             "items": {
                               "type": "string"
                             },
                             "example": [
-                              "NG"
+                              "NG",
+                              "GH"
                             ]
                           },
-                          "rca_search": {
-                            "type": "boolean",
-                            "description": "Include relative and close associate (RCA) search.",
-                            "default": true
+                          "filters": {
+                            "type": "array",
+                            "description": "Screening categories. Prefer the top-level `filters` object.",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "sanction",
+                                "warning",
+                                "fitness-probity",
+                                "pep",
+                                "pep-class-1",
+                                "pep-class-2",
+                                "pep-class-3",
+                                "pep-class-4",
+                                "adverse-media"
+                              ]
+                            }
                           },
-                          "alias_search": {
-                            "type": "boolean",
-                            "description": "Include alias search.",
-                            "default": true
+                          "match_score": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100
+                          },
+                          "biometric_search_image": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Both modes. HTTPS URL of a JPEG or PNG (max 5MB) for biometric matching. Do not send base64; the API fetches the URL and encodes it for the provider."
+                          },
+                          "individual_face": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Both modes. HTTPS URL of a JPEG, PNG, or PDF (max 16MB). Do not send base64."
+                          },
+                          "context": {
+                            "type": "string",
+                            "description": "Extra context used when assessing matches.",
+                            "example": "Onboarding for a regulated account"
                           }
                         }
                       }
@@ -1638,32 +1802,53 @@
                 }
               },
               "examples": {
-                "default": {
-                  "summary": "Sample request",
+                "link": {
+                  "summary": "Link mode \u2014 hosted business name",
                   "value": {
+                    "mode": "link",
                     "input_data": {
                       "email": "customer@example.com",
                       "language": "EN",
-                      "country": "NG",
+                      "ttl": 60,
+                      "filters": {
+                        "filters": [
+                          "sanction",
+                          "warning"
+                        ],
+                        "match_score": 100
+                      },
+                      "aml_for_businesses": {
+                        "business_name": "Acme Corp Ltd"
+                      }
+                    }
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode \u2014 business name + filters",
+                  "value": {
+                    "mode": "direct",
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "filters": {
+                        "filters": [
+                          "sanction",
+                          "warning"
+                        ],
+                        "match_score": 100,
+                        "rca_search": true,
+                        "alias_search": true
+                      },
                       "aml_for_businesses": {
                         "business_name": "Acme Corp Ltd",
                         "business_incorporation_date": "2010-06-15",
-                        "filters": [
-                          "sanction",
-                          "warning",
-                          "fitness-probity",
-                          "pep",
-                          "pep-class-1",
-                          "pep-class-2",
-                          "pep-class-3",
-                          "pep-class-4"
-                        ],
-                        "match_score": 100,
                         "countries": [
-                          "NG"
+                          "NG",
+                          "GH"
                         ],
-                        "rca_search": true,
-                        "alias_search": true
+                        "biometric_search_image": "https://files.example.com/subject-face.jpg",
+                        "individual_face": "https://files.example.com/ubo-face.pdf",
+                        "context": "Onboarding for a regulated account"
                       }
                     }
                   }
@@ -1806,6 +1991,26 @@
                         "proofs_available": false
                       }
                     }
+                  },
+                  "link": {
+                    "summary": "Link mode \u2014 hosted URL",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request created. Redirect the customer to data.link.url.",
+                      "data": {
+                        "id": "ver_9gjzgc36t",
+                        "verification_type": "business_aml_screening",
+                        "status": "PENDING",
+                        "created_at": "2026-02-09T08:01:42.891Z",
+                        "link": {
+                          "url": "https://verify.verifyafrica.io/v/ver_9gjzgc36t",
+                          "expires_at": "2026-02-09T09:01:42.891Z"
+                        },
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
                   }
                 }
               }
@@ -1827,7 +2032,7 @@
     "/api/v2/public/verifications/requests/kyb/": {
       "post": {
         "summary": "KYB - Know Your Business",
-        "description": "Perform full Know Your Business checks including ownership structure, beneficial owners, and registry data.\n\nPublic API creates always use direct (offsite) mode.",
+        "description": "Know Your Business checks with three bases (`input_data.kyb.base`): `search` (default, enhanced registry lookup), `document` (customer or merchant supplies a supported business document), and `document_purchase` (retrieve official registry documents). Link and direct modes work for every base.\n\nThe backend stores provider coverage per jurisdiction and rejects unsupported identifiers, document labels, and purchase documents. Fields that do not belong to the selected base are stripped. Do not send `callback_url` \u2014 purchase results arrive on your tenant webhook.\n\nCoverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search` (also `document` and `document_purchase`).\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** `send_email`, `input_data.ttl`, `country`, `kyb` locks (jurisdiction, registration number, base)\n**Returns:** `data.link.url`\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `input_data.email`, base-specific `kyb` fields (see examples)\n**Do not send:** `send_email`, `input_data.ttl`\n**Returns:** accepted request (`PENDING`)\n\nListen for `verification.completed` / `verification.failed` or poll GET for the terminal result.",
         "operationId": "public-kyb",
         "tags": [
           "single-compliance-screening"
@@ -1847,31 +2052,205 @@
                   "input_data"
                 ],
                 "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Defaults to `link`. `link` returns `data.link.url` for the hosted page; `direct` submits the screening immediately and returns `PENDING`."
+                  },
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted link to `input_data.email`. Defaults to `false`."
+                  },
                   "input_data": {
                     "type": "object",
-                    "properties": {
-                      "rc_number": {
-                        "type": "string",
-                        "description": "Company registration number."
-                      },
-                      "company_name": {
-                        "type": "string",
-                        "description": "Legal name of the business (used for cross-validation)."
-                      }
-                    },
                     "required": [
-                      "rc_number"
-                    ]
+                      "email"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Both modes. Customer's email address."
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "Both modes. Language code (e.g. \"EN\", \"FR\"). Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
+                      },
+                      "country": {
+                        "type": "string",
+                        "description": "Both modes. ISO 3166-1 alpha-2 or US state jurisdiction (`US_AL`). Must be supported for the selected `kyb.base`.",
+                        "example": "NG"
+                      },
+                      "kyb": {
+                        "type": "object",
+                        "description": "KYB payload. Set `base` to choose search, document, or document_purchase. Fields that do not belong to the selected base are stripped. Do not send `callback_url` \u2014 it is injected server-side. Unsupported identifiers, document labels, and purchase documents for the jurisdiction are rejected.",
+                        "properties": {
+                          "base": {
+                            "type": "string",
+                            "enum": [
+                              "search",
+                              "document",
+                              "document_purchase"
+                            ],
+                            "default": "search",
+                            "description": "KYB basis. Defaults to `search`."
+                          },
+                          "advanced_search": {
+                            "description": "Search only. `\"1\"` / `\"0\"` or boolean. Defaults to `\"1\"`.",
+                            "example": true
+                          },
+                          "company_name": {
+                            "type": "string",
+                            "description": "Search. Used when the jurisdiction supports `company_name`.",
+                            "example": "Acme Limited"
+                          },
+                          "company_registration_number": {
+                            "type": "string",
+                            "description": "Search and document_purchase. Registration / RC number.",
+                            "example": "RC123456"
+                          },
+                          "company_jurisdiction_code": {
+                            "type": "string",
+                            "description": "Search and document_purchase. Jurisdiction code. US states use `US_AL`. Purchase is sent to the provider as a lowercase ISO code.",
+                            "example": "NG"
+                          },
+                          "search_type": {
+                            "type": "string",
+                            "enum": [
+                              "fuzzy",
+                              "contains",
+                              "start_with"
+                            ],
+                            "default": "fuzzy",
+                            "description": "Search only. Defaults to `fuzzy`."
+                          },
+                          "search_by": {
+                            "type": "string",
+                            "description": "Search only. Must be a coverage identifier for that country (`vat_number`, `trn_number`, \u2026). Use with `search_word` when it is not company name or registration number."
+                          },
+                          "search_word": {
+                            "type": "string",
+                            "description": "Search only. Value for `search_by` when it is not company name or registration number."
+                          },
+                          "ai_business_insights": {
+                            "description": "Search only. Optional `\"1\"` / `\"0\"` or boolean."
+                          },
+                          "document_proof": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Document base. HTTPS URL of the business document. Direct mode typically requires this; link mode collects it on the hosted page."
+                          },
+                          "additional_proof_labels": {
+                            "type": "array",
+                            "description": "Document base. Labels from document coverage for that country.",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "validate_document": {
+                            "description": "Document base. `\"1\"` requires exactly one proof."
+                          },
+                          "required_documents": {
+                            "type": "array",
+                            "description": "document_purchase. Payload names from purchase coverage. Empty means all supported documents.",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
               "examples": {
-                "default": {
-                  "summary": "Sample request",
+                "link": {
+                  "summary": "Link mode \u2014 hosted KYB form",
                   "value": {
+                    "mode": "link",
+                    "send_email": false,
                     "input_data": {
-                      "rc_number": "RC789012",
-                      "company_name": "TechStart Nigeria Ltd"
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "country": "NG",
+                      "kyb": {
+                        "base": "search"
+                      }
+                    }
+                  }
+                },
+                "direct_search": {
+                  "summary": "Direct search",
+                  "value": {
+                    "mode": "direct",
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "country": "NG",
+                      "kyb": {
+                        "base": "search",
+                        "company_name": "Acme Limited",
+                        "company_registration_number": "RC123456",
+                        "company_jurisdiction_code": "NG",
+                        "search_type": "fuzzy",
+                        "advanced_search": true
+                      }
+                    }
+                  }
+                },
+                "direct_document": {
+                  "summary": "Direct document",
+                  "value": {
+                    "mode": "direct",
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "country": "NG",
+                      "kyb": {
+                        "base": "document",
+                        "document_proof": "https://files.example.com/cac-certificate.pdf",
+                        "additional_proof_labels": [
+                          "certificate_of_incorporation"
+                        ],
+                        "validate_document": "1"
+                      }
+                    }
+                  }
+                },
+                "direct_purchase": {
+                  "summary": "Direct document purchase",
+                  "value": {
+                    "mode": "direct",
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "country": "NG",
+                      "kyb": {
+                        "base": "document_purchase",
+                        "company_registration_number": "RC123456",
+                        "company_jurisdiction_code": "NG",
+                        "required_documents": []
+                      }
                     }
                   }
                 }
@@ -2008,6 +2387,26 @@
                         "verification_type": "kyb_screening",
                         "status": "PENDING",
                         "created_at": "2026-02-09T08:01:42.891Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "link": {
+                    "summary": "Link mode \u2014 hosted URL",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request created. Redirect the customer to data.link.url.",
+                      "data": {
+                        "id": "ver_9gjzgc36t",
+                        "verification_type": "kyb_screening",
+                        "status": "PENDING",
+                        "created_at": "2026-02-09T08:01:42.891Z",
+                        "link": {
+                          "url": "https://verify.verifyafrica.io/v/ver_9gjzgc36t",
+                          "expires_at": "2026-02-09T09:01:42.891Z"
+                        },
                         "response_data": {},
                         "proofs": {},
                         "proofs_available": false
@@ -6170,7 +6569,7 @@
     "/api/v2/public/verifications/supported-countries/": {
       "get": {
         "summary": "Supported countries",
-        "description": "Return supported countries for a verification type. Currently `id_document` only. No authentication required.",
+        "description": "Return supported countries for a verification type.\n\nNo authentication required.\n\n`verification_type` accepts `id_document`, `aml_screening`, `business_aml_screening`, or `kyb_screening`.\n\nFor KYB, pass `kyb_base` (`search`, `document`, or `document_purchase`) to return jurisdiction coverage including identifiers, country names, and documents for that base.",
         "operationId": "public-supported-countries",
         "tags": [
           "single-identity-verification"
@@ -6184,10 +6583,27 @@
             "schema": {
               "type": "string",
               "enum": [
-                "id_document"
+                "id_document",
+                "aml_screening",
+                "business_aml_screening",
+                "kyb_screening"
               ]
             },
             "description": "Verification type whose coverage list to return."
+          },
+          {
+            "name": "kyb_base",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "search",
+                "document",
+                "document_purchase"
+              ]
+            },
+            "description": "KYB only. Coverage base: `search`, `document`, or `document_purchase`."
           }
         ],
         "responses": {
@@ -6214,6 +6630,32 @@
                           {
                             "name": "Ghana",
                             "code": "GH"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "kyb": {
+                    "summary": "KYB search coverage",
+                    "value": {
+                      "success": true,
+                      "message": "Supported countries retrieved successfully.",
+                      "data": {
+                        "verification_type": "kyb_screening",
+                        "kyb_base": "search",
+                        "countries": [
+                          {
+                            "name": "Nigeria",
+                            "code": "NG",
+                            "iso": "NG",
+                            "identifiers": [
+                              "company_name",
+                              "company_registration_number"
+                            ],
+                            "country_names": [
+                              "Nigeria"
+                            ],
+                            "documents": []
                           }
                         ]
                       }

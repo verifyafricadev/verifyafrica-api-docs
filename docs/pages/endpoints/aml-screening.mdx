@@ -6,12 +6,25 @@ sidebar_label: AML Screening
 
 # AML Screening
 
-Screen individuals against global sanctions lists, PEP databases, and adverse media sources.
+Screen individuals against global sanctions, PEP, watchlist, and adverse media sources in either **link** or **direct** mode.
+
+Shufti Individual AML is name-based. There is no customer document upload.
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | Email plus optional countries, DOB, and filters | `data.link.url` for the customer | After the customer submits their name (and any unlocked fields) |
+| `direct` | Full name plus screening config | Accepted request (`PENDING`) | After provider processing completes |
+
+If you send `countries` (or a single `country`) or `dob` in **link** mode, those values are locked. The customer cannot send them, and the backend rejects them if they try.
+
+Place screening categories in a top-level `filters` object. The same filters are applied to `background_checks` before the request is sent to Shufti.
+
+Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes. Error payloads include `internal_error_provider` and `internal_error_message`.
 
 :::tip API Reference
 Jump directly to the interactive API docs:
 
-- [API reference](/api) — schemas, examples, and playground
+- [AML Screening](/api/single-compliance-screening#aml-screening) — schemas, examples, and playground
 - Create: `POST /api/v2/public/verifications/requests/aml_screening/`
 - Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
 :::
@@ -22,118 +35,86 @@ Jump directly to the interactive API docs:
 aml_screening
 ```
 
-## Use Cases
+## Request body
 
-- Customer due diligence for financial services
-- PEP and sanctions list screening
-- Adverse media checks during onboarding
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `input_data` | object | Required | Required | Customer details and screening options. |
+| `send_email` | boolean | Optional (default `false`) | — | `true` to email the hosted link to `input_data.email`. |
 
-## Input Parameters
+### `input_data`
 
-Pass these fields inside `input_data` in your request body.
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Required | Required | Customer's email address. |
+| `language` | string | Optional (default `"EN"`) | Optional | Language code. |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes: `15`, `30`, `60`, `120`, `240`. |
+| `country` | string | Optional | Optional | ISO 3166-1 alpha-2. Compatibility alias for a single code; prefer `background_checks.countries`. Locks countries in link mode. |
+| `filters` | object | Optional | Optional | `{ "filters": [...], "match_score": 100, "rca_search": true, "alias_search": true }`. Defaults: RCA and alias search on. |
+| `background_checks` | object | Optional | Required | Subject details. Direct mode requires `name.full_name`. |
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `email` | string | Yes | Customer's email address. |
-| `language` | string | Yes | Language code (e.g. `"EN"`, `"FR"`). |
-| `background_checks` | object | Yes | AML screening configuration. See nested fields below. |
-| `country` | string | No | ISO 3166-1 alpha-2 country code for the request context (e.g. `"NG"`). |
+### `background_checks`
 
-### `background_checks` object
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `name.full_name` | string | — | Required | Subject's full name. Collected on the hosted page in link mode. |
+| `dob` | string | Optional | Optional | `YYYY-MM-DD`. Locks DOB in link mode. |
+| `countries` | array of string | Optional | Optional | ISO 3166-1 alpha-2 codes. Leave empty for a global screen. Any values lock countries in link mode. |
+| `filters` | array of string | Optional | Optional | Screening categories. Prefer the top-level `filters` object. |
+| `match_score` | integer | Optional | Optional | `0`–`100`. Defaults to `100`. |
+| `biometric_search_image` | string | Optional | Optional | HTTPS URL of a JPEG or PNG (max 5MB) for biometric matching. Do not send base64; the API fetches the URL and encodes it for Shufti. |
+| `context` | string | Optional | Optional | Extra context used when assessing matches. |
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `name` | object | Yes | Subject name details. See nested fields below. |
-| `filters` | array of string | No | Screening categories to run. See allowed values below. If omitted, the provider default set is used. |
-| `match_score` | integer | No | Matching threshold from `0` to `100`. A score of `100` applies the strictest accuracy. Defaults to `100`. |
-| `dob` | string | No | Subject's date of birth in `YYYY-MM-DD` format. Improves match accuracy. |
-| `countries` | array of string | No | ISO alpha-2 country codes to restrict the screening to (e.g. `["NG", "GH"]`). |
-| `rca_search` | boolean | No | Include relative and close associate (RCA) search. Defaults to `true` in the product UI. |
-| `alias_search` | boolean | No | Include alias search. Defaults to `true` in the product UI. |
+Allowed filter values: `sanction`, `warning`, `fitness-probity`, `pep`, `pep-class-1`, `pep-class-2`, `pep-class-3`, `pep-class-4`, `adverse-media`.
 
-### `background_checks.name` object
+`rca_search` includes relatives and close associates. `alias_search` matches known aliases. Both default to `true`.
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `full_name` | string | Yes | Subject's full name. |
-
-### Allowed `filters` values
-
-| Value | Label |
-| --- | --- |
-| `sanction` | SANCTION |
-| `warning` | WARNING |
-| `fitness-probity` | FITNESS PROBITY |
-| `pep` | PEP |
-| `pep-class-1` | PEP CLASS 1 |
-| `pep-class-2` | PEP CLASS 2 |
-| `pep-class-3` | PEP CLASS 3 |
-| `pep-class-4` | PEP CLASS 4 |
-
-## Making a Request
-
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
-
-**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/aml_screening/`
-
-Authenticate with `Authorization: Bearer <VA-…api-key>`. The product path selects the verification type — do not send `verification_type`.
+## Link mode example
 
 ```json
 {
+  "mode": "link",
+  "send_email": false,
   "input_data": {
     "email": "customer@example.com",
     "language": "EN",
-    "country": "NG",
-    "background_checks": {
-      "name": {
-        "full_name": "John Doe"
-      },
-      "filters": [
-        "sanction",
-        "warning",
-        "fitness-probity",
-        "pep",
-        "pep-class-1",
-        "pep-class-2",
-        "pep-class-3",
-        "pep-class-4"
-      ],
-      "match_score": 100,
-      "dob": "1990-01-15",
-      "countries": ["NG"],
+    "ttl": 60,
+    "filters": {
+      "filters": ["sanction", "pep", "adverse-media"],
+      "match_score": 80,
       "rca_search": true,
       "alias_search": true
+    },
+    "background_checks": {
+      "biometric_search_image": "https://files.example.com/subject-face.jpg"
     }
   }
 }
 ```
 
-
-## Example Error Responses
-
-Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+## Direct mode example
 
 ```json
 {
-  "success": false,
-  "message": "Invalid API key.",
-  "errors": ["Invalid API key."]
+  "mode": "direct",
+  "input_data": {
+    "email": "customer@example.com",
+    "language": "EN",
+    "country": "NG",
+    "filters": {
+      "filters": ["sanction", "pep", "adverse-media"],
+      "match_score": 100,
+      "rca_search": false,
+      "alias_search": true
+    },
+    "background_checks": {
+      "name": { "full_name": "John Doe" },
+      "dob": "1990-01-15",
+      "countries": ["NG"],
+      "biometric_search_image": "https://files.example.com/subject-face.jpg",
+      "context": "Onboarding for a regulated account"
+    }
+  }
 }
 ```
-
-```json
-{
-  "success": false,
-  "message": "Missing required parameters for 'aml_screening': …",
-  "errors": ["Missing required parameters for 'aml_screening': …"]
-}
-```
-
-See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
-
-## API Reference
-
-View the full request/response schemas, response codes, and interactive playground:
-
-- [AML Screening API reference](/api/single-compliance-screening#aml-screening)
-- [All API endpoints](/api)
