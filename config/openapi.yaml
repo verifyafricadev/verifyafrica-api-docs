@@ -3161,7 +3161,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/za_said_verification": {
       "post": {
         "summary": "South Africa ID Verification",
-        "description": "South Africa ID Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `za_said_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "South Africa ID Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `za_said_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-za_said_verification",
         "tags": [
           "single-gov-south-africa"
@@ -3381,7 +3381,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_bvn_verification": {
       "post": {
         "summary": "Nigeria BVN Verification",
-        "description": "Nigeria BVN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_bvn_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria BVN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_bvn_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_bvn_verification",
         "tags": [
           "single-gov-nigeria"
@@ -3601,7 +3601,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_nin_verification": {
       "post": {
         "summary": "Nigeria NIN Verification",
-        "description": "Nigeria NIN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_nin_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria NIN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_nin_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_nin_verification",
         "tags": [
           "single-gov-nigeria"
@@ -3813,7 +3813,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_virtual_nin_verification": {
       "post": {
         "summary": "Nigeria Virtual NIN",
-        "description": "Nigeria Virtual NIN.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_virtual_nin_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria Virtual NIN.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_virtual_nin_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_virtual_nin_verification",
         "tags": [
           "single-gov-nigeria"
@@ -4025,7 +4025,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_advanced_phone_number_verification": {
       "post": {
         "summary": "Nigeria Phone Verification",
-        "description": "Nigeria Phone Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_advanced_phone_number_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria Phone Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_advanced_phone_number_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_advanced_phone_number_verification",
         "tags": [
           "single-gov-nigeria"
@@ -4237,7 +4237,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_phone_number_lookup": {
       "post": {
         "summary": "Nigeria Phone Lookup",
-        "description": "Nigeria Phone Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_phone_number_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria Phone Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_phone_number_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_phone_number_lookup",
         "tags": [
           "single-gov-nigeria"
@@ -4449,7 +4449,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_cac_lookup": {
       "post": {
         "summary": "Nigeria CAC Lookup",
-        "description": "Nigeria CAC Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria CAC Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_cac_lookup",
         "tags": [
           "single-gov-nigeria"
@@ -4661,7 +4661,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_passport_verification": {
       "post": {
         "summary": "Nigeria Passport Verification",
-        "description": "Nigeria Passport Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_passport_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Nigeria Passport Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_passport_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ng_passport_verification",
         "tags": [
           "single-gov-nigeria"
@@ -4873,7 +4873,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_passport_lookup": {
       "post": {
         "summary": "Ghana Passport Lookup",
-        "description": "Ghana Passport Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_passport_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Ghana Passport Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_passport_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-gh_passport_lookup",
         "tags": [
           "single-gov-ghana"
@@ -5085,7 +5085,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_voter_card_lookup": {
       "post": {
         "summary": "Ghana Voter Card Lookup",
-        "description": "Ghana Voter Card Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Ghana Voter Card Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-gh_voter_card_lookup",
         "tags": [
           "single-gov-ghana"
@@ -5297,7 +5297,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_ssnit_lookup": {
       "post": {
         "summary": "Ghana SSNIT Lookup",
-        "description": "Ghana SSNIT Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_ssnit_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Ghana SSNIT Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_ssnit_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-gh_ssnit_lookup",
         "tags": [
           "single-gov-ghana"
@@ -5509,7 +5509,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_drivers_license_lookup": {
       "post": {
         "summary": "Ghana Drivers License Lookup",
-        "description": "Ghana Drivers License Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_drivers_license_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Ghana Drivers License Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_drivers_license_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-gh_drivers_license_lookup",
         "tags": [
           "single-gov-ghana"
@@ -5721,7 +5721,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_passport_lookup": {
       "post": {
         "summary": "Kenya Passport Lookup",
-        "description": "Kenya Passport Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_passport_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Kenya Passport Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_passport_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ke_passport_lookup",
         "tags": [
           "single-gov-kenya"
@@ -5933,7 +5933,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_national_id_lookup": {
       "post": {
         "summary": "Kenya National ID Lookup",
-        "description": "Kenya National ID Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_national_id_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Kenya National ID Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_national_id_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ke_national_id_lookup",
         "tags": [
           "single-gov-kenya"
@@ -6145,7 +6145,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_phone_number_lookup": {
       "post": {
         "summary": "Kenya Phone Lookup",
-        "description": "Kenya Phone Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_phone_number_lookup`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Kenya Phone Lookup.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_phone_number_lookup`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ke_phone_number_lookup",
         "tags": [
           "single-gov-kenya"
@@ -6357,7 +6357,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_tax_pin_verification": {
       "post": {
         "summary": "Kenya Tax PIN Verification",
-        "description": "Kenya Tax PIN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_tax_pin_verification`.\n\nPublic creates always use direct (offsite) mode.",
+        "description": "Kenya Tax PIN Verification.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_tax_pin_verification`.\n\nSupports `mode=link` (hosted URL, billing on customer submit) or `mode=direct` (async offsite, billing on provider submit).",
         "operationId": "public-gov-ke_tax_pin_verification",
         "tags": [
           "single-gov-kenya"
