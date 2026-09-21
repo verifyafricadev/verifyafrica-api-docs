@@ -1,6 +1,6 @@
 ---
 title: Webhooks
-description: Receive verification.completed and verification.failed events when a verification reaches a terminal status.
+description: Receive sf./kr. prefixed verification.completed and verification.failed events when a verification reaches a terminal status.
 sidebar_label: Webhooks
 sidebar_icon: webhook
 ---
@@ -14,7 +14,7 @@ Webhooks fire for verifications created from the **dashboard**, **public API**, 
 :::tip Source of truth
 Event names, `verification_type` values, statuses, and the full payload shape are defined in the OpenAPI schemas:
 
-- [Webhook events & payload](/api/webhooks) — `verification.completed` and `verification.failed`
+- [Webhook events & payload](/api/webhooks) — `sf.verification.completed`, `kr.verification.completed`, `sf.verification.failed`, and `kr.verification.failed`
 - Schemas: `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, `WebhookPayload`
 
 Prefer those schemas over copying examples from this page.
@@ -31,7 +31,7 @@ Recommended flow:
 
 1. `POST` a product create endpoint (include `mode` for document / facial / address)
 2. Store the returned `data.id` (and `data.link.url` when using link mode)
-3. Wait for `verification.completed` or `verification.failed` on your webhook URL
+3. Wait for `sf.` / `kr.` `verification.completed` or `verification.failed` on your webhook URL
 4. Optionally poll `GET /api/v2/public/verifications/requests/?verification_id={id}` if needed
 
 ## Setup
@@ -51,7 +51,7 @@ Each OpenAPI schema maps to a specific key in the webhook JSON body:
 | Schema | Payload key | What it defines |
 | --- | --- | --- |
 | `WebhookPayload` | *(root body)* | Full JSON object POSTed to your endpoint |
-| `WebhookEvent` | `event` | `verification.completed`, `verification.failed` |
+| `WebhookEvent` | `event` | `sf.verification.completed`, `kr.verification.completed`, `sf.verification.failed`, `kr.verification.failed` |
 | — | `status` | Envelope status: `success` or `failure` (aligned with `event`) |
 | `VerificationRequestData` | `data` | Verification object nested under the root payload |
 | `PublicVerificationType` | `data.verification_type` | Every public-API product type value |
@@ -60,28 +60,28 @@ Each OpenAPI schema maps to a specific key in the webhook JSON body:
 
 | Event (`event`) | When | Envelope `status` | Typical `data.status` |
 | --- | --- | --- | --- |
-| `verification.completed` | Verification finished successfully | `success` | `SUCCESS` |
-| `verification.failed` | Verification did not succeed | `failure` | `FAILED` or `ERROR` |
+| `sf.verification.completed` / `kr.verification.completed` | Verification finished successfully | `success` | `SUCCESS` |
+| `sf.verification.failed` / `kr.verification.failed` | Verification did not succeed | `failure` | `FAILED` or `ERROR` |
 
 No webhook is sent while the verification is still `PENDING`.
 
 ## Payload shape
 
-Webhook `data` uses the same public shape as GET detail responses. It is **provider-agnostic**:
+Webhook `data` uses the same public shape as GET detail responses.
 
-- No internal provider names
+- Event names are prefixed by provider: `sf.` for [Shufti](https://developers.shuftipro.com/docs/mobile/parameters/responses#response-events), `kr.` for Kora
 - No provider-hosted proof URLs, access tokens, or verification links
 - `input_data` is the resolved request (mode, capture flags, collect for documents, nested document/face/address). Proof HTTPS URLs you submitted are kept; provider-hosted assets are not.
 - For link-mode identity products, `link.url` is the customer capture URL
 - For direct mode, `proofs` / `input_data.*.proof` echo the HTTPS URLs you submitted
-- `response_data` contains the verification result with upstream artifacts stripped
+- `response_data` contains the verification result with upstream artifacts stripped. Shufti `response_data.event` values use the `sf.` prefix (for example `sf.verification.accepted`).
 
 Example terminal payload:
 
 ```json
 {
   "status": "success",
-  "event": "verification.completed",
+  "event": "sf.verification.completed",
   "data": {
     "id": "6a59068c-cc6c-7d97-8000-90755031f952",
     "verification_type": "id_document",
@@ -108,7 +108,7 @@ Example terminal payload:
       }
     },
     "response_data": {
-      "event": "verification.accepted",
+      "event": "sf.verification.accepted",
       "status": "SUCCESS",
       "verification_result": {
         "document": {

@@ -6747,21 +6747,25 @@
       "WebhookEvent": {
         "type": "string",
         "title": "WebhookEvent",
-        "description": "Webhook event names emitted by VerifyAfrica to your endpoint.\n\nHandle unknown values defensively so future events do not break your integration.",
+        "description": "Webhook event names emitted by VerifyAfrica to your endpoint.\n\nNames are prefixed by provider: `sf.` for Shufti, `kr.` for Kora. Handle unknown values defensively so future events do not break your integration.",
         "enum": [
-          "verification.completed",
-          "verification.failed"
+          "sf.verification.completed",
+          "kr.verification.completed",
+          "sf.verification.failed",
+          "kr.verification.failed"
         ],
-        "example": "verification.completed",
+        "example": "sf.verification.completed",
         "x-enumDescriptions": {
-          "verification.completed": "Sent when a verification finishes successfully (`data.status` = `SUCCESS`).",
-          "verification.failed": "Sent when a verification does not complete successfully (`data.status` = `FAILED` or `ERROR`)."
+          "sf.verification.completed": "Shufti verification finished successfully (`data.status` = `SUCCESS`).",
+          "kr.verification.completed": "Kora verification finished successfully (`data.status` = `SUCCESS`).",
+          "sf.verification.failed": "Shufti verification did not complete successfully (`data.status` = `FAILED` or `ERROR`).",
+          "kr.verification.failed": "Kora verification did not complete successfully (`data.status` = `FAILED` or `ERROR`)."
         }
       },
       "VerificationStatus": {
         "type": "string",
         "title": "VerificationStatus",
-        "description": "Lifecycle status of a verification request.\n\n- `SUCCESS` \u2192 webhook event `verification.completed`\n- `FAILED` / `ERROR` \u2192 webhook event `verification.failed`\n- Other statuses do not trigger a webhook.",
+        "description": "Lifecycle status of a verification request.\n\n- `SUCCESS` \u2192 webhook event `sf.verification.completed` or `kr.verification.completed`\n- `FAILED` / `ERROR` \u2192 webhook event `sf.verification.failed` or `kr.verification.failed`\n- Other statuses do not trigger a webhook.",
         "enum": [
           "PENDING",
           "SUCCESS",
@@ -6773,9 +6777,9 @@
         "example": "PENDING",
         "x-enumDescriptions": {
           "PENDING": "Accepted / still processing. Does not trigger a webhook.",
-          "SUCCESS": "Verification completed successfully. Triggers `verification.completed`.",
-          "FAILED": "Verification completed but did not pass. Triggers `verification.failed`.",
-          "ERROR": "Processing failed. Triggers `verification.failed`.",
+          "SUCCESS": "Verification completed successfully. Triggers `sf.`/`kr.` `verification.completed`.",
+          "FAILED": "Verification completed but did not pass. Triggers `sf.`/`kr.` `verification.failed`.",
+          "ERROR": "Processing failed. Triggers `sf.`/`kr.` `verification.failed`.",
           "ABANDONED": "Stale pending verification marked abandoned. Does not trigger a webhook.",
           "PARTIAL": "Bulk batch mixed outcomes. Does not trigger a webhook."
         }
