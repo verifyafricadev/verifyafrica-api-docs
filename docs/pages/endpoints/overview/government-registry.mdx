@@ -1,13 +1,30 @@
 ---
 title: Government Registry Checks
-description: Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, and Kenya.
+description: Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, and Kenya — in link or direct mode.
 sidebar_label: Government Registry Checks
 sidebar_icon: landmark
 ---
 
 # Government Registry Checks
 
-Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, and Kenya.
+Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, and Kenya in either **link** or **direct** mode.
+
+| Mode | What you send | What create returns | When verification finishes |
+| --- | --- | --- | --- |
+| `link` (default) | `input_data` (email + optional prefills) — no selfie file required up front | `data.link.url` for the customer | After the customer completes the hosted form (and optional selfie) and Korapay finishes |
+| `direct` | Registry identifier (+ optional validation / selfie URL) | Accepted request (`PENDING`) | After Korapay Identity processing completes |
+
+Use [Webhooks](/webhooks) (`kr.verification.completed` / `kr.verification.failed`) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
+
+Billing for registry checks is deferred until the check is submitted to Korapay (not at HTTP create).
+
+:::tip API Reference
+Jump directly to the interactive API docs:
+
+- [API reference](/api) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/government_registry_checks/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
+:::
 
 ## Countries
 
@@ -18,10 +35,121 @@ Verify identity and registry records against official government databases acros
 
 ## Getting Started
 
-Government registry checks use one product endpoint, organized by country in the [API Reference](/api):
+All checks share one product endpoint. Set `verification_type` to the check you need (for example `ng_nin_verification`):
 
 `POST /api/v2/public/verifications/requests/government_registry_checks/`
 
-Include `verification_type` in the body to select the specific check (for example `ng_bvn_verification`).
+Browse a country below, then open the check page for its `input_data` fields.
 
-Browse a country below, then open the check you need.
+## Choosing a mode
+
+Send top-level `mode`:
+
+- **`link`** — Hosted VerifyAfrica page. Prefill registry fields (NIN, BVN, etc.) to lock them for the customer; leave optional validation fields blank so the customer enters them. Optional `require_selfie` and `allow_file_upload` (camera vs camera + upload). Response includes `data.link.url`. Do **not** send a selfie proof URL.
+- **`direct`** — Run immediately with the identifier you supply. Optional name / DOB validation and optional `selfie` HTTPS URL. Do **not** send `send_email`, `allow_file_upload`, `ttl`, or `require_selfie`.
+
+If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
+
+## Required fields at a glance
+
+### Link mode (`mode: "link"` or omitted)
+
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `verification_type` | **Yes** | e.g. `ng_nin_verification` |
+| `input_data` | **Yes** | Customer email and optional prefills |
+| `input_data.email` | **Yes** | Used for the hosted session / notifications |
+| Primary identifier (e.g. `nin`) | No | Prefill to lock it; omit so the customer enters it |
+| Name / DOB validation fields | No | Prefill to lock; omit so the customer enters them |
+| `input_data.require_selfie` | No | When `true` and the check supports selfie, customer must capture/upload |
+| `send_email` | No | Emails `data.link.url` to `input_data.email` |
+| `allow_file_upload` | No | Link only — camera + upload vs camera only (selfie-capable types) |
+| `input_data.ttl` | No | Link lifetime in minutes (`15`, `30`, `60`, `120`, `240`) |
+
+**Do not send in link mode:** `input_data.selfie` (proof URL)
+
+### Direct mode (`mode: "direct"`)
+
+| Field | Required? | Notes |
+| --- | --- | --- |
+| `verification_type` | **Yes** | e.g. `ng_nin_verification` |
+| `input_data` | **Yes** | Identifier and optional validation |
+| Primary identifier (e.g. `nin`) | **Yes** | Required for that check type |
+| Name / DOB validation fields | No | Compared against the registry response when present |
+| `input_data.selfie` | No | HTTPS URL of a selfie image (selfie-capable types only) |
+
+**Do not send in direct mode:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`
+
+## Request body
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `verification_type` | string | Required | Required | Registry check type (see country pages). |
+| `input_data` | object | Required | Required | Identifier, email (link), optional validation / selfie. |
+| `send_email` | boolean | Optional (default `false`) | — | `true` to email the hosted link. |
+| `allow_file_upload` | boolean | Optional (tenant default `true`) | — | Selfie-capable types only. `true` = camera + file upload; `false` = camera only. |
+
+### Shared `input_data` options
+
+| Parameter | Type | Link | Direct | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Required | Optional | Customer email (required for link). |
+| `language` | string | Optional (default `"EN"`) | Optional | Language code. |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. |
+| `country` | string | Optional | Optional | ISO 3166-1 alpha-2 (often implied by the check type). |
+| `require_selfie` | boolean | Optional | — | Require selfie on the hosted page when supported. |
+| `allow_file_upload` | boolean | Optional | — | Same override as the top-level field. |
+| `selfie` | string (URL) | — | Optional | HTTPS selfie image URL for facial matching when supported. |
+| `first_name` / `last_name` / `date_of_birth` | string | Optional | Optional | Validation fields when the check supports them. Prefills lock on link mode. |
+
+Each check’s required identifier and optional fields are listed on its endpoint page (for example [Nigeria NIN](./ng-nin-verification)).
+
+## Example — link mode (NIN)
+
+```json
+{
+  "verification_type": "ng_nin_verification",
+  "mode": "link",
+  "send_email": true,
+  "allow_file_upload": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "ttl": 60,
+    "nin": "55555555555",
+    "require_selfie": true
+  }
+}
+```
+
+Response includes `data.link.url`. The customer completes any remaining fields (and selfie if required) on the hosted page.
+
+## Example — direct mode (NIN)
+
+```json
+{
+  "verification_type": "ng_nin_verification",
+  "mode": "direct",
+  "input_data": {
+    "nin": "55555555555",
+    "first_name": "Bimbo",
+    "last_name": "Olakunle",
+    "date_of_birth": "1988-04-04"
+  }
+}
+```
+
+Create returns `PENDING`. Listen for `kr.verification.completed` / `kr.verification.failed`, or poll GET detail.
+
+## Sandbox testing
+
+With Korapay **test** secret keys, only [Korapay sandbox identity numbers](https://developers.korapay.com/docs/testing-your-integration) work. Real NINs/BVNs return “data not found”. Live keys are required for real identities.
+
+## Webhooks
+
+Terminal events use the `kr.` prefix:
+
+- `kr.verification.completed`
+- `kr.verification.failed`
+
+See [Webhooks](/webhooks) for setup, payload shape, and inbound provider URLs.

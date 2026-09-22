@@ -31,26 +31,60 @@ ke_national_id_lookup
 
 Pass these fields inside `input_data` in your request body.
 
+**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `id_number` | string | Yes | Kenya national ID number. |
+| `national_id` | string | Yes | Kenya national ID number. |
 | `first_name` | string | No | First name for cross-validation. |
+| `last_name` | string | No | Last name for cross-validation. |
+| `date_of_birth` | string | No | Date of birth (YYYY-MM-DD). |
+| `selfie` | string (URL) | No | Direct mode only — HTTPS selfie image URL. |
+
+## Modes
+
+Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, selfies, and webhooks.
+
+| Mode | Notes |
+| --- | --- |
+| `link` (default) | Hosted page. Prefill fields to lock them; leave optional validation blank for the customer. Returns `data.link.url`. |
+| `direct` | Send the required identifier now. Runs asynchronously. |
+
+Do not send internal `method_type`. Use top-level `mode` instead.
 
 ## Making a Request
-
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
-
 
 **Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/`
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ke_national_id_lookup`.
 
+### Link mode
+
 ```json
 {
   "verification_type": "ke_national_id_lookup",
-  "input_data": { /* see parameters above */ }
+  "mode": "link",
+  "send_email": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "ttl": 60
+  }
 }
 ```
+
+### Direct mode
+
+```json
+{
+  "verification_type": "ke_national_id_lookup",
+  "mode": "direct",
+  "input_data": {
+    "national_id": "25219766"
+  }
+}
+```
+
+Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
 
 

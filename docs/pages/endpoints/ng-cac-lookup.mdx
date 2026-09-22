@@ -31,26 +31,57 @@ ng_cac_lookup
 
 Pass these fields inside `input_data` in your request body.
 
+**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `rc_number` | string | Yes | CAC registration number (e.g., RC123456). |
-| `company_name` | string | No | Company name for cross-validation. |
+| `cac_number` | string | Yes | CAC registration number (e.g., RC00000011). |
+| `registration_name` | string | No | Registered business name for cross-validation. |
+
+## Modes
+
+Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, selfies, and webhooks.
+
+| Mode | Notes |
+| --- | --- |
+| `link` (default) | Hosted page. Prefill fields to lock them; leave optional validation blank for the customer. Returns `data.link.url`. |
+| `direct` | Send the required identifier now. Runs asynchronously. |
+
+Do not send internal `method_type`. Use top-level `mode` instead.
 
 ## Making a Request
-
-Public API creates always use **direct (offsite)** mode. Do not send `method_type` — the API forces `offsite`.
-
 
 **Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/`
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ng_cac_lookup`.
 
+### Link mode
+
 ```json
 {
   "verification_type": "ng_cac_lookup",
-  "input_data": { /* see parameters above */ }
+  "mode": "link",
+  "send_email": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "ttl": 60
+  }
 }
 ```
+
+### Direct mode
+
+```json
+{
+  "verification_type": "ng_cac_lookup",
+  "mode": "direct",
+  "input_data": {
+    "cac_number": "RC00000011"
+  }
+}
+```
+
+Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
 
 

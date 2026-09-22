@@ -24,15 +24,17 @@ Prefer those schemas over copying examples from this page.
 
 Public create endpoints return **immediately** with `status: PENDING`.
 
-- **Link mode** (document / facial / address with `mode: "link"`) — customer still needs to open `data.link.url`. Terminal webhook fires after they finish capture and processing completes.
-- **Direct mode** (proof URLs, or any other product) — provider work starts in the background. Terminal webhook fires when verification completes.
+- **Link mode** (document / facial / address / AML / business AML / KYB / **government registry** with `mode: "link"`) — customer still needs to open `data.link.url`. Terminal webhook fires after they finish and processing completes.
+- **Direct mode** (proof URLs, registry identifiers, or any other product with `mode: "direct"`) — provider work starts in the background. Terminal webhook fires when verification completes.
 
 Recommended flow:
 
-1. `POST` a product create endpoint (include `mode` for document / facial / address)
+1. `POST` a product create endpoint (include `mode` for link-capable products, including government registry checks)
 2. Store the returned `data.id` (and `data.link.url` when using link mode)
 3. Wait for `sf.` / `kr.` `verification.completed` or `verification.failed` on your webhook URL
 4. Optionally poll `GET /api/v2/public/verifications/requests/?verification_id={id}` if needed
+
+Government registry checks use Korapay Identity and emit **`kr.`** events. Shufti-backed products (document, face, address, AML, KYB, …) emit **`sf.`** events.
 
 ## Setup
 
@@ -74,7 +76,7 @@ Webhook `data` uses the same public shape as GET detail responses.
 - `input_data` is the resolved request (mode, capture flags, collect for documents, nested document/face/address). Proof HTTPS URLs you submitted are kept; provider-hosted assets are not.
 - For link-mode identity products, `link.url` is the customer capture URL
 - For direct mode, `proofs` / `input_data.*.proof` echo the HTTPS URLs you submitted
-- `response_data` contains the verification result with upstream artifacts stripped. Shufti `response_data.event` values use the `sf.` prefix (for example `sf.verification.accepted`).
+- `response_data` contains the verification result with upstream artifacts stripped. Shufti `response_data.event` values use the `sf.` prefix (for example `sf.verification.accepted`). Korapay Identity (government registry) stores `kr.verification.completed` / `kr.verification.failed` / `kr.verification.pending` on `response_data.event`.
 
 Example terminal payload:
 
