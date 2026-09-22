@@ -3230,11 +3230,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "ZA"
-                      },
                       "id_number": {
                         "type": "string",
                         "description": "South African ID number."
@@ -3263,7 +3258,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "ZA",
                       "id_number": "8012185201077",
                       "first_name": "John",
                       "last_name": "Doe"
@@ -3277,7 +3271,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "ZA",
                       "id_number": "8012185201077",
                       "first_name": "John",
                       "last_name": "Doe"
@@ -3294,7 +3287,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "ZA",
                       "id_number": "8012185201077",
                       "first_name": "John",
                       "last_name": "Doe"
@@ -3564,11 +3556,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -3621,7 +3608,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "bvn": "22222222222",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
@@ -3638,7 +3624,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "bvn": "22222222222",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
@@ -3657,7 +3642,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "bvn": "22222222222",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
@@ -3930,11 +3914,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -3987,7 +3966,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "nin": "55555555555",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
@@ -4004,7 +3982,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "nin": "55555555555",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
@@ -4023,7 +4000,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "nin": "55555555555",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
@@ -4296,11 +4272,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -4353,7 +4324,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "virtual_nin": "KO111111111111IL",
                       "require_selfie": true
                     },
@@ -4367,7 +4337,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "virtual_nin": "KO111111111111IL",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -4383,7 +4352,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "virtual_nin": "KO111111111111IL",
                       "require_selfie": true
                     },
@@ -4653,11 +4621,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -4710,7 +4673,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "phone_number": "08000000000",
                       "require_selfie": true
                     },
@@ -4724,7 +4686,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "phone_number": "08000000000",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -4740,7 +4701,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "phone_number": "08000000000",
                       "require_selfie": true
                     },
@@ -5010,11 +4970,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "phone_number": {
                         "type": "string",
                         "description": "Nigerian phone number."
@@ -5035,7 +4990,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "phone_number": "08000000000"
                     }
                   }
@@ -5047,7 +5001,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "phone_number": "08000000000"
                     }
                   }
@@ -5062,7 +5015,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "phone_number": "08000000000"
                     }
                   }
@@ -5330,11 +5282,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "cac_number": {
                         "type": "string",
                         "description": "CAC registration number (e.g. RC00000011)."
@@ -5359,7 +5306,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "cac_number": "RC00000011"
                     }
                   }
@@ -5371,7 +5317,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "cac_number": "RC00000011"
                     }
                   }
@@ -5386,7 +5331,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "cac_number": "RC00000011"
                     }
                   }
@@ -5654,11 +5598,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "NG"
-                      },
                       "passport_id": {
                         "type": "string",
                         "description": "Passport number."
@@ -5683,7 +5622,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "passport_id": "A01234567",
                       "last_name": "Olakunle"
                     }
@@ -5696,7 +5634,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "NG",
                       "passport_id": "A01234567",
                       "last_name": "Olakunle"
                     }
@@ -5712,7 +5649,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "NG",
                       "passport_id": "A01234567",
                       "last_name": "Olakunle"
                     }
@@ -5981,11 +5917,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "GH"
-                      },
                       "passport_number": {
                         "type": "string",
                         "description": "Ghana passport number."
@@ -6020,7 +5951,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "passport_number": "G0000555"
                     }
                   }
@@ -6032,7 +5962,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "GH",
                       "passport_number": "G0000555"
                     }
                   }
@@ -6047,7 +5976,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "passport_number": "G0000555"
                     }
                   }
@@ -6315,11 +6243,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "GH"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -6372,7 +6295,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "voter_id": "9001330422",
                       "require_selfie": true
                     },
@@ -6386,7 +6308,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "GH",
                       "voter_id": "9001330422",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -6402,7 +6323,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "voter_id": "9001330422",
                       "require_selfie": true
                     },
@@ -6672,11 +6592,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "GH"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -6729,7 +6644,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "ssnit_number": "C987464748977",
                       "require_selfie": true
                     },
@@ -6743,7 +6657,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "GH",
                       "ssnit_number": "C987464748977",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -6759,7 +6672,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "ssnit_number": "C987464748977",
                       "require_selfie": true
                     },
@@ -7029,11 +6941,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "GH"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -7086,7 +6993,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "license_number": "070667",
                       "require_selfie": true
                     },
@@ -7100,7 +7006,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "GH",
                       "license_number": "070667",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -7116,7 +7021,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "GH",
                       "license_number": "070667",
                       "require_selfie": true
                     },
@@ -7386,11 +7290,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "KE"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -7443,7 +7342,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "passport_number": "A2011111",
                       "require_selfie": true
                     },
@@ -7457,7 +7355,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "KE",
                       "passport_number": "A2011111",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -7473,7 +7370,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "passport_number": "A2011111",
                       "require_selfie": true
                     },
@@ -7743,11 +7639,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "KE"
-                      },
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
@@ -7800,7 +7691,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "national_id": "25219766",
                       "require_selfie": true
                     },
@@ -7814,7 +7704,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "KE",
                       "national_id": "25219766",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
@@ -7830,7 +7719,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "national_id": "25219766",
                       "require_selfie": true
                     },
@@ -8100,11 +7988,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "KE"
-                      },
                       "phone_number": {
                         "type": "string",
                         "description": "Kenya phone number."
@@ -8133,7 +8016,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "phone_number": "0723818211",
                       "type": "national_id"
                     }
@@ -8146,7 +8028,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "KE",
                       "phone_number": "0723818211",
                       "type": "national_id"
                     }
@@ -8162,7 +8043,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "phone_number": "0723818211",
                       "type": "national_id"
                     }
@@ -8431,11 +8311,6 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
-                      "country": {
-                        "type": "string",
-                        "description": "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-                        "example": "KE"
-                      },
                       "tax_pin": {
                         "type": "string",
                         "description": "Kenya tax PIN."
@@ -8456,7 +8331,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "tax_pin": "A009274635J"
                     }
                   }
@@ -8468,7 +8342,6 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "country": "KE",
                       "tax_pin": "A009274635J"
                     }
                   }
@@ -8483,7 +8356,6 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "country": "KE",
                       "tax_pin": "A009274635J"
                     }
                   }
@@ -9231,7 +9103,6 @@
                       "input_data": {
                         "email": "customer@example.com",
                         "language": "EN",
-                        "country": "NG",
                         "nin": "55555555555",
                         "first_name": "Bimbo",
                         "last_name": "Olakunle",
@@ -9358,8 +9229,7 @@
                       "verification_type": "ng_nin_verification",
                       "status": "FAILED",
                       "input_data": {
-                        "nin": "55555555555",
-                        "country": "NG"
+                        "nin": "55555555555"
                       },
                       "response_data": {
                         "event": "kr.verification.failed",

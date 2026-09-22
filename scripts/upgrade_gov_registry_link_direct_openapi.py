@@ -296,10 +296,6 @@ def build_input_properties(meta: dict) -> dict:
             "default": 60,
             "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode.",
         },
-        "country": prop(
-            "Both modes. ISO 3166-1 alpha-2 country code (often implied by the check type).",
-            example=meta["country"],
-        ),
     }
     if meta["selfie"]:
         props["require_selfie"] = {
@@ -383,7 +379,6 @@ def build_examples(vtype: str, meta: dict) -> dict:
         "email": "customer@example.com",
         "language": "EN",
         "ttl": 60,
-        "country": meta["country"],
         **{k: v for k, v in sample.items() if k != "selfie"},
     }
     if meta["selfie"]:
@@ -400,7 +395,6 @@ def build_examples(vtype: str, meta: dict) -> dict:
 
     direct_input = {
         "language": "EN",
-        "country": meta["country"],
         **sample,
     }
     if meta["selfie"]:
@@ -564,7 +558,6 @@ GOV_WEBHOOK_COMPLETED = {
         "input_data": {
             "email": "customer@example.com",
             "language": "EN",
-            "country": "NG",
             "nin": "55555555555",
             "first_name": "Bimbo",
             "last_name": "Olakunle",
@@ -594,7 +587,6 @@ GOV_WEBHOOK_FAILED = {
         "status": "FAILED",
         "input_data": {
             "nin": "55555555555",
-            "country": "NG",
         },
         "response_data": {
             "event": "kr.verification.failed",
