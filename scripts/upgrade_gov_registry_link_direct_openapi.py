@@ -240,6 +240,42 @@ CHECKS: dict[str, dict] = {
         "sample": {"tax_pin": "A009274635J"},
         "field_desc": {"tax_pin": "Kenya tax PIN."},
     },
+    "ci_national_id_lookup": {
+        "summary": "Côte d'Ivoire National ID Lookup",
+        "country": "CI",
+        "required": ["national_id"],
+        "optional": ["first_name", "last_name", "date_of_birth", "selfie"],
+        "selfie": True,
+        "sample": {"national_id": "00112233440"},
+        "field_desc": {
+            "national_id": (
+                "Ivorian National ID. 7–12 alphanumeric characters; "
+                "normalized to uppercase before sending to Korapay."
+            ),
+            "first_name": "Optional first name for cross-validation.",
+            "last_name": "Optional last name for cross-validation.",
+            "date_of_birth": "Optional date of birth (YYYY-MM-DD).",
+            "selfie": "Direct mode only. HTTPS URL of a selfie image for facial matching.",
+        },
+    },
+    "ci_residence_card_lookup": {
+        "summary": "Côte d'Ivoire Residence Card Lookup",
+        "country": "CI",
+        "required": ["residence_card_id"],
+        "optional": ["first_name", "last_name", "date_of_birth", "selfie"],
+        "selfie": True,
+        "sample": {"residence_card_id": "11223344555"},
+        "field_desc": {
+            "residence_card_id": (
+                "Ivorian Residence Card ID. 7–12 alphanumeric characters; "
+                "normalized to uppercase before sending to Korapay."
+            ),
+            "first_name": "Optional first name for cross-validation.",
+            "last_name": "Optional last name for cross-validation.",
+            "date_of_birth": "Optional date of birth (YYYY-MM-DD).",
+            "selfie": "Direct mode only. HTTPS URL of a selfie image for facial matching.",
+        },
+    },
 }
 
 
@@ -702,42 +738,111 @@ def upgrade_webhooks(spec: dict) -> None:
         }
 
 
+def ensure_country_tags(spec: dict) -> None:
+    tags = spec.setdefault("tags", [])
+    by_name = {t.get("name"): t for t in tags if isinstance(t, dict)}
+    desired = {
+        "single-gov-south-africa": "South Africa",
+        "single-gov-nigeria": "Nigeria",
+        "single-gov-ghana": "Ghana",
+        "single-gov-kenya": "Kenya",
+        "single-gov-cote-divoire": "Côte d'Ivoire",
+    }
+    for name, display in desired.items():
+        desc = (
+            f"Government registry checks for {display}. Each operation supports "
+            "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
+        )
+        if name in by_name:
+            by_name[name]["description"] = desc
+            by_name[name]["x-displayName"] = display
+        else:
+            tags.append({"name": name, "description": desc, "x-displayName": display})
+
+    groups = spec.get("x-tagGroups") or []
+    for group in groups:
+        if group.get("name") == "Government Registry Checks":
+            group["tags"] = [
+                "single-gov-south-africa",
+                "single-gov-nigeria",
+                "single-gov-ghana",
+                "single-gov-kenya",
+                "single-gov-cote-divoire",
+            ]
+
+
+COUNTRY_TAG_BY_CODE = {
+    "ZA": "single-gov-south-africa",
+    "NG": "single-gov-nigeria",
+    "GH": "single-gov-ghana",
+    "KE": "single-gov-kenya",
+    "CI": "single-gov-cote-divoire",
+}
+
+
+def ensure_check_path(paths: dict, vtype: str, meta: dict, template_post: dict) -> None:
+    key = f"{PRODUCT_PATH.rstrip('/')}/{vtype}"
+    if key in paths and "post" in paths[key]:
+        return
+    op = copy.deepcopy(template_post)
+    op["summary"] = meta["summary"]
+    op["operationId"] = f"public-gov-{vtype}"
+    op["tags"] = [COUNTRY_TAG_BY_CODE[meta["country"]]]
+    paths[key] = {"post": op}
+
+
+def ensure_public_verification_type_enum(spec: dict) -> None:
+    schema = (spec.get("components") or {}).get("schemas", {}).get("PublicVerificationType")
+    if not isinstance(schema, dict):
+        return
+    enum = list(schema.get("enum") or [])
+    for vtype in CHECKS:
+        if vtype not in enum:
+            # Insert CI types after Kenya tax PIN when present
+            if "ke_tax_pin_verification" in enum:
+                idx = enum.index("ke_tax_pin_verification") + 1
+                enum[idx:idx] = [v for v in (vtype,) if v not in enum]
+            else:
+                enum.append(vtype)
+    # De-dupe while preserving order
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for item in enum:
+        if item not in seen:
+            seen.add(item)
+            ordered.append(item)
+    schema["enum"] = ordered
+    x_enum = schema.get("x-enumDescriptions")
+    if isinstance(x_enum, dict):
+        x_enum["ci_national_id_lookup"] = (
+            "Côte d'Ivoire national ID (`POST .../government_registry_checks/`)"
+        )
+        x_enum["ci_residence_card_lookup"] = (
+            "Côte d'Ivoire residence card (`POST .../government_registry_checks/`)"
+        )
+
+
 def main() -> None:
     for path in (JSON_PATH, YAML_PATH):
         spec = json.loads(path.read_text())
         paths = spec["paths"]
+        ensure_country_tags(spec)
+        ensure_public_verification_type_enum(spec)
+
+        template_key = f"{PRODUCT_PATH.rstrip('/')}/ke_national_id_lookup"
+        template_post = paths[template_key]["post"]
+
         updated = 0
         for vtype, meta in CHECKS.items():
+            ensure_check_path(paths, vtype, meta, template_post)
             key = f"{PRODUCT_PATH.rstrip('/')}/{vtype}"
             node = paths.get(key)
             if not node or "post" not in node:
                 print(f"MISSING {key}")
                 continue
             node["post"] = upgrade_operation(node["post"], vtype, meta)
+            node["post"]["tags"] = [COUNTRY_TAG_BY_CODE[meta["country"]]]
             updated += 1
-
-        # Country tag descriptions
-        for tag in spec.get("tags", []):
-            if tag.get("name") == "single-gov-south-africa":
-                tag["description"] = (
-                    "Government registry checks for South Africa. Each operation supports "
-                    "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
-                )
-            elif tag.get("name") == "single-gov-nigeria":
-                tag["description"] = (
-                    "Government registry checks for Nigeria. Each operation supports "
-                    "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
-                )
-            elif tag.get("name") == "single-gov-ghana":
-                tag["description"] = (
-                    "Government registry checks for Ghana. Each operation supports "
-                    "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
-                )
-            elif tag.get("name") == "single-gov-kenya":
-                tag["description"] = (
-                    "Government registry checks for Kenya. Each operation supports "
-                    "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
-                )
 
         info = spec.get("info", {})
         if isinstance(info.get("description"), str):

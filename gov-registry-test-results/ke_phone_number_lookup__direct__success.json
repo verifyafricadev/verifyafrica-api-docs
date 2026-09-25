@@ -1,0 +1,107 @@
+{
+  "scenario": {
+    "verification_type": "ke_phone_number_lookup",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ke_phone_number_lookup",
+        "mode": "direct",
+        "input_data": {
+          "phone_number": "0723818211",
+          "type": "national_id"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab26a9-db65-74f2-8000-5b863f3168f9",
+        "verification_type": "ke_phone_number_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "type": "national_id",
+          "language": "EN",
+          "phone_number": "0723818211"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:37.712473Z",
+        "submitted_at": "2026-09-22T11:46:37.712216Z",
+        "batch_id": null,
+        "reference": "VER-06ab26a9-db65-7ef1-8000-68ec7ad0bfc5",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26a9-db65-74f2-8000-5b863f3168f9"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26a9-db65-74f2-8000-5b863f3168f9",
+        "verification_type": "ke_phone_number_lookup",
+        "status": "SUCCESS",
+        "input_data": {
+          "mode": "direct",
+          "type": "national_id",
+          "language": "EN",
+          "phone_number": "0723818211"
+        },
+        "response_data": {
+          "data": {
+            "id": "0723818211",
+            "email": "senajisein@viola.com",
+            "gender": "Male",
+            "id_type": "ke_get_phone",
+            "full_name": "Nabilai Vincent Senaji",
+            "last_name": "Senaji",
+            "reference": "VR-FupfAuRMFcQjpVeyL",
+            "first_name": "Nabilai",
+            "middle_name": "Vincent",
+            "requested_by": "API User",
+            "date_of_birth": "1999-12-28",
+            "identity_type": "national_id",
+            "marital_status": "Married",
+            "home_telephone_number": "+8761234566",
+            "work_telephone_number": "040-3203307",
+            "mobile_telephone_number": "254723818211"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "Phone data retrieved successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:37.712473Z",
+        "submitted_at": "2026-09-22T11:46:37.712216Z",
+        "batch_id": null,
+        "reference": "VER-06ab26a9-db65-7ef1-8000-68ec7ad0bfc5",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

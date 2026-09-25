@@ -1,0 +1,105 @@
+{
+  "scenario": {
+    "verification_type": "za_said_verification",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "za_said_verification",
+        "mode": "direct",
+        "input_data": {
+          "id_number": "8012185201077"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab268e-1f1e-7829-8000-250a22ad26c3",
+        "verification_type": "za_said_verification",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "id_number": "8012185201077"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:13.945916Z",
+        "submitted_at": "2026-09-22T11:39:13.944878Z",
+        "batch_id": null,
+        "reference": "VER-06ab268e-1f20-783b-8000-5bf9a7ae9a4e",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab268e-1f1e-7829-8000-250a22ad26c3"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab268e-1f1e-7829-8000-250a22ad26c3",
+        "verification_type": "za_said_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "id_number": "8012185201077"
+        },
+        "response_data": {
+          "data": {
+            "id": "8012185201077",
+            "on_npr": "yes",
+            "id_type": "za_said",
+            "on_hanis": "yes",
+            "last_name": "Mandela",
+            "reference": "VR-iWlxYx5hZ6LKtKPW8",
+            "first_name": "Trevor",
+            "issued_date": "2015-07-08",
+            "requested_by": "API User",
+            "date_of_death": "",
+            "marital_status": "SINGLE",
+            "deceased_status": "alive",
+            "hanis_reference": "2306078375132",
+            "sequence_number": "1",
+            "country_of_birth": "SOUTH AFRICA",
+            "date_of_marriage": "",
+            "is_smart_card_issued": "Yes"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "South Africa ID verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:13.945916Z",
+        "submitted_at": "2026-09-22T11:39:13.944878Z",
+        "batch_id": null,
+        "reference": "VER-06ab268e-1f20-783b-8000-5bf9a7ae9a4e",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

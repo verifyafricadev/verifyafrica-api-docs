@@ -1,0 +1,138 @@
+{
+  "scenario": {
+    "verification_type": "ke_phone_number_lookup",
+    "mode": "link",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration",
+    "note": "Korapay docs list only a valid KE phone; fail uses a synthetic invalid number."
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ke_phone_number_lookup",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+ke_phone_number_lookup-fail@example.com",
+          "phone_number": "0700000000",
+          "type": "national_id"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab26aa-26ed-7bea-8000-96950d80ecfc",
+        "verification_type": "ke_phone_number_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "type": "national_id",
+          "email": "gov-registry-test+ke_phone_number_lookup-fail@example.com",
+          "language": "EN",
+          "send_email": false,
+          "phone_number": "0700000000",
+          "require_selfie": false
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:42.433246Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab26aa-26ee-7398-8000-67eba6f3ab91",
+        "link": {
+          "id": "06ab26aa-26f9-7bbd-8000-079c748c79c0",
+          "link": "bfe92268-567c-4ef2-9560-a071d08c38ec",
+          "url": "https://app.verifyafrica.io/new-verify/bfe92268-567c-4ef2-9560-a071d08c38ec",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:46:42.434775Z",
+          "created_at": "2026-09-22T11:46:42.436998Z",
+          "verification_id": "06ab26aa-26ed-7bea-8000-96950d80ecfc",
+          "verification_reference": "VER-06ab26aa-26ee-7398-8000-67eba6f3ab91"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/bfe92268-567c-4ef2-9560-a071d08c38ec/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab26aa-26ee-7398-8000-67eba6f3ab91",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26aa-26ed-7bea-8000-96950d80ecfc"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26aa-26ed-7bea-8000-96950d80ecfc",
+        "verification_type": "ke_phone_number_lookup",
+        "status": "FAILED",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "type": "national_id",
+          "email": "gov-registry-test+ke_phone_number_lookup-fail@example.com",
+          "language": "EN",
+          "send_email": false,
+          "phone_number": "0700000000",
+          "require_selfie": false
+        },
+        "response_data": {
+          "data": {},
+          "event": "kr.verification.failed",
+          "status": false,
+          "message": "Get Phone data not found"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:42.433246Z",
+        "submitted_at": "2026-09-22T11:46:42.452083Z",
+        "batch_id": null,
+        "reference": "VER-06ab26aa-26ee-7398-8000-67eba6f3ab91",
+        "link": {
+          "id": "06ab26aa-26f9-7bbd-8000-079c748c79c0",
+          "link": "bfe92268-567c-4ef2-9560-a071d08c38ec",
+          "url": "https://app.verifyafrica.io/new-verify/bfe92268-567c-4ef2-9560-a071d08c38ec",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:46:42.434775Z",
+          "created_at": "2026-09-22T11:46:42.436998Z",
+          "verification_id": "06ab26aa-26ed-7bea-8000-96950d80ecfc",
+          "verification_reference": "VER-06ab26aa-26ee-7398-8000-67eba6f3ab91"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "scenario": {
+    "verification_type": "ng_advanced_phone_number_verification",
+    "mode": "link",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_advanced_phone_number_verification",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+ng_advanced_phone_number_verification-success@example.com",
+          "phone_number": "08000000000"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab268f-e88d-7f8c-8000-61624d7cd265",
+        "verification_type": "ng_advanced_phone_number_verification",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_advanced_phone_number_verification-success@example.com",
+          "language": "EN",
+          "send_email": false,
+          "phone_number": "08000000000",
+          "require_selfie": false,
+          "allow_file_upload": true
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:42.534788Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab268f-e88e-7495-8000-a0a5d39056a8",
+        "link": {
+          "id": "06ab268f-e897-73e6-8000-dca06dab567c",
+          "link": "03719997-53bb-4a80-a039-a65ad00fe1a9",
+          "url": "https://app.verifyafrica.io/new-verify/03719997-53bb-4a80-a039-a65ad00fe1a9",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:39:42.536416Z",
+          "created_at": "2026-09-22T11:39:42.537340Z",
+          "verification_id": "06ab268f-e88d-7f8c-8000-61624d7cd265",
+          "verification_reference": "VER-06ab268f-e88e-7495-8000-a0a5d39056a8"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/03719997-53bb-4a80-a039-a65ad00fe1a9/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab268f-e88e-7495-8000-a0a5d39056a8",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab268f-e88d-7f8c-8000-61624d7cd265"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab268f-e88d-7f8c-8000-61624d7cd265",
+        "verification_type": "ng_advanced_phone_number_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_advanced_phone_number_verification-success@example.com",
+          "language": "EN",
+          "send_email": false,
+          "phone_number": "08000000000",
+          "require_selfie": false,
+          "allow_file_upload": true
+        },
+        "response_data": {
+          "data": {
+            "id": "08000000000",
+            "email": "vino@viola.com",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "gender": "female",
+            "address": {
+              "lga": "Suleja",
+              "town": "SULEJA",
+              "state": "Niger",
+              "street": "13B Fake Street, Ilupeju Niger State"
+            },
+            "id_type": "ng_nin_phone",
+            "religion": "christianity",
+            "birth_lga": "Esan West",
+            "last_name": "Olakunle",
+            "reference": "VR-rPN7266lLAp3SZGIp",
+            "signature": "data:image/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIcSUNDX1BST0ZJTEUAAQEAAAIMbG…<truncated 9954 chars>",
+            "first_name": "Bimbo",
+            "birth_state": "Edo",
+            "middle_name": "Doherty",
+            "phone_number": "08000000000",
+            "requested_by": "API User",
+            "birth_country": "nigeria",
+            "date_of_birth": "1988-04-04",
+            "next_of_kin_state": "Niger"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "NIN phone verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:42.534788Z",
+        "submitted_at": "2026-09-22T11:39:42.549591Z",
+        "batch_id": null,
+        "reference": "VER-06ab268f-e88e-7495-8000-a0a5d39056a8",
+        "link": {
+          "id": "06ab268f-e897-73e6-8000-dca06dab567c",
+          "link": "03719997-53bb-4a80-a039-a65ad00fe1a9",
+          "url": "https://app.verifyafrica.io/new-verify/03719997-53bb-4a80-a039-a65ad00fe1a9",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:39:42.536416Z",
+          "created_at": "2026-09-22T11:39:42.537340Z",
+          "verification_id": "06ab268f-e88d-7f8c-8000-61624d7cd265",
+          "verification_reference": "VER-06ab268f-e88e-7495-8000-a0a5d39056a8"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

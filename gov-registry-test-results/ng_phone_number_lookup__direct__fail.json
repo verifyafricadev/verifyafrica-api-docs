@@ -1,0 +1,87 @@
+{
+  "scenario": {
+    "verification_type": "ng_phone_number_lookup",
+    "mode": "direct",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_phone_number_lookup",
+        "mode": "direct",
+        "input_data": {
+          "phone_number": "08000000001"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab2690-3501-79b7-8000-2c82c42d3b08",
+        "verification_type": "ng_phone_number_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "phone_number": "08000000001"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:47.313036Z",
+        "submitted_at": "2026-09-22T11:39:47.312881Z",
+        "batch_id": null,
+        "reference": "VER-06ab2690-3501-7f83-8000-d10a7f344015",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab2690-3501-79b7-8000-2c82c42d3b08"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab2690-3501-79b7-8000-2c82c42d3b08",
+        "verification_type": "ng_phone_number_lookup",
+        "status": "FAILED",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "phone_number": "08000000001"
+        },
+        "response_data": {
+          "data": {},
+          "event": "kr.verification.failed",
+          "status": false,
+          "message": "Phone Number data not found"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:47.313036Z",
+        "submitted_at": "2026-09-22T11:39:47.312881Z",
+        "batch_id": null,
+        "reference": "VER-06ab2690-3501-7f83-8000-d10a7f344015",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

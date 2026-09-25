@@ -1,0 +1,153 @@
+{
+  "scenario": {
+    "verification_type": "ng_passport_verification",
+    "mode": "link",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_passport_verification",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+ng_passport_verification-success@example.com",
+          "passport_id": "A01234567",
+          "last_name": "Olakunle"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab2691-1aae-7e7f-8000-44b2fbde2425",
+        "verification_type": "ng_passport_verification",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_passport_verification-success@example.com",
+          "language": "EN",
+          "last_name": "Olakunle",
+          "send_email": false,
+          "passport_id": "A01234567",
+          "require_selfie": false
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:40:01.667960Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab2691-1aaf-788d-8000-00489ef66fd0",
+        "link": {
+          "id": "06ab2691-1ad6-7650-8000-1810e3c7a69b",
+          "link": "b6888ec4-11ba-46e6-a349-c531de2e842a",
+          "url": "https://app.verifyafrica.io/new-verify/b6888ec4-11ba-46e6-a349-c531de2e842a",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:40:01.674299Z",
+          "created_at": "2026-09-22T11:40:01.678799Z",
+          "verification_id": "06ab2691-1aae-7e7f-8000-44b2fbde2425",
+          "verification_reference": "VER-06ab2691-1aaf-788d-8000-00489ef66fd0"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/b6888ec4-11ba-46e6-a349-c531de2e842a/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab2691-1aaf-788d-8000-00489ef66fd0",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab2691-1aae-7e7f-8000-44b2fbde2425"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab2691-1aae-7e7f-8000-44b2fbde2425",
+        "verification_type": "ng_passport_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_passport_verification-success@example.com",
+          "language": "EN",
+          "last_name": "Olakunle",
+          "send_email": false,
+          "passport_id": "A01234567",
+          "require_selfie": false
+        },
+        "response_data": {
+          "data": {
+            "id": "A01234567",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "gender": "female",
+            "id_type": "ng_passport",
+            "issued_at": "AKURE",
+            "last_name": "Jalekun",
+            "reference": "VR-Nq41zTRNEjEzlBWqx",
+            "signature": null,
+            "first_name": "Abike",
+            "issued_date": "2022-02-01",
+            "middle_name": "Mary",
+            "expired_date": "2030-04-04",
+            "phone_number": "08030123456",
+            "requested_by": "API User",
+            "date_of_birth": "1999-07-04"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "Passport verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:40:01.667960Z",
+        "submitted_at": "2026-09-22T11:40:01.706383Z",
+        "batch_id": null,
+        "reference": "VER-06ab2691-1aaf-788d-8000-00489ef66fd0",
+        "link": {
+          "id": "06ab2691-1ad6-7650-8000-1810e3c7a69b",
+          "link": "b6888ec4-11ba-46e6-a349-c531de2e842a",
+          "url": "https://app.verifyafrica.io/new-verify/b6888ec4-11ba-46e6-a349-c531de2e842a",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:40:01.674299Z",
+          "created_at": "2026-09-22T11:40:01.678799Z",
+          "verification_id": "06ab2691-1aae-7e7f-8000-44b2fbde2425",
+          "verification_reference": "VER-06ab2691-1aaf-788d-8000-00489ef66fd0"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

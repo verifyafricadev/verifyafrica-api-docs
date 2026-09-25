@@ -48,6 +48,13 @@ CHECKS: list[tuple[str, str, str, str]] = [
     ("ke_national_id_lookup", "single-gov-kenya", "Kenya National ID Lookup", "ke-national-id-lookup"),
     ("ke_phone_number_lookup", "single-gov-kenya", "Kenya Phone Lookup", "ke-phone-number-lookup"),
     ("ke_tax_pin_verification", "single-gov-kenya", "Kenya Tax PIN Verification", "ke-tax-pin-verification"),
+    ("ci_national_id_lookup", "single-gov-cote-divoire", "Côte d'Ivoire National ID Lookup", "ci-national-id-lookup"),
+    (
+        "ci_residence_card_lookup",
+        "single-gov-cote-divoire",
+        "Côte d'Ivoire Residence Card Lookup",
+        "ci-residence-card-lookup",
+    ),
 ]
 
 COUNTRY_TAGS = {
@@ -71,6 +78,11 @@ COUNTRY_TAGS = {
         "description": "Government registry checks for Kenya.",
         "x-displayName": "Kenya",
     },
+    "single-gov-cote-divoire": {
+        "name": "single-gov-cote-divoire",
+        "description": "Government registry checks for Côte d'Ivoire.",
+        "x-displayName": "Côte d'Ivoire",
+    },
 }
 
 # Required input_data keys per verification_type (from MDX)
@@ -91,6 +103,8 @@ REQUIRED_INPUT: dict[str, list[str]] = {
     "ke_national_id_lookup": ["id_number"],
     "ke_phone_number_lookup": ["phone_number"],
     "ke_tax_pin_verification": ["tax_pin"],
+    "ci_national_id_lookup": ["national_id"],
+    "ci_residence_card_lookup": ["residence_card_id"],
 }
 
 
@@ -230,6 +244,7 @@ def transform(spec: dict) -> dict:
                 "single-gov-nigeria",
                 "single-gov-ghana",
                 "single-gov-kenya",
+                "single-gov-cote-divoire",
             ],
         },
     ]

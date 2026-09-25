@@ -1,0 +1,112 @@
+{
+  "scenario": {
+    "verification_type": "ng_advanced_phone_number_verification",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_advanced_phone_number_verification",
+        "mode": "direct",
+        "input_data": {
+          "phone_number": "08000000000"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab268f-b636-70b4-8000-7b0ba5321b63",
+        "verification_type": "ng_advanced_phone_number_verification",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "phone_number": "08000000000"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:39.388384Z",
+        "submitted_at": "2026-09-22T11:39:39.388174Z",
+        "batch_id": null,
+        "reference": "VER-06ab268f-b636-78b9-8000-81d461a36917",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab268f-b636-70b4-8000-7b0ba5321b63"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab268f-b636-70b4-8000-7b0ba5321b63",
+        "verification_type": "ng_advanced_phone_number_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "phone_number": "08000000000"
+        },
+        "response_data": {
+          "data": {
+            "id": "08000000000",
+            "email": "vino@viola.com",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "gender": "female",
+            "address": {
+              "lga": "Suleja",
+              "town": "SULEJA",
+              "state": "Niger",
+              "street": "13B Fake Street, Ilupeju Niger State"
+            },
+            "id_type": "ng_nin_phone",
+            "religion": "christianity",
+            "birth_lga": "Esan West",
+            "last_name": "Olakunle",
+            "reference": "VR-1i6biifPbuRpQL5kY",
+            "signature": "data:image/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIcSUNDX1BST0ZJTEUAAQEAAAIMbG…<truncated 9954 chars>",
+            "first_name": "Bimbo",
+            "birth_state": "Edo",
+            "middle_name": "Doherty",
+            "phone_number": "08000000000",
+            "requested_by": "API User",
+            "birth_country": "nigeria",
+            "date_of_birth": "1988-04-04",
+            "next_of_kin_state": "Niger"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "NIN phone verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:39.388384Z",
+        "submitted_at": "2026-09-22T11:39:39.388174Z",
+        "batch_id": null,
+        "reference": "VER-06ab268f-b636-78b9-8000-81d461a36917",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

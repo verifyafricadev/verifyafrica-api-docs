@@ -1,0 +1,134 @@
+{
+  "scenario": {
+    "verification_type": "za_said_verification",
+    "mode": "link",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "za_said_verification",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+za_said_verification-fail@example.com",
+          "id_number": "8000000000001"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab268e-6c55-70cf-8000-0f9ab910752c",
+        "verification_type": "za_said_verification",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+za_said_verification-fail@example.com",
+          "language": "EN",
+          "id_number": "8000000000001",
+          "send_email": false,
+          "require_selfie": false
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:18.771027Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab268e-6c55-7b3c-8000-dbeec905346f",
+        "link": {
+          "id": "06ab268e-6c6d-7104-8000-0b912f5bcd71",
+          "link": "26c87096-cf75-4682-ad70-070973b4003b",
+          "url": "https://app.verifyafrica.io/new-verify/26c87096-cf75-4682-ad70-070973b4003b",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:39:18.775270Z",
+          "created_at": "2026-09-22T11:39:18.777332Z",
+          "verification_id": "06ab268e-6c55-70cf-8000-0f9ab910752c",
+          "verification_reference": "VER-06ab268e-6c55-7b3c-8000-dbeec905346f"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/26c87096-cf75-4682-ad70-070973b4003b/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab268e-6c55-7b3c-8000-dbeec905346f",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab268e-6c55-70cf-8000-0f9ab910752c"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab268e-6c55-70cf-8000-0f9ab910752c",
+        "verification_type": "za_said_verification",
+        "status": "FAILED",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+za_said_verification-fail@example.com",
+          "language": "EN",
+          "id_number": "8000000000001",
+          "send_email": false,
+          "require_selfie": false
+        },
+        "response_data": {
+          "data": {},
+          "event": "kr.verification.failed",
+          "status": false,
+          "message": "SAID data not found"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:18.771027Z",
+        "submitted_at": "2026-09-22T11:39:18.807950Z",
+        "batch_id": null,
+        "reference": "VER-06ab268e-6c55-7b3c-8000-dbeec905346f",
+        "link": {
+          "id": "06ab268e-6c6d-7104-8000-0b912f5bcd71",
+          "link": "26c87096-cf75-4682-ad70-070973b4003b",
+          "url": "https://app.verifyafrica.io/new-verify/26c87096-cf75-4682-ad70-070973b4003b",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:39:18.775270Z",
+          "created_at": "2026-09-22T11:39:18.777332Z",
+          "verification_id": "06ab268e-6c55-70cf-8000-0f9ab910752c",
+          "verification_reference": "VER-06ab268e-6c55-7b3c-8000-dbeec905346f"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

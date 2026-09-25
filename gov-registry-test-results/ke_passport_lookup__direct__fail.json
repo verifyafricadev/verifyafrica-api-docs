@@ -1,0 +1,87 @@
+{
+  "scenario": {
+    "verification_type": "ke_passport_lookup",
+    "mode": "direct",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ke_passport_lookup",
+        "mode": "direct",
+        "input_data": {
+          "passport_number": "A0000000"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab26a9-279e-70c9-8000-2d76568884c7",
+        "verification_type": "ke_passport_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "passport_number": "A0000000"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:26.476401Z",
+        "submitted_at": "2026-09-22T11:46:26.476060Z",
+        "batch_id": null,
+        "reference": "VER-06ab26a9-279e-7e36-8000-6d040f94a3cf",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26a9-279e-70c9-8000-2d76568884c7"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26a9-279e-70c9-8000-2d76568884c7",
+        "verification_type": "ke_passport_lookup",
+        "status": "FAILED",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "passport_number": "A0000000"
+        },
+        "response_data": {
+          "data": {},
+          "event": "kr.verification.failed",
+          "status": false,
+          "message": "Passport data not found"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:26.476401Z",
+        "submitted_at": "2026-09-22T11:46:26.476060Z",
+        "batch_id": null,
+        "reference": "VER-06ab26a9-279e-7e36-8000-6d040f94a3cf",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

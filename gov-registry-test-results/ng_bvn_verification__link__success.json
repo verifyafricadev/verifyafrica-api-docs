@@ -1,0 +1,166 @@
+{
+  "scenario": {
+    "verification_type": "ng_bvn_verification",
+    "mode": "link",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_bvn_verification",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+ng_bvn_verification-success@example.com",
+          "bvn": "22222222222"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab268e-b90d-7bc8-8000-e4df23c51bad",
+        "verification_type": "ng_bvn_verification",
+        "status": "PENDING",
+        "input_data": {
+          "bvn": "22222222222",
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_bvn_verification-success@example.com",
+          "language": "EN",
+          "send_email": false,
+          "require_selfie": false,
+          "allow_file_upload": true
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:23.566043Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab268e-b90e-733c-8000-1ef2a1b85239",
+        "link": {
+          "id": "06ab268e-b920-77a7-8000-14cb77b0539c",
+          "link": "5d984e08-f542-49c5-bc95-419b3960a596",
+          "url": "https://app.verifyafrica.io/new-verify/5d984e08-f542-49c5-bc95-419b3960a596",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:39:23.569702Z",
+          "created_at": "2026-09-22T11:39:23.571038Z",
+          "verification_id": "06ab268e-b90d-7bc8-8000-e4df23c51bad",
+          "verification_reference": "VER-06ab268e-b90e-733c-8000-1ef2a1b85239"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/5d984e08-f542-49c5-bc95-419b3960a596/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab268e-b90e-733c-8000-1ef2a1b85239",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab268e-b90d-7bc8-8000-e4df23c51bad"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab268e-b90d-7bc8-8000-e4df23c51bad",
+        "verification_type": "ng_bvn_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "bvn": "22222222222",
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_bvn_verification-success@example.com",
+          "language": "EN",
+          "send_email": false,
+          "require_selfie": false,
+          "allow_file_upload": true
+        },
+        "response_data": {
+          "data": {
+            "id": "22222222222",
+            "nin": "55555555555",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "title": null,
+            "gender": "male",
+            "address": {
+              "lga": null,
+              "town": null,
+              "state": null,
+              "street": null
+            },
+            "id_type": "ng_bvn",
+            "last_name": "Mandela",
+            "reference": "VR-u9yACSqhzp77qvbN8",
+            "first_name": "Trevor",
+            "middle_name": null,
+            "name_on_card": null,
+            "other_mobile": null,
+            "phone_number": "08031234567",
+            "requested_by": "API User",
+            "watch_listed": null,
+            "date_of_birth": "1989-07-08",
+            "lga_of_origin": null,
+            "marital_status": null,
+            "state_of_origin": null,
+            "level_of_account": null,
+            "enrollment_branch": null,
+            "registration_date": "2005-11-11",
+            "enrollment_institution": null
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "BVN verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:23.566043Z",
+        "submitted_at": "2026-09-22T11:39:23.589062Z",
+        "batch_id": null,
+        "reference": "VER-06ab268e-b90e-733c-8000-1ef2a1b85239",
+        "link": {
+          "id": "06ab268e-b920-77a7-8000-14cb77b0539c",
+          "link": "5d984e08-f542-49c5-bc95-419b3960a596",
+          "url": "https://app.verifyafrica.io/new-verify/5d984e08-f542-49c5-bc95-419b3960a596",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:39:23.569702Z",
+          "created_at": "2026-09-22T11:39:23.571038Z",
+          "verification_id": "06ab268e-b90d-7bc8-8000-e4df23c51bad",
+          "verification_reference": "VER-06ab268e-b90e-733c-8000-1ef2a1b85239"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

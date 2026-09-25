@@ -1,0 +1,125 @@
+---
+title: Côte d'Ivoire Residence Card Lookup
+description: Verify Ivorian Residence Card records against the government registry via Korapay Identity.
+sidebar_label: Côte d'Ivoire Residence Card Lookup
+---
+
+# Côte d'Ivoire Residence Card Lookup
+
+Verify Ivorian Residence Card records against the government registry via Korapay Identity.
+
+:::tip API Reference
+Jump directly to the interactive API docs:
+
+- [API reference](/api/single-gov-cote-divoire#cote-d-ivoire-residence-card-lookup) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/government_registry_checks/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
+:::
+
+## Verification Type
+
+```
+ci_residence_card_lookup
+```
+
+## Use Cases
+
+- Residence card verification for Côte d'Ivoire
+- KYC for foreign nationals with Ivorian residence documents
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `residence_card_id` | string | Yes | Ivorian Residence Card ID. **7–12 alphanumeric characters**; normalized to uppercase before Korapay. |
+| `first_name` | string | No | First name for cross-validation. |
+| `last_name` | string | No | Last name for cross-validation. |
+| `date_of_birth` | string | No | Date of birth (YYYY-MM-DD). |
+| `selfie` | string (URL) | No | Direct mode only — HTTPS selfie image URL for facial matching. |
+
+## Modes
+
+Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, selfies, and webhooks.
+
+| Mode | Notes |
+| --- | --- |
+| `link` (default) | Hosted page. Prefill fields to lock them; leave optional validation blank for the customer. Returns `data.link.url`. |
+| `direct` | Send the required identifier now. Runs asynchronously. |
+
+Do not send internal `method_type`. Use top-level `mode` instead.
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/`
+
+Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ci_residence_card_lookup`.
+
+### Link mode
+
+```json
+{
+  "verification_type": "ci_residence_card_lookup",
+  "mode": "link",
+  "send_email": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "ttl": 60
+  }
+}
+```
+
+### Direct mode
+
+```json
+{
+  "verification_type": "ci_residence_card_lookup",
+  "mode": "direct",
+  "input_data": {
+    "residence_card_id": "11223344555"
+  }
+}
+```
+
+Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
+
+## Sandbox testing
+
+With Korapay **test** keys, use the [Korapay sandbox identity numbers](https://developers.korapay.com/docs/testing-your-integration):
+
+| Scenario | Residence Card ID |
+| --- | --- |
+| Valid | `11223344555` |
+
+IDs are normalized to uppercase. Values outside 7–12 alphanumeric characters are rejected at create with HTTP 400.
+
+## Example Error Responses
+
+Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+
+```json
+{
+  "success": false,
+  "message": "residence_card_id: Residence card ID must be 7 to 12 characters.",
+  "errors": ["residence_card_id: Residence card ID must be 7 to 12 characters."]
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Invalid API key.",
+  "errors": ["Invalid API key."]
+}
+```
+
+See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [API reference](/api/single-gov-cote-divoire#cote-d-ivoire-residence-card-lookup)

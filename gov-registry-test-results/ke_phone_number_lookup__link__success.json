@@ -1,0 +1,154 @@
+{
+  "scenario": {
+    "verification_type": "ke_phone_number_lookup",
+    "mode": "link",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ke_phone_number_lookup",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+ke_phone_number_lookup-success@example.com",
+          "phone_number": "0723818211",
+          "type": "national_id"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab26aa-0d84-7abf-8000-3aca3bf1bdab",
+        "verification_type": "ke_phone_number_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "type": "national_id",
+          "email": "gov-registry-test+ke_phone_number_lookup-success@example.com",
+          "language": "EN",
+          "send_email": false,
+          "phone_number": "0723818211",
+          "require_selfie": false
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:40.845115Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab26aa-0d85-73b7-8000-81842c01c6b1",
+        "link": {
+          "id": "06ab26aa-0d92-7e1d-8000-41812d198c92",
+          "link": "9ef07f4f-8013-440c-b6e1-5b1116a51829",
+          "url": "https://app.verifyafrica.io/new-verify/9ef07f4f-8013-440c-b6e1-5b1116a51829",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:46:40.847259Z",
+          "created_at": "2026-09-22T11:46:40.849001Z",
+          "verification_id": "06ab26aa-0d84-7abf-8000-3aca3bf1bdab",
+          "verification_reference": "VER-06ab26aa-0d85-73b7-8000-81842c01c6b1"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/9ef07f4f-8013-440c-b6e1-5b1116a51829/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab26aa-0d85-73b7-8000-81842c01c6b1",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26aa-0d84-7abf-8000-3aca3bf1bdab"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26aa-0d84-7abf-8000-3aca3bf1bdab",
+        "verification_type": "ke_phone_number_lookup",
+        "status": "SUCCESS",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "type": "national_id",
+          "email": "gov-registry-test+ke_phone_number_lookup-success@example.com",
+          "language": "EN",
+          "send_email": false,
+          "phone_number": "0723818211",
+          "require_selfie": false
+        },
+        "response_data": {
+          "data": {
+            "id": "0723818211",
+            "email": "senajisein@viola.com",
+            "gender": "Male",
+            "id_type": "ke_get_phone",
+            "full_name": "Nabilai Vincent Senaji",
+            "last_name": "Senaji",
+            "reference": "VR-oeweFcC9j1FPpCZdu",
+            "first_name": "Nabilai",
+            "middle_name": "Vincent",
+            "requested_by": "API User",
+            "date_of_birth": "1999-12-28",
+            "identity_type": "national_id",
+            "marital_status": "Married",
+            "home_telephone_number": "+8761234566",
+            "work_telephone_number": "040-3203307",
+            "mobile_telephone_number": "254723818211"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "Phone data retrieved successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:40.845115Z",
+        "submitted_at": "2026-09-22T11:46:40.873047Z",
+        "batch_id": null,
+        "reference": "VER-06ab26aa-0d85-73b7-8000-81842c01c6b1",
+        "link": {
+          "id": "06ab26aa-0d92-7e1d-8000-41812d198c92",
+          "link": "9ef07f4f-8013-440c-b6e1-5b1116a51829",
+          "url": "https://app.verifyafrica.io/new-verify/9ef07f4f-8013-440c-b6e1-5b1116a51829",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:46:40.847259Z",
+          "created_at": "2026-09-22T11:46:40.849001Z",
+          "verification_id": "06ab26aa-0d84-7abf-8000-3aca3bf1bdab",
+          "verification_reference": "VER-06ab26aa-0d85-73b7-8000-81842c01c6b1"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

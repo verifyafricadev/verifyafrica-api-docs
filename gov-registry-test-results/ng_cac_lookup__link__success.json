@@ -1,0 +1,459 @@
+{
+  "scenario": {
+    "verification_type": "ng_cac_lookup",
+    "mode": "link",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_cac_lookup",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+ng_cac_lookup-success@example.com",
+          "cac_number": "RC00000011",
+          "registration_type": "RC"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab26bb-db7c-7488-8000-73db7710d376",
+        "verification_type": "ng_cac_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_cac_lookup-success@example.com",
+          "language": "EN",
+          "cac_number": "RC00000011",
+          "send_email": false,
+          "require_selfie": false,
+          "registration_type": "RC"
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:51:25.718088Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab26bb-db7c-7e81-8000-a7bdbc33eccc",
+        "link": {
+          "id": "06ab26bb-dbb6-74d2-8000-f326072c177e",
+          "link": "a1e4eb93-2412-4adc-bf55-083ffa8600cf",
+          "url": "https://app.verifyafrica.io/new-verify/a1e4eb93-2412-4adc-bf55-083ffa8600cf",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:51:25.729752Z",
+          "created_at": "2026-09-22T11:51:25.732897Z",
+          "verification_id": "06ab26bb-db7c-7488-8000-73db7710d376",
+          "verification_reference": "VER-06ab26bb-db7c-7e81-8000-a7bdbc33eccc"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/a1e4eb93-2412-4adc-bf55-083ffa8600cf/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab26bb-db7c-7e81-8000-a7bdbc33eccc",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26bb-db7c-7488-8000-73db7710d376"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26bb-db7c-7488-8000-73db7710d376",
+        "verification_type": "ng_cac_lookup",
+        "status": "SUCCESS",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+ng_cac_lookup-success@example.com",
+          "language": "EN",
+          "cac_number": "RC00000011",
+          "send_email": false,
+          "require_selfie": false,
+          "registration_type": "RC"
+        },
+        "response_data": {
+          "data": {
+            "id": "RC00000011",
+            "lga": "Lagos Mainland",
+            "tin": "00000000-0001",
+            "city": "YABA",
+            "name": "John Doe Inc",
+            "email": "johnfakedoe@gmail.com",
+            "state": "LAGOS",
+            "address": "1ST FLOOR,SUM HOUSE,Fake Street",
+            "country": "ng",
+            "filings": [
+              {
+                "date": "2020-10-31",
+                "name": "Dissolution",
+                "type": "Dissolution",
+                "status": null,
+                "type_code": null
+              },
+              {
+                "date": "2017-09-27",
+                "name": "Incorporation",
+                "type": "Incorporation",
+                "status": null,
+                "type_code": null
+              }
+            ],
+            "id_type": "ng_cac",
+            "jtb_tin": null,
+            "activity": "Information service activities",
+            "reference": "VR-TCGSjd4tgYaquSE20",
+            "activities": [],
+            "affiliates": [
+              {
+                "name": "John Doe 1",
+                "country": "NG",
+                "brand_name": null,
+                "short_name": null,
+                "company_number": "0000.000.000"
+              },
+              {
+                "name": "John Doe 2",
+                "country": "NG",
+                "brand_name": null,
+                "short_name": null,
+                "company_number": "0000.000.0000"
+              }
+            ],
+            "brand_name": null,
+            "objectives": "",
+            "tax_office": null,
+            "vat_number": "00000000-0001",
+            "former_name": null,
+            "search_term": "RC00000011",
+            "phone_number": "+1 000 000 0000",
+            "requested_by": "API User",
+            "shares_value": "0.01 NGN",
+            "key_personnel": [
+              {
+                "name": "PETER DOE",
+                "email": "",
+                "gender": "",
+                "number": "",
+                "status": "ACTIVE",
+                "address": "8C, NONE STREET, ZONE 4",
+                "companies": [],
+                "birth_date": null,
+                "birth_year": null,
+                "is_foreign": "false",
+                "occupation": "LAWYER",
+                "birth_month": null,
+                "designation": "WITNESS",
+                "nationality": null,
+                "resigned_on": null,
+                "shares_type": "",
+                "appointed_on": null,
+                "is_corporate": false,
+                "phone_number": "",
+                "shares_count": null,
+                "shares_value": null,
+                "date_of_birth": null,
+                "document_type": "",
+                "document_number": "",
+                "document_issued_by": null,
+                "document_issued_on": null,
+                "country_of_residence": "NIGERIA"
+              },
+              {
+                "name": "SUSAN DOE",
+                "email": "",
+                "gender": "FEMALE",
+                "number": "",
+                "status": "ACTIVE",
+                "address": "11, NONE CRESCENT",
+                "companies": [],
+                "birth_date": null,
+                "birth_year": null,
+                "is_foreign": "false",
+                "occupation": "SECRETARY",
+                "birth_month": null,
+                "designation": "SECRETARY_COMPANY",
+                "nationality": "NIGERIA",
+                "resigned_on": null,
+                "shares_type": "",
+                "appointed_on": null,
+                "is_corporate": false,
+                "phone_number": "",
+                "shares_count": null,
+                "shares_value": null,
+                "date_of_birth": null,
+                "document_type": "",
+                "document_number": "",
+                "document_issued_by": null,
+                "document_issued_on": null,
+                "country_of_residence": "NIGERIA"
+              },
+              {
+                "name": "MICHAEL DOE",
+                "email": null,
+                "gender": "MALE",
+                "number": null,
+                "status": "ACTIVE",
+                "address": "1, NONE STREET, ",
+                "companies": [],
+                "birth_date": null,
+                "birth_year": null,
+                "is_foreign": "false",
+                "occupation": "BUSINESS",
+                "birth_month": null,
+                "designation": "DIRECTOR",
+                "nationality": "NIGERIA",
+                "resigned_on": null,
+                "shares_type": null,
+                "appointed_on": null,
+                "is_corporate": null,
+                "phone_number": null,
+                "shares_count": null,
+                "shares_value": null,
+                "date_of_birth": null,
+                "document_type": null,
+                "document_number": null,
+                "document_issued_by": null,
+                "document_issued_on": null,
+                "country_of_residence": "NIGERIA"
+              },
+              {
+                "name": "JANE DOE  INC",
+                "email": null,
+                "gender": null,
+                "number": null,
+                "status": "ACTIVE",
+                "address": "01 COASTAL HIGHWAY,LEWES DE 000000  USA,COUNTY OF SUSSEX",
+                "companies": [],
+                "birth_date": null,
+                "birth_year": null,
+                "is_foreign": "true",
+                "occupation": null,
+                "birth_month": null,
+                "designation": "SHAREHOLDER",
+                "nationality": null,
+                "resigned_on": null,
+                "shares_type": "ORDINARY",
+                "appointed_on": "2021-03-17T14:07:43.000+00:00",
+                "is_corporate": true,
+                "phone_number": null,
+                "shares_count": "9990000",
+                "shares_value": "9990000",
+                "date_of_birth": null,
+                "document_type": null,
+                "document_number": null,
+                "document_issued_by": null,
+                "document_issued_on": null,
+                "country_of_residence": "UNITED STATES"
+              },
+              {
+                "name": "JOHN DOE",
+                "email": null,
+                "gender": "MALE",
+                "number": null,
+                "status": "ACTIVE",
+                "address": "1 NONE STREET,LEKKI",
+                "companies": [],
+                "birth_date": null,
+                "birth_year": null,
+                "is_foreign": "false",
+                "occupation": null,
+                "birth_month": null,
+                "designation": "SHAREHOLDER",
+                "nationality": null,
+                "resigned_on": null,
+                "shares_type": "ORDINARY",
+                "appointed_on": null,
+                "is_corporate": null,
+                "phone_number": null,
+                "shares_count": "10000",
+                "shares_value": "10000",
+                "date_of_birth": null,
+                "document_type": null,
+                "document_number": null,
+                "document_issued_by": null,
+                "document_issued_on": null,
+                "country_of_residence": "NIGERIA"
+              },
+              {
+                "name": "JOHN DOE INC",
+                "email": null,
+                "gender": null,
+                "number": null,
+                "status": "ACTIVE",
+                "address": "01 COASTAL HIGHWAY,LEWES DE 000000 ",
+                "companies": [],
+                "birth_date": null,
+                "birth_year": null,
+                "is_foreign": "true",
+                "occupation": null,
+                "birth_month": null,
+                "designation": "PERSONS WITH SIGNIFICANT CONTROL",
+                "nationality": null,
+                "resigned_on": null,
+                "shares_type": null,
+                "appointed_on": "2022-03-30T14:42:16.554+00:00",
+                "is_corporate": true,
+                "phone_number": null,
+                "shares_count": null,
+                "shares_value": null,
+                "date_of_birth": null,
+                "document_type": null,
+                "document_number": null,
+                "document_issued_by": null,
+                "document_issued_on": null,
+                "country_of_residence": "UNITED STATES"
+              }
+            ],
+            "shares_issued": "10000000",
+            "website_email": null,
+            "branch_address": "1ST FLOOR,SUM HOUSE,Fake Street, YABA, LAGOS STATE ",
+            "company_status": "ACTIVE",
+            "date_dissolved": null,
+            "parent_country": null,
+            "type_of_entity": "PRIVATE COMPANY LIMITED BY SHARES",
+            "last_updated_at": "2022-03-30T14:19:35.571+00:00",
+            "registry_number": "00000000",
+            "registration_date": "2017-06-09T00:00:00.000+00:00",
+            "paid_share_capital": "10000000",
+            "head_office_address": null,
+            "registration_number": "RC00000000",
+            "activity_description": "Information service activities",
+            "search_business_name": null,
+            "share_capital_in_words": "TEN MILLION NAIRA",
+            "company_contact_persons": [
+              {
+                "name": "Eboikpomwen  Eki ",
+                "contacts": {
+                  "email": [
+                    "jeneki2000@yahoo.co.uk"
+                  ],
+                  "phone": [
+                    "08034926354"
+                  ]
+                }
+              }
+            ],
+            "subscribed_share_capital": "10000000",
+            "central_index_key_register": [
+              {
+                "cik": "000000",
+                "ein": "000000000000",
+                "sic": "3711",
+                "name": "John Doe, Inc.",
+                "tickers": [
+                  "JOL"
+                ],
+                "website": "",
+                "description": "",
+                "entity_type": "operating",
+                "former_names": [
+                  {
+                    "to": "2017-01-27T00:00:00.000Z",
+                    "from": "2005-02-17T00:00:00.000Z",
+                    "name": "JOL MOTORS INC"
+                  }
+                ],
+                "phone_number": "000-000-0000",
+                "sic_description": "Motor Vehicles & Passenger Car Bodies",
+                "investor_website": "",
+                "mailing_address_city": "PALO ALTO",
+                "business_address_city": "PALO ALTO",
+                "state_of_incorporation": "DE",
+                "business_address_street_1": "3500 FAKE ST ROAD",
+                "business_address_street_2": null,
+                "business_address_zip_code": "123454",
+                "business_address_state_or_country": "CA",
+                "business_address_state_or_country_description": "CA"
+              }
+            ],
+            "registration_submission_date": "2017-05-31T11:22:07.713+00:00",
+            "legal_entity_identifier_register": [
+              {
+                "status": "ISSUED",
+                "legal_name": "John Doe PLC",
+                "entity_status": "ACTIVE",
+                "entity_category": "GENERAL",
+                "legal_address_city": "CAMBRIDGE",
+                "legal_jurisdiction": "GB",
+                "legal_address_region": "GB-CAM",
+                "legal_address_country": "GB",
+                "validation_authority_id": "RA000000",
+                "legal_first_address_line": "1 FAKE CRICK AVENUE",
+                "initial_registration_date": "2012-06-06",
+                "legal_address_postal_code": "CB2 0AA",
+                "registration_authority_id": "R0000000",
+                "registration_managing_lou": "0000000000000000",
+                "legal_entity_identifier_code": "0000000000000000",
+                "registration_last_update_date": "2021-08-21",
+                "registration_next_renewal_date": "2022-08-11",
+                "validation_authority_entity_id": "02700000",
+                "legal_additional_address_line_1": "CAMBRIDGE BIOMEDICAL CAMPUS",
+                "legal_additional_address_line_2": "",
+                "legal_additional_address_line_3": "",
+                "registration_validation_sources": "FULLY_CORROBORATED",
+                "registration_authority_entity_id": "00000000"
+              }
+            ]
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "CAC verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:51:25.718088Z",
+        "submitted_at": "2026-09-22T11:51:25.765602Z",
+        "batch_id": null,
+        "reference": "VER-06ab26bb-db7c-7e81-8000-a7bdbc33eccc",
+        "link": {
+          "id": "06ab26bb-dbb6-74d2-8000-f326072c177e",
+          "link": "a1e4eb93-2412-4adc-bf55-083ffa8600cf",
+          "url": "https://app.verifyafrica.io/new-verify/a1e4eb93-2412-4adc-bf55-083ffa8600cf",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:51:25.729752Z",
+          "created_at": "2026-09-22T11:51:25.732897Z",
+          "verification_id": "06ab26bb-db7c-7488-8000-73db7710d376",
+          "verification_reference": "VER-06ab26bb-db7c-7e81-8000-a7bdbc33eccc"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

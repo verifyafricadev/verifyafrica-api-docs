@@ -1,0 +1,105 @@
+{
+  "scenario": {
+    "verification_type": "gh_passport_lookup",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "gh_passport_lookup",
+        "mode": "direct",
+        "input_data": {
+          "passport_number": "G0000555"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab2691-4de1-75c4-8000-dbd78d355653",
+        "verification_type": "gh_passport_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "passport_number": "G0000555"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:40:04.867762Z",
+        "submitted_at": "2026-09-22T11:40:04.867461Z",
+        "batch_id": null,
+        "reference": "VER-06ab2691-4de2-702e-8000-0687f731a5af",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab2691-4de1-75c4-8000-dbd78d355653"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab2691-4de1-75c4-8000-dbd78d355653",
+        "verification_type": "gh_passport_lookup",
+        "status": "SUCCESS",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "passport_number": "G0000555"
+        },
+        "response_data": {
+          "data": {
+            "id": "G0000555",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "gender": "male",
+            "id_type": "gh_passport",
+            "full_name": "SAMUEL MICHAEL KUDUS",
+            "issued_at": "ACCRA",
+            "last_name": "KUDUS",
+            "reference": "VR-ohWwyPuOyttsTTlpB",
+            "signature": "data:image/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIcSUNDX1BST0ZJTEUAAQEAAAIMbG…<truncated 9954 chars>",
+            "first_name": "SAMUEL",
+            "issued_date": "2023-03-10",
+            "middle_name": "MICHAEL",
+            "nationality": "GHANAIAN",
+            "expired_date": "2030-03-11",
+            "requested_by": "API User",
+            "date_of_birth": "1955-05-25",
+            "place_of_birth": "ACCRA"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "Passport verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:40:04.867762Z",
+        "submitted_at": "2026-09-22T11:40:04.867461Z",
+        "batch_id": null,
+        "reference": "VER-06ab2691-4de2-702e-8000-0687f731a5af",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

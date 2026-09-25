@@ -1,0 +1,663 @@
+{
+  "total": 64,
+  "passed_expectation": 64,
+  "failed_expectation": [],
+  "results": [
+    {
+      "file": "gh_drivers_license_lookup__direct__fail.json",
+      "verification_type": "gh_drivers_license_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Driver's License data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_drivers_license_lookup__direct__success.json",
+      "verification_type": "gh_drivers_license_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Driver's license verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_drivers_license_lookup__link__fail.json",
+      "verification_type": "gh_drivers_license_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Driver's License data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_drivers_license_lookup__link__success.json",
+      "verification_type": "gh_drivers_license_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Driver's license verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_passport_lookup__direct__fail.json",
+      "verification_type": "gh_passport_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Passport data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_passport_lookup__direct__success.json",
+      "verification_type": "gh_passport_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Passport verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_passport_lookup__link__fail.json",
+      "verification_type": "gh_passport_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Passport data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_passport_lookup__link__success.json",
+      "verification_type": "gh_passport_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Passport verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_ssnit_lookup__direct__fail.json",
+      "verification_type": "gh_ssnit_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "SSNIT data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_ssnit_lookup__direct__success.json",
+      "verification_type": "gh_ssnit_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "SSNIT verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_ssnit_lookup__link__fail.json",
+      "verification_type": "gh_ssnit_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "SSNIT data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_ssnit_lookup__link__success.json",
+      "verification_type": "gh_ssnit_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "SSNIT verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_voter_card_lookup__direct__fail.json",
+      "verification_type": "gh_voter_card_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "GVC data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_voter_card_lookup__direct__success.json",
+      "verification_type": "gh_voter_card_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Voter's card verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_voter_card_lookup__link__fail.json",
+      "verification_type": "gh_voter_card_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "GVC data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "gh_voter_card_lookup__link__success.json",
+      "verification_type": "gh_voter_card_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Voter's card verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_national_id_lookup__direct__fail.json",
+      "verification_type": "ke_national_id_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "National ID data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_national_id_lookup__direct__success.json",
+      "verification_type": "ke_national_id_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "National identity verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_national_id_lookup__link__fail.json",
+      "verification_type": "ke_national_id_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "National ID data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_national_id_lookup__link__success.json",
+      "verification_type": "ke_national_id_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "National identity verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_passport_lookup__direct__fail.json",
+      "verification_type": "ke_passport_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Passport data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_passport_lookup__direct__success.json",
+      "verification_type": "ke_passport_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Passport verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_passport_lookup__link__fail.json",
+      "verification_type": "ke_passport_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Passport data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_passport_lookup__link__success.json",
+      "verification_type": "ke_passport_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Passport verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_phone_number_lookup__direct__fail.json",
+      "verification_type": "ke_phone_number_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Get Phone data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_phone_number_lookup__direct__success.json",
+      "verification_type": "ke_phone_number_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Phone data retrieved successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_phone_number_lookup__link__fail.json",
+      "verification_type": "ke_phone_number_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Get Phone data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_phone_number_lookup__link__success.json",
+      "verification_type": "ke_phone_number_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Phone data retrieved successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_tax_pin_verification__direct__fail.json",
+      "verification_type": "ke_tax_pin_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Tax Pin data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_tax_pin_verification__direct__success.json",
+      "verification_type": "ke_tax_pin_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Tax pin verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_tax_pin_verification__link__fail.json",
+      "verification_type": "ke_tax_pin_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Tax Pin data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ke_tax_pin_verification__link__success.json",
+      "verification_type": "ke_tax_pin_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Tax pin verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_advanced_phone_number_verification__direct__fail.json",
+      "verification_type": "ng_advanced_phone_number_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "NIN Phone data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_advanced_phone_number_verification__direct__success.json",
+      "verification_type": "ng_advanced_phone_number_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "NIN phone verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_advanced_phone_number_verification__link__fail.json",
+      "verification_type": "ng_advanced_phone_number_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "NIN Phone data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_advanced_phone_number_verification__link__success.json",
+      "verification_type": "ng_advanced_phone_number_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "NIN phone verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_bvn_verification__direct__fail.json",
+      "verification_type": "ng_bvn_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "BVN data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_bvn_verification__direct__success.json",
+      "verification_type": "ng_bvn_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "BVN verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_bvn_verification__link__fail.json",
+      "verification_type": "ng_bvn_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "BVN data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_bvn_verification__link__success.json",
+      "verification_type": "ng_bvn_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "BVN verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_cac_lookup__direct__fail.json",
+      "verification_type": "ng_cac_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "CAC data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_cac_lookup__direct__success.json",
+      "verification_type": "ng_cac_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "CAC verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_cac_lookup__link__fail.json",
+      "verification_type": "ng_cac_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "CAC data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_cac_lookup__link__success.json",
+      "verification_type": "ng_cac_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "CAC verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_nin_verification__direct__fail.json",
+      "verification_type": "ng_nin_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "NIN data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_nin_verification__direct__success.json",
+      "verification_type": "ng_nin_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "NIN verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_nin_verification__link__fail.json",
+      "verification_type": "ng_nin_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "NIN data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_nin_verification__link__success.json",
+      "verification_type": "ng_nin_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "NIN verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_passport_verification__direct__fail.json",
+      "verification_type": "ng_passport_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Passport data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_passport_verification__direct__success.json",
+      "verification_type": "ng_passport_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Passport verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_passport_verification__link__fail.json",
+      "verification_type": "ng_passport_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Passport data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_passport_verification__link__success.json",
+      "verification_type": "ng_passport_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Passport verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_phone_number_lookup__direct__fail.json",
+      "verification_type": "ng_phone_number_lookup",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Phone Number data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_phone_number_lookup__direct__success.json",
+      "verification_type": "ng_phone_number_lookup",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Phone number verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_phone_number_lookup__link__fail.json",
+      "verification_type": "ng_phone_number_lookup",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Phone Number data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_phone_number_lookup__link__success.json",
+      "verification_type": "ng_phone_number_lookup",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Phone number verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_virtual_nin_verification__direct__fail.json",
+      "verification_type": "ng_virtual_nin_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "VNIN data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_virtual_nin_verification__direct__success.json",
+      "verification_type": "ng_virtual_nin_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Virtual NIN verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_virtual_nin_verification__link__fail.json",
+      "verification_type": "ng_virtual_nin_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "VNIN data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "ng_virtual_nin_verification__link__success.json",
+      "verification_type": "ng_virtual_nin_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Virtual NIN verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "za_said_verification__direct__fail.json",
+      "verification_type": "za_said_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "SAID data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "za_said_verification__direct__success.json",
+      "verification_type": "za_said_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "South Africa ID verified successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "za_said_verification__link__fail.json",
+      "verification_type": "za_said_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "SAID data not found",
+      "expected_ok": true
+    },
+    {
+      "file": "za_said_verification__link__success.json",
+      "verification_type": "za_said_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "South Africa ID verified successfully",
+      "expected_ok": true
+    }
+  ],
+  "credentials_source": "https://developers.korapay.com/docs/testing-your-integration",
+  "api": {
+    "base": "http://localhost:8300",
+    "create": "POST /api/v2/public/verifications/requests/government_registry_checks/",
+    "get": "GET /api/v2/public/verifications/requests/?verification_id=\u2026",
+    "link_submit": "POST /api/v2/verifications/new-verify/{token}/government_registry/",
+    "auth": "Authorization: Bearer <VA-api-key>"
+  },
+  "notes": [
+    "Large base64 image fields in responses are truncated for readability.",
+    "Link mode: create -> submit hosted government_registry with {} (fields prefilled) -> poll GET.",
+    "Direct mode: create -> poll GET until terminal.",
+    "ng_cac_lookup: Korapay wants numeric id + registration_type; API accepts RC00000011 and normalizes.",
+    "gh_voter_card_lookup: requires type old_voters_card|new_voters_card; Korapay path is gh/voters-card.",
+    "ke_phone_number_lookup fail uses synthetic 0700000000 (no invalid phone in Korapay docs)."
+  ]
+}

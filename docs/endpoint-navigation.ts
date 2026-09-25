@@ -113,6 +113,15 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 "endpoints/ke-tax-pin-verification",
 							],
 						},
+						{
+							type: "category",
+							label: "🇨🇮 Côte d'Ivoire",
+							link: "endpoints/overview/government-registry/cote-divoire",
+							items: [
+"endpoints/ci-national-id-lookup",
+"endpoints/ci-residence-card-lookup",
+							],
+						},
 					],
 				},
 				],

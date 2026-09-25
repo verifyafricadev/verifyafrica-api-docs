@@ -1,0 +1,101 @@
+{
+  "scenario": {
+    "verification_type": "ke_national_id_lookup",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ke_national_id_lookup",
+        "mode": "direct",
+        "input_data": {
+          "national_id": "25219766"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab26a9-74d1-7028-8000-9870d4657919",
+        "verification_type": "ke_national_id_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "national_id": "25219766"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:31.301309Z",
+        "submitted_at": "2026-09-22T11:46:31.301001Z",
+        "batch_id": null,
+        "reference": "VER-06ab26a9-74d1-7bd1-8000-6aa75f015dad",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26a9-74d1-7028-8000-9870d4657919"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26a9-74d1-7028-8000-9870d4657919",
+        "verification_type": "ke_national_id_lookup",
+        "status": "SUCCESS",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "national_id": "25219766"
+        },
+        "response_data": {
+          "data": {
+            "id": "25219766",
+            "type": "id",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "gender": "female",
+            "id_type": "ke_national_id",
+            "full_name": "Josephine Mary Okunmu",
+            "last_name": "Okunmu",
+            "reference": "VR-Q5Z6CBCCvxxD8UW6I",
+            "first_name": "Josephine",
+            "middle_name": "Mary",
+            "nationality": "KENYAN",
+            "requested_by": "API User",
+            "date_of_birth": "2002-06-03"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "National identity verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:46:31.301309Z",
+        "submitted_at": "2026-09-22T11:46:31.301001Z",
+        "batch_id": null,
+        "reference": "VER-06ab26a9-74d1-7bd1-8000-6aa75f015dad",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "scenario": {
+    "verification_type": "gh_voter_card_lookup",
+    "mode": "link",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "gh_voter_card_lookup",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+gh_voter_card_lookup-fail@example.com",
+          "voter_id": "0000000000",
+          "type": "old_voters_card"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06ab26b8-3804-718e-8000-5e6c0188d4a3",
+        "verification_type": "gh_voter_card_lookup",
+        "status": "PENDING",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "type": "old_voters_card",
+          "email": "gov-registry-test+gh_voter_card_lookup-fail@example.com",
+          "language": "EN",
+          "voter_id": "0000000000",
+          "send_email": false,
+          "require_selfie": false,
+          "allow_file_upload": true
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:50:27.501267Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06ab26b8-3804-7a24-8000-2d1332d5a518",
+        "link": {
+          "id": "06ab26b8-3812-7649-8000-ddf2e7d67492",
+          "link": "dc496ff1-b5d3-43fb-bfaa-7dd0c6400314",
+          "url": "https://app.verifyafrica.io/new-verify/dc496ff1-b5d3-43fb-bfaa-7dd0c6400314",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:50:27.502894Z",
+          "created_at": "2026-09-22T11:50:27.505153Z",
+          "verification_id": "06ab26b8-3804-718e-8000-5e6c0188d4a3",
+          "verification_reference": "VER-06ab26b8-3804-7a24-8000-2d1332d5a518"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/dc496ff1-b5d3-43fb-bfaa-7dd0c6400314/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06ab26b8-3804-7a24-8000-2d1332d5a518",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab26b8-3804-718e-8000-5e6c0188d4a3"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab26b8-3804-718e-8000-5e6c0188d4a3",
+        "verification_type": "gh_voter_card_lookup",
+        "status": "FAILED",
+        "input_data": {
+          "ttl": 60,
+          "mode": "link",
+          "type": "old_voters_card",
+          "email": "gov-registry-test+gh_voter_card_lookup-fail@example.com",
+          "language": "EN",
+          "voter_id": "0000000000",
+          "send_email": false,
+          "require_selfie": false,
+          "allow_file_upload": true
+        },
+        "response_data": {
+          "data": {},
+          "event": "kr.verification.failed",
+          "status": false,
+          "message": "GVC data not found"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:50:27.501267Z",
+        "submitted_at": "2026-09-22T11:50:27.521702Z",
+        "batch_id": null,
+        "reference": "VER-06ab26b8-3804-7a24-8000-2d1332d5a518",
+        "link": {
+          "id": "06ab26b8-3812-7649-8000-ddf2e7d67492",
+          "link": "dc496ff1-b5d3-43fb-bfaa-7dd0c6400314",
+          "url": "https://app.verifyafrica.io/new-verify/dc496ff1-b5d3-43fb-bfaa-7dd0c6400314",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-22T12:50:27.502894Z",
+          "created_at": "2026-09-22T11:50:27.505153Z",
+          "verification_id": "06ab26b8-3804-718e-8000-5e6c0188d4a3",
+          "verification_reference": "VER-06ab26b8-3804-7a24-8000-2d1332d5a518"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

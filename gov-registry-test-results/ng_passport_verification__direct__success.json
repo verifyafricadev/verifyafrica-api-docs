@@ -1,0 +1,106 @@
+{
+  "scenario": {
+    "verification_type": "ng_passport_verification",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_passport_verification",
+        "mode": "direct",
+        "input_data": {
+          "passport_id": "A01234567",
+          "last_name": "Olakunle"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab2690-e843-7210-8000-84640ef466cc",
+        "verification_type": "ng_passport_verification",
+        "status": "PENDING",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "last_name": "Olakunle",
+          "passport_id": "A01234567"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:58.516593Z",
+        "submitted_at": "2026-09-22T11:39:58.516368Z",
+        "batch_id": null,
+        "reference": "VER-06ab2690-e843-7a55-8000-de6cee542e4e",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab2690-e843-7210-8000-84640ef466cc"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab2690-e843-7210-8000-84640ef466cc",
+        "verification_type": "ng_passport_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "mode": "direct",
+          "language": "EN",
+          "last_name": "Olakunle",
+          "passport_id": "A01234567"
+        },
+        "response_data": {
+          "data": {
+            "id": "A01234567",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "gender": "female",
+            "id_type": "ng_passport",
+            "issued_at": "AKURE",
+            "last_name": "Jalekun",
+            "reference": "VR-Dvcch89eTF023flOn",
+            "signature": null,
+            "first_name": "Abike",
+            "issued_date": "2022-02-01",
+            "middle_name": "Mary",
+            "expired_date": "2030-04-04",
+            "phone_number": "08030123456",
+            "requested_by": "API User",
+            "date_of_birth": "1999-07-04"
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "Passport verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:58.516593Z",
+        "submitted_at": "2026-09-22T11:39:58.516368Z",
+        "batch_id": null,
+        "reference": "VER-06ab2690-e843-7a55-8000-de6cee542e4e",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

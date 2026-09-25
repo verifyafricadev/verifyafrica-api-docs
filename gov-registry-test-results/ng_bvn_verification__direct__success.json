@@ -1,0 +1,117 @@
+{
+  "scenario": {
+    "verification_type": "ng_bvn_verification",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "ng_bvn_verification",
+        "mode": "direct",
+        "input_data": {
+          "bvn": "22222222222"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06ab268e-8637-7f44-8000-322aea041dc4",
+        "verification_type": "ng_bvn_verification",
+        "status": "PENDING",
+        "input_data": {
+          "bvn": "22222222222",
+          "mode": "direct",
+          "language": "EN"
+        },
+        "response_data": {},
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:20.388824Z",
+        "submitted_at": "2026-09-22T11:39:20.388644Z",
+        "batch_id": null,
+        "reference": "VER-06ab268e-8638-75cf-8000-444ec8a7a7cd",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06ab268e-8637-7f44-8000-322aea041dc4"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06ab268e-8637-7f44-8000-322aea041dc4",
+        "verification_type": "ng_bvn_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "bvn": "22222222222",
+          "mode": "direct",
+          "language": "EN"
+        },
+        "response_data": {
+          "data": {
+            "id": "22222222222",
+            "nin": "55555555555",
+            "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZ…<truncated 6296 chars>",
+            "title": null,
+            "gender": "male",
+            "address": {
+              "lga": null,
+              "town": null,
+              "state": null,
+              "street": null
+            },
+            "id_type": "ng_bvn",
+            "last_name": "Mandela",
+            "reference": "VR-B41nj7h7tAXGQQi2Q",
+            "first_name": "Trevor",
+            "middle_name": null,
+            "name_on_card": null,
+            "other_mobile": null,
+            "phone_number": "08031234567",
+            "requested_by": "API User",
+            "watch_listed": null,
+            "date_of_birth": "1989-07-08",
+            "lga_of_origin": null,
+            "marital_status": null,
+            "state_of_origin": null,
+            "level_of_account": null,
+            "enrollment_branch": null,
+            "registration_date": "2005-11-11",
+            "enrollment_institution": null
+          },
+          "event": "kr.verification.completed",
+          "status": true,
+          "message": "BVN verified successfully"
+        },
+        "cost_charged": "1.60",
+        "currency": "USD",
+        "created_at": "2026-09-22T11:39:20.388824Z",
+        "submitted_at": "2026-09-22T11:39:20.388644Z",
+        "batch_id": null,
+        "reference": "VER-06ab268e-8638-75cf-8000-444ec8a7a7cd",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

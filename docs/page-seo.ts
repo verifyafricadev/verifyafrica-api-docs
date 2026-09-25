@@ -110,8 +110,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 	"/endpoints/overview/government-registry": {
 		title: "Government Registry Checks",
 		description:
-			"Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, and Kenya.",
-		keywords: ["government registry", "official ID verification", "registry lookup"],
+			"Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, Kenya, and Côte d'Ivoire.",
+		keywords: ["government registry", "official ID verification", "registry lookup", "Côte d'Ivoire"],
 	},
 	"/endpoints/overview/government-registry/south-africa": {
 		title: "South Africa Government Registry",
@@ -215,6 +215,21 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 		title: "Kenya Tax PIN Verification",
 		description: "Verify Kenyan KRA Personal Identification Numbers.",
 		keywords: ["Kenya tax PIN", "KRA PIN", "tax identification"],
+	},
+	"/endpoints/overview/government-registry/cote-divoire": {
+		title: "Côte d'Ivoire Government Registry",
+		description: "Government registry verification endpoints for Côte d'Ivoire.",
+		keywords: ["Côte d'Ivoire", "Ivory Coast", "national ID", "residence card"],
+	},
+	"/endpoints/ci-national-id-lookup": {
+		title: "Côte d'Ivoire National ID Lookup",
+		description: "Verify Ivorian National ID records against the government registry.",
+		keywords: ["Côte d'Ivoire national ID", "Ivory Coast CNI", "Ivorian ID"],
+	},
+	"/endpoints/ci-residence-card-lookup": {
+		title: "Côte d'Ivoire Residence Card Lookup",
+		description: "Verify Ivorian Residence Card records against the government registry.",
+		keywords: ["Côte d'Ivoire residence card", "Ivory Coast titre de séjour"],
 	},
 };
 

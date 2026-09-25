@@ -71,6 +71,11 @@
       "name": "webhooks",
       "description": "Outbound webhook events VerifyAfrica sends to your endpoint. Schemas below are the source of truth for `event` names, `verification_type` values, and statuses.",
       "x-displayName": "Webhooks"
+    },
+    {
+      "name": "single-gov-cote-divoire",
+      "description": "Government registry checks for Côte d'Ivoire. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "x-displayName": "Côte d'Ivoire"
     }
   ],
   "x-tagGroups": [
@@ -89,7 +94,8 @@
         "single-gov-south-africa",
         "single-gov-nigeria",
         "single-gov-ghana",
-        "single-gov-kenya"
+        "single-gov-kenya",
+        "single-gov-cote-divoire"
       ]
     },
     {
@@ -8662,6 +8668,704 @@
           }
         }
       }
+    },
+    "/api/v2/public/verifications/requests/government_registry_checks/ci_national_id_lookup": {
+      "post": {
+        "summary": "Côte d'Ivoire National ID Lookup",
+        "description": "Create a **Côte d'Ivoire National ID Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ci_national_id_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`national_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `national_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "operationId": "public-gov-ci_national_id_lookup",
+        "tags": [
+          "single-gov-cote-divoire"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "verification_type",
+                  "input_data"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                  },
+                  "verification_type": {
+                    "type": "string",
+                    "description": "Must match this check.",
+                    "enum": [
+                      "ci_national_id_lookup"
+                    ]
+                  },
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted capture link to `input_data.email`. Defaults to `false`."
+                  },
+                  "input_data": {
+                    "type": "object",
+                    "description": "Fields for `ci_national_id_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "description": "Link mode: required. Direct mode: optional customer email.",
+                        "format": "email"
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "Both modes. Language code. Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                      },
+                      "require_selfie": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                      },
+                      "allow_file_upload": {
+                        "type": "boolean",
+                        "description": "Link mode only. Same override as top-level `allow_file_upload`."
+                      },
+                      "selfie": {
+                        "type": "string",
+                        "description": "Direct mode only. HTTPS URL of a selfie image. Base64 data URIs are rejected.",
+                        "format": "uri"
+                      },
+                      "national_id": {
+                        "type": "string",
+                        "description": "Ivorian National ID. 7–12 alphanumeric characters; normalized to uppercase before sending to Korapay."
+                      },
+                      "first_name": {
+                        "type": "string",
+                        "description": "Optional first name for cross-validation."
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "description": "Optional last name for cross-validation."
+                      },
+                      "date_of_birth": {
+                        "type": "string",
+                        "description": "Optional date of birth (YYYY-MM-DD).",
+                        "format": "date",
+                        "example": "1988-04-04"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "allow_file_upload": {
+                    "type": "boolean",
+                    "description": "Link mode only. Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only."
+                  }
+                }
+              },
+              "examples": {
+                "link": {
+                  "summary": "Link mode — hosted page",
+                  "value": {
+                    "verification_type": "ci_national_id_lookup",
+                    "mode": "link",
+                    "send_email": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "national_id": "00112233440",
+                      "require_selfie": true
+                    },
+                    "allow_file_upload": true
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode — async Korapay Identity",
+                  "value": {
+                    "verification_type": "ci_national_id_lookup",
+                    "mode": "direct",
+                    "input_data": {
+                      "language": "EN",
+                      "national_id": "00112233440",
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
+                  }
+                },
+                "default": {
+                  "summary": "Link mode — hosted page",
+                  "value": {
+                    "verification_type": "ci_national_id_lookup",
+                    "mode": "link",
+                    "send_email": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "national_id": "00112233440",
+                      "require_selfie": true
+                    },
+                    "allow_file_upload": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ci_national_id_lookup': national_id",
+                      "errors": [
+                        "Missing required parameters for 'ci_national_id_lookup': national_id"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Verification created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success Response"
+                },
+                "examples": {
+                  "link": {
+                    "summary": "Link mode — hosted URL returned",
+                    "value": {
+                      "success": true,
+                      "message": "Verification link created successfully.",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "ci_national_id_lookup",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "link": {
+                          "url": "https://verify.verifyafrica.io/new-verify/25b6057a-7e63-4469-ad9f-45b3242e1d93"
+                        },
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "direct": {
+                    "summary": "Direct mode — accepted PENDING",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request accepted. Processing has started; listen for the kr.verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "ci_national_id_lookup",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "success": {
+                    "summary": "Direct mode — accepted PENDING",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request accepted. Processing has started; listen for the kr.verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "ci_national_id_lookup",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/requests/government_registry_checks/ci_residence_card_lookup": {
+      "post": {
+        "summary": "Côte d'Ivoire Residence Card Lookup",
+        "description": "Create a **Côte d'Ivoire Residence Card Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ci_residence_card_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`residence_card_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `residence_card_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "operationId": "public-gov-ci_residence_card_lookup",
+        "tags": [
+          "single-gov-cote-divoire"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "verification_type",
+                  "input_data"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                  },
+                  "verification_type": {
+                    "type": "string",
+                    "description": "Must match this check.",
+                    "enum": [
+                      "ci_residence_card_lookup"
+                    ]
+                  },
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted capture link to `input_data.email`. Defaults to `false`."
+                  },
+                  "input_data": {
+                    "type": "object",
+                    "description": "Fields for `ci_residence_card_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "description": "Link mode: required. Direct mode: optional customer email.",
+                        "format": "email"
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "Both modes. Language code. Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                      },
+                      "require_selfie": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                      },
+                      "allow_file_upload": {
+                        "type": "boolean",
+                        "description": "Link mode only. Same override as top-level `allow_file_upload`."
+                      },
+                      "selfie": {
+                        "type": "string",
+                        "description": "Direct mode only. HTTPS URL of a selfie image. Base64 data URIs are rejected.",
+                        "format": "uri"
+                      },
+                      "residence_card_id": {
+                        "type": "string",
+                        "description": "Ivorian Residence Card ID. 7–12 alphanumeric characters; normalized to uppercase before sending to Korapay."
+                      },
+                      "first_name": {
+                        "type": "string",
+                        "description": "Optional first name for cross-validation."
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "description": "Optional last name for cross-validation."
+                      },
+                      "date_of_birth": {
+                        "type": "string",
+                        "description": "Optional date of birth (YYYY-MM-DD).",
+                        "format": "date",
+                        "example": "1988-04-04"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "allow_file_upload": {
+                    "type": "boolean",
+                    "description": "Link mode only. Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only."
+                  }
+                }
+              },
+              "examples": {
+                "link": {
+                  "summary": "Link mode — hosted page",
+                  "value": {
+                    "verification_type": "ci_residence_card_lookup",
+                    "mode": "link",
+                    "send_email": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "residence_card_id": "11223344555",
+                      "require_selfie": true
+                    },
+                    "allow_file_upload": true
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode — async Korapay Identity",
+                  "value": {
+                    "verification_type": "ci_residence_card_lookup",
+                    "mode": "direct",
+                    "input_data": {
+                      "language": "EN",
+                      "residence_card_id": "11223344555",
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
+                  }
+                },
+                "default": {
+                  "summary": "Link mode — hosted page",
+                  "value": {
+                    "verification_type": "ci_residence_card_lookup",
+                    "mode": "link",
+                    "send_email": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "residence_card_id": "11223344555",
+                      "require_selfie": true
+                    },
+                    "allow_file_upload": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'ci_residence_card_lookup': residence_card_id",
+                      "errors": [
+                        "Missing required parameters for 'ci_residence_card_lookup': residence_card_id"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Verification created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success Response"
+                },
+                "examples": {
+                  "link": {
+                    "summary": "Link mode — hosted URL returned",
+                    "value": {
+                      "success": true,
+                      "message": "Verification link created successfully.",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "ci_residence_card_lookup",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "link": {
+                          "url": "https://verify.verifyafrica.io/new-verify/25b6057a-7e63-4469-ad9f-45b3242e1d93"
+                        },
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "direct": {
+                    "summary": "Direct mode — accepted PENDING",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request accepted. Processing has started; listen for the kr.verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "ci_residence_card_lookup",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "success": {
+                    "summary": "Direct mode — accepted PENDING",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request accepted. Processing has started; listen for the kr.verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "ci_residence_card_lookup",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -8808,7 +9512,9 @@
           "ke_passport_lookup",
           "ke_national_id_lookup",
           "ke_phone_number_lookup",
-          "ke_tax_pin_verification"
+          "ke_tax_pin_verification",
+          "ci_residence_card_lookup",
+          "ci_national_id_lookup"
         ],
         "example": "id_document",
         "x-enumDescriptions": {
@@ -8835,7 +9541,9 @@
           "ke_passport_lookup": "Kenya passport (`POST .../government_registry_checks/`)",
           "ke_national_id_lookup": "Kenya national ID (`POST .../government_registry_checks/`)",
           "ke_phone_number_lookup": "Kenya phone lookup (`POST .../government_registry_checks/`)",
-          "ke_tax_pin_verification": "Kenya tax PIN (`POST .../government_registry_checks/`)"
+          "ke_tax_pin_verification": "Kenya tax PIN (`POST .../government_registry_checks/`)",
+          "ci_national_id_lookup": "Côte d'Ivoire national ID (`POST .../government_registry_checks/`)",
+          "ci_residence_card_lookup": "Côte d'Ivoire residence card (`POST .../government_registry_checks/`)"
         }
       },
       "VerificationRequestData": {
