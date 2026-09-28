@@ -31,7 +31,7 @@ ng_passport_verification
 
 Pass these fields inside `input_data` in your request body.
 
-**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+**Required** below applies to **direct** mode. This check does not support selfie matching, so **link mode is not available**.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
@@ -40,14 +40,11 @@ Pass these fields inside `input_data` in your request body.
 
 ## Modes
 
-Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, selfies, and webhooks.
+This check does **not** support selfie matching, so **link mode is not available**. Use `mode: "direct"`. See [Government Registry Checks](./overview/government-registry).
 
-| Mode | Notes |
-| --- | --- |
-| `link` (default) | Hosted page. Prefill fields to lock them; leave optional validation blank for the customer. Returns `data.link.url`. |
-| `direct` | Send the required identifier now. Runs asynchronously. |
+If `mode` is omitted it defaults to `direct`. Sending `mode: "link"` returns **400**.
 
-Do not send internal `method_type`. Use top-level `mode` instead.
+Do not send internal `method_type`.
 
 ## Making a Request
 
@@ -55,21 +52,7 @@ Do not send internal `method_type`. Use top-level `mode` instead.
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ng_passport_verification`.
 
-### Link mode
 
-```json
-{
-  "verification_type": "ng_passport_verification",
-  "mode": "link",
-  "send_email": true,
-  "input_data": {
-    "email": "customer@example.com",
-    "ttl": 60
-  }
-}
-```
-
-### Direct mode
 
 ```json
 {

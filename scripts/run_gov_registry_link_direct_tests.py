@@ -36,6 +36,22 @@ SUBMIT_PATH = "/api/v2/verifications/new-verify/{token}/government_registry/"
 POLL_INTERVAL_S = 1.5
 POLL_TIMEOUT_S = 90
 
+# Korapay Identity facial matching (`validation.selfie`). Link mode is only for these.
+SELFIE_TYPES = frozenset({
+    "ng_bvn_verification",
+    "ng_nin_verification",
+    "ng_virtual_nin_verification",
+    "ng_advanced_phone_number_verification",
+    "gh_passport_lookup",
+    "gh_voter_card_lookup",
+    "gh_ssnit_lookup",
+    "gh_drivers_license_lookup",
+    "ke_passport_lookup",
+    "ke_national_id_lookup",
+    "ci_national_id_lookup",
+    "ci_residence_card_lookup",
+})
+
 # Success / fail credentials from Korapay testing docs.
 CHECKS: list[dict[str, Any]] = [
     {
@@ -286,6 +302,7 @@ def run_link(check: dict, outcome: str) -> Path:
         "send_email": False,
         "input_data": {
             "email": f"gov-registry-test+{vtype}-{outcome}@example.com",
+            "require_selfie": True,
             **fields,
         },
     }
@@ -355,10 +372,11 @@ def main() -> int:
     selected = set(sys.argv[1:])
     checks = [c for c in CHECKS if not selected or c["verification_type"] in selected]
     summary: list[dict[str, Any]] = []
-    total = len(checks) * 4
+    total = sum(2 if c["verification_type"] in SELFIE_TYPES else 1 for c in checks) * 2
     idx = 0
     for check in checks:
-        for mode in ("direct", "link"):
+        modes = ("direct", "link") if check["verification_type"] in SELFIE_TYPES else ("direct",)
+        for mode in modes:
             for outcome in ("success", "fail"):
                 idx += 1
                 label = f"{check['verification_type']} / {mode} / {outcome}"

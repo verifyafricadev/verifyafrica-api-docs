@@ -1,18 +1,20 @@
 ---
 title: Government Registry Checks
-description: Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States — in link or direct mode.
+description: Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States — in direct mode, or link mode when requesting a selfie.
 sidebar_label: Government Registry Checks
 sidebar_icon: landmark
 ---
 
 # Government Registry Checks
 
-Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States in either **link** or **direct** mode.
+Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States.
 
-| Mode | What you send | What create returns | When verification finishes |
+**Direct mode** is always available. **Link mode** is only available for checks that support Korapay facial matching, and only when you set `input_data.require_selfie` to `true` so the customer can capture a selfie on the hosted page.
+
+| Mode | When you can use it | What you send | What create returns |
 | --- | --- | --- | --- |
-| `link` (default) | `input_data` (email + optional prefills) — no selfie file required up front | `data.link.url` for the customer | After the customer completes the hosted form (and optional selfie) and Korapay finishes |
-| `direct` | Registry identifier (+ optional validation / selfie URL) | Accepted request (`PENDING`) | After Korapay Identity processing completes |
+| `direct` | Every registry check | Identifier (+ optional validation / selfie URL) | Accepted request (`PENDING`) |
+| `link` | Selfie-capable checks **and** `require_selfie: true` | Email + optional prefills (no selfie URL) | `data.link.url` for selfie capture |
 
 Use [Webhooks](/webhooks) (`kr.verification.completed` / `kr.verification.failed`) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
 
@@ -45,27 +47,51 @@ Browse a country below, then open the check page for its `input_data` fields.
 
 ## Choosing a mode
 
-Send top-level `mode`:
+Send top-level `mode`. Do not send internal `method_type`.
 
-- **`link`** — Hosted VerifyAfrica page. Prefill registry fields (NIN, BVN, etc.) to lock them for the customer; leave optional validation fields blank so the customer enters them. Optional `require_selfie` and `allow_file_upload` (camera vs camera + upload). Response includes `data.link.url`. Do **not** send a selfie proof URL.
-- **`direct`** — Run immediately with the identifier you supply. Optional name / DOB validation and optional `selfie` HTTPS URL. Do **not** send `send_email`, `allow_file_upload`, `ttl`, or `require_selfie`.
+- **`direct`** — Run immediately with the identifier you supply. Optional name / DOB validation and optional `selfie` HTTPS URL (selfie-capable types only). Do **not** send `send_email`, `allow_file_upload`, `ttl`, or `require_selfie`.
+- **`link`** — Hosted VerifyAfrica page for **selfie capture**. Allowed only when the check supports facial matching **and** `input_data.require_selfie` is `true`. Prefill registry fields to lock them; omit fields so the customer enters them. Response includes `data.link.url`. Do **not** send a selfie proof URL.
 
-If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
+If `mode` is omitted:
+
+- it becomes `link` when the check supports selfie **and** `input_data.require_selfie` is `true`
+- otherwise it becomes `direct`
+
+Sending `mode: "link"` without `require_selfie: true`, or on a check that does not support selfie matching, returns **400**.
+
+### Checks that support selfie (link mode allowed)
+
+These match Korapay Identity facial matching (`validation.selfie`):
+
+| Country | Checks |
+| --- | --- |
+| Nigeria | BVN, NIN, Virtual NIN, Advanced phone verification |
+| Ghana | Passport, Voter card, SSNIT, Driver's licence |
+| Kenya | Passport, National ID |
+| Côte d'Ivoire | National ID, Residence card |
+
+### Checks that are direct-only (no selfie)
+
+Nigeria phone lookup, CAC, Nigeria passport · Kenya phone lookup, Tax PIN · South Africa ID · United States SSN
+
+Sending `input_data.selfie` or `input_data.require_selfie: true` on these checks returns **400**.
 
 ## Required fields at a glance
 
-### Link mode (`mode: "link"` or omitted)
+### Link mode (`mode: "link"`)
+
+Link mode is **not** the default. It is rejected unless the check supports selfie matching and `input_data.require_selfie` is `true`.
 
 | Field | Required? | Notes |
 | --- | --- | --- |
-| `verification_type` | **Yes** | e.g. `ng_nin_verification` |
+| `verification_type` | **Yes** | Must be a selfie-capable check (see table above) |
 | `input_data` | **Yes** | Customer email and optional prefills |
 | `input_data.email` | **Yes** | Used for the hosted session / notifications |
+| `input_data.require_selfie` | **Yes** | Must be `true` |
 | Primary identifier (e.g. `nin`) | No | Prefill to lock it; omit so the customer enters it |
 | Name / DOB validation fields | No | Prefill to lock; omit so the customer enters them |
-| `input_data.require_selfie` | No | When `true` and the check supports selfie, customer must capture/upload |
 | `send_email` | No | Emails `data.link.url` to `input_data.email` |
-| `allow_file_upload` | No | Link only — camera + upload vs camera only (selfie-capable types) |
+| `allow_file_upload` | No | Camera + upload vs camera only |
 | `input_data.ttl` | No | Link lifetime in minutes (`15`, `30`, `60`, `120`, `240`) |
 
 **Do not send in link mode:** `input_data.selfie` (proof URL)
@@ -86,7 +112,7 @@ If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 
 | Parameter | Type | Link | Direct | Description |
 | --- | --- | --- | --- | --- |
-| `mode` | string | Optional (default `link`) | Optional | `"link"` or `"direct"`. |
+| `mode` | string | Optional | Optional (default `direct` unless `require_selfie` is true) | `"link"` or `"direct"`. Link only for selfie-capable checks with `require_selfie: true`. |
 | `verification_type` | string | Required | Required | Registry check type (see country pages). |
 | `input_data` | object | Required | Required | Identifier, email (link), optional validation / selfie. |
 | `send_email` | boolean | Optional (default `false`) | — | `true` to email the hosted link. |
@@ -99,7 +125,7 @@ If `mode` is omitted, it defaults to `link`. Do not send internal `method_type`.
 | `email` | string | Required | Optional | Customer email (required for link). |
 | `language` | string | Optional (default `"EN"`) | Optional | Language code. |
 | `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. |
-| `require_selfie` | boolean | Optional | — | Require selfie on the hosted page when supported. |
+| `require_selfie` | boolean | **Required** (`true`) | — | Must be `true` to use link mode. |
 | `allow_file_upload` | boolean | Optional | — | Same override as the top-level field. |
 | `selfie` | string (URL) | — | Optional | HTTPS selfie image URL for facial matching when supported. |
 | `first_name` / `last_name` / `date_of_birth` | string | Optional | Optional | Validation fields when the check supports them. Prefills lock on link mode. |
@@ -123,7 +149,7 @@ Each check’s required identifier and optional fields are listed on its endpoin
 }
 ```
 
-Response includes `data.link.url`. The customer completes any remaining fields (and selfie if required) on the hosted page.
+Response includes `data.link.url`. The customer captures a selfie (and any fields you omitted) on the hosted page.
 
 ## Example — direct mode (NIN)
 

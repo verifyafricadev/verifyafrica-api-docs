@@ -134,14 +134,15 @@ CHECKS: dict[str, dict] = {
         "summary": "Ghana Passport Lookup",
         "country": "GH",
         "required": ["passport_number"],
-        "optional": ["first_name", "last_name", "date_of_birth"],
-        "selfie": False,
+        "optional": ["first_name", "last_name", "date_of_birth", "selfie"],
+        "selfie": True,
         "sample": {"passport_number": "G0000555"},
         "field_desc": {
             "passport_number": "Ghana passport number.",
             "first_name": "Optional first name for cross-validation.",
             "last_name": "Optional last name for cross-validation.",
             "date_of_birth": "Optional date of birth (YYYY-MM-DD).",
+            "selfie": "Direct mode only. HTTPS URL of a selfie image for facial matching.",
         },
     },
     "gh_voter_card_lookup": {
@@ -314,31 +315,49 @@ def build_description(vtype: str, meta: dict) -> str:
     opt_no_selfie = [k for k in opt if k != "selfie"]
     opt_txt = ", ".join(f"`{k}`" for k in opt_no_selfie) or "none"
     selfie = meta["selfie"]
-    lines = [
-        f"Create a **{meta['summary']}** check in **link** or **direct** mode.",
-        "",
-        f"Call `POST {PRODUCT_PATH}` and set `verification_type` to `{vtype}`.",
-        "",
-        "### Link mode (`mode=link`, default)",
-        f"**Required:** `input_data`, `input_data.email`",
-        f"**Optional:** primary fields ({req}), validation fields ({opt_txt}), "
-        "`send_email`, `input_data.ttl`"
-        + (", `allow_file_upload`, `input_data.require_selfie`" if selfie else ""),
-        "**Do not send:** `input_data.selfie` (proof URL)",
-        "**Returns:** `data.link.url` for the hosted VerifyAfrica page",
-        "Prefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.",
-        "",
-        "### Direct mode (`mode=direct`)",
-        f"**Required:** `input_data`, {req}",
-        f"**Optional:** {opt_txt}"
-        + (", `input_data.selfie` (HTTPS URL)" if selfie else ""),
-        "**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`",
-        "**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously",
-        "",
-        "Billing is deferred until the check is submitted to Korapay (not at HTTP create).",
-        "Do not send internal `method_type`. Listen for `kr.verification.completed` / "
-        "`kr.verification.failed` (or poll GET) for the terminal result.",
-    ]
+    if selfie:
+        lines = [
+            f"Create a **{meta['summary']}** check in **direct** or **link** mode.",
+            "",
+            f"Call `POST {PRODUCT_PATH}` and set `verification_type` to `{vtype}`.",
+            "",
+            "### Link mode (`mode=link`)",
+            "Allowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).",
+            f"**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`",
+            f"**Optional:** primary fields ({req}), validation fields ({opt_txt}), "
+            "`send_email`, `input_data.ttl`, `allow_file_upload`",
+            "**Do not send:** `input_data.selfie` (proof URL)",
+            "**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page",
+            "",
+            "### Direct mode (`mode=direct`, default unless require_selfie is true)",
+            f"**Required:** `input_data`, {req}",
+            f"**Optional:** {opt_txt}, `input_data.selfie` (HTTPS URL)",
+            "**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`",
+            "**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously",
+            "",
+            "Billing is deferred until the check is submitted to Korapay (not at HTTP create).",
+            "Do not send internal `method_type`. Listen for `kr.verification.completed` / "
+            "`kr.verification.failed` (or poll GET) for the terminal result.",
+        ]
+    else:
+        lines = [
+            f"Create a **{meta['summary']}** check in **direct** mode.",
+            "",
+            f"Call `POST {PRODUCT_PATH}` and set `verification_type` to `{vtype}`.",
+            "",
+            "This check does **not** support selfie matching, so **link mode is not available**.",
+            "Sending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.",
+            "",
+            "### Direct mode (`mode=direct`)",
+            f"**Required:** `input_data`, {req}",
+            f"**Optional:** {opt_txt}",
+            "**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`",
+            "**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously",
+            "",
+            "Billing is deferred until the check is submitted to Korapay (not at HTTP create).",
+            "Do not send internal `method_type`. Listen for `kr.verification.completed` / "
+            "`kr.verification.failed` (or poll GET) for the terminal result.",
+        ]
     return "\n".join(lines)
 
 
@@ -360,7 +379,7 @@ def build_input_properties(meta: dict) -> dict:
         props["require_selfie"] = {
             "type": "boolean",
             "default": False,
-            "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page.",
+            "description": "Required for link mode. Must be true. Link mode is rejected unless this is true.",
         }
         props["allow_file_upload"] = {
             "type": "boolean",
@@ -393,12 +412,28 @@ def build_input_properties(meta: dict) -> dict:
 
 
 def build_request_schema(vtype: str, meta: dict) -> dict:
+    if meta["selfie"]:
+        mode_desc = (
+            "`direct` always. `link` only when `input_data.require_selfie` is true. "
+            "If omitted: `link` when require_selfie is true, otherwise `direct`."
+        )
+        input_desc = (
+            f"Fields for `{vtype}`. In **direct** mode the primary identifier(s) are required. "
+            "In **link** mode they are optional prefills and `require_selfie` must be true."
+        )
+        mode_default = "direct"
+        mode_enum = ["link", "direct"]
+    else:
+        mode_desc = "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
+        input_desc = f"Fields for `{vtype}`. Direct mode only; the primary identifier(s) are required."
+        mode_default = "direct"
+        mode_enum = ["direct"]
     properties: dict = {
         "mode": {
             "type": "string",
-            "enum": ["link", "direct"],
-            "default": "link",
-            "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously.",
+            "enum": mode_enum,
+            "default": mode_default,
+            "description": mode_desc,
         },
         "verification_type": {
             "type": "string",
@@ -412,10 +447,7 @@ def build_request_schema(vtype: str, meta: dict) -> dict:
         },
         "input_data": {
             "type": "object",
-            "description": (
-                f"Fields for `{vtype}`. In **direct** mode the primary identifier(s) are required. "
-                "In **link** mode they are optional prefills (locked when sent)."
-            ),
+            "description": input_desc,
             "properties": build_input_properties(meta),
             "additionalProperties": False,
         },
@@ -465,18 +497,29 @@ def build_examples(vtype: str, meta: dict) -> dict:
         "input_data": direct_input,
     }
 
+    if meta["selfie"]:
+        return {
+            "link": {
+                "summary": "Link mode — hosted selfie capture (require_selfie true)",
+                "value": link_body,
+            },
+            "direct": {
+                "summary": "Direct mode — async Korapay Identity",
+                "value": direct_body,
+            },
+            "default": {
+                "summary": "Direct mode — async Korapay Identity",
+                "value": direct_body,
+            },
+        }
     return {
-        "link": {
-            "summary": "Link mode — hosted page",
-            "value": link_body,
-        },
         "direct": {
             "summary": "Direct mode — async Korapay Identity",
             "value": direct_body,
         },
         "default": {
-            "summary": "Link mode — hosted page",
-            "value": link_body,
+            "summary": "Direct mode — async Korapay Identity",
+            "value": direct_body,
         },
     }
 
@@ -587,21 +630,33 @@ def upgrade_info_description(desc: str) -> str:
     )
     new = (
         "Crypto and risk creates behave like direct mode. "
+        "**Government registry** checks: `mode=direct` always; `mode=link` only for selfie-capable "
+        "checks when `input_data.require_selfie` is true (hosted selfie capture; returns `data.link.url`). "
+        "Billing is deferred until provider submit. Terminal webhooks use the `kr.` prefix "
+        "(`kr.verification.completed` / `kr.verification.failed`)."
+    )
+    if old in desc:
+        return desc.replace(old, new)
+    prev = (
         "**Government registry** checks support `mode=link` (hosted page; returns `data.link.url`) "
         "or `mode=direct` (async Korapay Identity). Billing is deferred until provider submit. "
         "Terminal webhooks use the `kr.` prefix (`kr.verification.completed` / `kr.verification.failed`)."
     )
-    if old in desc:
-        return desc.replace(old, new)
-    if "Government registry** checks support" in desc or "government registry** checks support" in desc:
-        return desc
+    gov_new = (
+        "**Government registry** checks: `mode=direct` always; `mode=link` only for selfie-capable "
+        "checks when `input_data.require_selfie` is true (hosted selfie capture; returns `data.link.url`). "
+        "Billing is deferred until provider submit. Terminal webhooks use the `kr.` prefix "
+        "(`kr.verification.completed` / `kr.verification.failed`)."
+    )
+    if prev in desc:
+        return desc.replace(prev, gov_new)
     # Fallback: insert after KYB sentence if present
     needle = "Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`."
     if needle in desc and "Government registry" not in desc.split(needle, 1)[1][:200]:
         return desc.replace(
             needle,
             needle
-            + " **Government registry** checks also support `mode=link` / `mode=direct` "
+            + " **Government registry** checks: `mode=direct` always; `mode=link` only with selfie "
             "(Korapay Identity; `kr.` webhooks).",
         )
     return desc
@@ -776,8 +831,8 @@ def ensure_country_tags(spec: dict) -> None:
     for name, display in desired.items():
         country = f"the {display}" if display == "United States" else display
         desc = (
-            f"Government registry checks for {country}. Each operation supports "
-            "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
+            f"Government registry checks for {country}. `mode=direct` is always available. "
+            "`mode=link` is only available for selfie-capable checks when `require_selfie` is true."
         )
         if name in by_name:
             by_name[name]["description"] = desc

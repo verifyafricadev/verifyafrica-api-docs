@@ -24,12 +24,12 @@ Prefer those schemas over copying examples from this page.
 
 Public create endpoints return **immediately** with `status: PENDING`.
 
-- **Link mode** (document / facial / address / AML / business AML / KYB / **government registry** with `mode: "link"`) — customer still needs to open `data.link.url`. Terminal webhook fires after they finish and processing completes.
+- **Link mode** (document / facial / address / AML / business AML / KYB, and **government registry only when requesting a selfie**) — customer still needs to open `data.link.url`. Terminal webhook fires after they finish and processing completes.
 - **Direct mode** (proof URLs, registry identifiers, or any other product with `mode: "direct"`) — provider work starts in the background. Terminal webhook fires when verification completes.
 
 Recommended flow:
 
-1. `POST` a product create endpoint (include `mode` for link-capable products, including government registry checks)
+1. `POST` a product create endpoint (include `mode` for link-capable products; government registry `link` also needs `input_data.require_selfie: true`)
 2. Store the returned `data.id` (and `data.link.url` when using link mode)
 3. Wait for `sf.` / `kr.` `verification.completed` or `verification.failed` on your webhook URL
 4. Optionally poll `GET /api/v2/public/verifications/requests/?verification_id={id}` if needed

@@ -74,7 +74,7 @@ See the [Webhooks](/webhooks) guide for payload shape, authentication, response 
 Create, GET, and webhook payloads share the same public shape:
 
 - **Provider-agnostic** — internal provider names and hosted provider URLs are never exposed
-- **`mode`** — for document / facial / address / AML / Business AML / KYB, `input_data.mode` is `"link"` or `"direct"`
+- **`mode`** — for document / facial / address / AML / Business AML / KYB, `input_data.mode` is `"link"` or `"direct"`. Government registry `link` is only allowed for selfie-capable checks when `require_selfie` is true.
 - **Link mode** — create returns `data.link.url` for customer capture; proofs appear on GET/webhooks after submit
 - **Direct mode** — create accepts HTTPS proof URLs; `proofs` / `input_data.*.proof` echo those URLs
 - **`input_data`** — resolved request for the check (`mode`, `allow_file_upload`, `send_email`, `ttl`, `collect` on documents, nested document/face/address). Document `collect` is omitted for address. Proof URLs are the originals you sent.

@@ -31,7 +31,7 @@ us_ssn_verification
 
 Pass these fields inside `input_data` in your request body.
 
-**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+**Required** below applies to **direct** mode. This check does not support selfie matching, so **link mode is not available**.
 
 Unlike most registry checks, the holder's name, date of birth, and phone number are **required** identity inputs for SSN, not optional validation fields.
 
@@ -47,14 +47,11 @@ Selfie matching is not supported for this check.
 
 ## Modes
 
-Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
+This check does **not** support selfie matching, so **link mode is not available**. Use `mode: "direct"`. See [Government Registry Checks](./overview/government-registry).
 
-| Mode | Notes |
-| --- | --- |
-| `link` (default) | Hosted page. Prefill fields to lock them; the customer enters any required fields you leave out. Returns `data.link.url`. |
-| `direct` | Send all five required fields now. Runs asynchronously. |
+If `mode` is omitted it defaults to `direct`. Sending `mode: "link"` returns **400**.
 
-Do not send internal `method_type`. Use top-level `mode` instead.
+Do not send internal `method_type`.
 
 ## Making a Request
 
@@ -62,23 +59,7 @@ Do not send internal `method_type`. Use top-level `mode` instead.
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `us_ssn_verification`.
 
-### Link mode
 
-```json
-{
-  "verification_type": "us_ssn_verification",
-  "mode": "link",
-  "send_email": true,
-  "input_data": {
-    "email": "customer@example.com",
-    "ttl": 60
-  }
-}
-```
-
-The customer enters their SSN, name, date of birth, and phone number on the hosted page. Prefill any of them (for example `"ssn": "765439022"`) to lock that field.
-
-### Direct mode
 
 ```json
 {

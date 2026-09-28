@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, address, AML, Business AML, and KYB** support `mode=link` (default; returns `data.link.url`) or `mode=direct` (verification runs asynchronously). KYB uses `input_data.kyb.base`: `search`, `document`, or `document_purchase`. Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`. Crypto and risk creates behave like direct mode. **Government registry** checks support `mode=link` (hosted page; returns `data.link.url`) or `mode=direct` (async Korapay Identity). Billing is deferred until provider submit. Terminal webhooks use the `kr.` prefix (`kr.verification.completed` / `kr.verification.failed`).\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=…` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema — `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=…`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, address, AML, Business AML, and KYB** support `mode=link` (default; returns `data.link.url`) or `mode=direct` (verification runs asynchronously). KYB uses `input_data.kyb.base`: `search`, `document`, or `document_purchase`. Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`. Crypto and risk creates behave like direct mode. **Government registry** checks: `mode=direct` always; `mode=link` only for selfie-capable checks when `input_data.require_selfie` is true (hosted selfie capture; returns `data.link.url`). Billing is deferred until provider submit. Terminal webhooks use the `kr.` prefix (`kr.verification.completed` / `kr.verification.failed`).\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=…` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema — `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=…`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -49,22 +49,22 @@
     },
     {
       "name": "single-gov-south-africa",
-      "description": "Government registry checks for South Africa. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "description": "Government registry checks for South Africa. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "South Africa"
     },
     {
       "name": "single-gov-nigeria",
-      "description": "Government registry checks for Nigeria. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "description": "Government registry checks for Nigeria. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "Nigeria"
     },
     {
       "name": "single-gov-ghana",
-      "description": "Government registry checks for Ghana. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "description": "Government registry checks for Ghana. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "Ghana"
     },
     {
       "name": "single-gov-kenya",
-      "description": "Government registry checks for Kenya. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "description": "Government registry checks for Kenya. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "Kenya"
     },
     {
@@ -74,12 +74,12 @@
     },
     {
       "name": "single-gov-cote-divoire",
-      "description": "Government registry checks for Côte d'Ivoire. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "description": "Government registry checks for Côte d'Ivoire. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "Côte d'Ivoire"
     },
     {
       "name": "single-gov-united-states",
-      "description": "Government registry checks for the United States. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "description": "Government registry checks for the United States. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "United States"
     }
   ],
@@ -3173,7 +3173,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/za_said_verification": {
       "post": {
         "summary": "South Africa ID Verification",
-        "description": "Create a **South Africa ID Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `za_said_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`id_number`), validation fields (`first_name`, `last_name`), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `id_number`\n**Optional:** `first_name`, `last_name`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **South Africa ID Verification** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `za_said_verification`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `id_number`\n**Optional:** `first_name`, `last_name`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-za_said_verification",
         "tags": [
           "single-gov-south-africa"
@@ -3197,11 +3197,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -3217,7 +3216,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `za_said_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `za_said_verification`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -3260,22 +3259,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "za_said_verification",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "id_number": "8012185201077",
-                      "first_name": "John",
-                      "last_name": "Doe"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -3290,15 +3273,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "za_said_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "id_number": "8012185201077",
                       "first_name": "John",
                       "last_name": "Doe"
@@ -3499,7 +3479,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_bvn_verification": {
       "post": {
         "summary": "Nigeria BVN Verification",
-        "description": "Create a **Nigeria BVN Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_bvn_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`bvn`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `bvn`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria BVN Verification** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_bvn_verification`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`bvn`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `bvn`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_bvn_verification",
         "tags": [
           "single-gov-nigeria"
@@ -3526,8 +3506,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -3543,7 +3523,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_bvn_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_bvn_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -3571,7 +3551,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -3611,7 +3591,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ng_bvn_verification",
                     "mode": "link",
@@ -3645,22 +3625,18 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_bvn_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "bvn": "22222222222",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
                       "date_of_birth": "1988-04-04",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -3857,7 +3833,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_nin_verification": {
       "post": {
         "summary": "Nigeria NIN Verification",
-        "description": "Create a **Nigeria NIN Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_nin_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`nin`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `nin`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria NIN Verification** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_nin_verification`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`nin`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `nin`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_nin_verification",
         "tags": [
           "single-gov-nigeria"
@@ -3884,8 +3860,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -3901,7 +3877,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_nin_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_nin_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -3929,7 +3905,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -3969,7 +3945,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ng_nin_verification",
                     "mode": "link",
@@ -4003,22 +3979,18 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_nin_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "nin": "55555555555",
                       "first_name": "Bimbo",
                       "last_name": "Olakunle",
                       "date_of_birth": "1988-04-04",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -4215,7 +4187,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_virtual_nin_verification": {
       "post": {
         "summary": "Nigeria Virtual NIN",
-        "description": "Create a **Nigeria Virtual NIN** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_virtual_nin_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`virtual_nin`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `virtual_nin`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria Virtual NIN** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_virtual_nin_verification`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`virtual_nin`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `virtual_nin`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_virtual_nin_verification",
         "tags": [
           "single-gov-nigeria"
@@ -4242,8 +4214,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -4259,7 +4231,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_virtual_nin_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_virtual_nin_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -4287,7 +4259,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -4327,7 +4299,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ng_virtual_nin_verification",
                     "mode": "link",
@@ -4355,19 +4327,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_virtual_nin_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "virtual_nin": "KO111111111111IL",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -4564,7 +4532,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_advanced_phone_number_verification": {
       "post": {
         "summary": "Nigeria Phone Verification",
-        "description": "Create a **Nigeria Phone Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_advanced_phone_number_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`phone_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `phone_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria Phone Verification** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_advanced_phone_number_verification`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`phone_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `phone_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_advanced_phone_number_verification",
         "tags": [
           "single-gov-nigeria"
@@ -4591,8 +4559,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -4608,7 +4576,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_advanced_phone_number_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_advanced_phone_number_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -4636,7 +4604,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -4676,7 +4644,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ng_advanced_phone_number_verification",
                     "mode": "link",
@@ -4704,19 +4672,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_advanced_phone_number_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "phone_number": "08000000000",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -4913,7 +4877,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_phone_number_lookup": {
       "post": {
         "summary": "Nigeria Phone Lookup",
-        "description": "Create a **Nigeria Phone Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_phone_number_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`phone_number`), validation fields (none), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `phone_number`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria Phone Lookup** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_phone_number_lookup`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `phone_number`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_phone_number_lookup",
         "tags": [
           "single-gov-nigeria"
@@ -4937,11 +4901,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -4957,7 +4920,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_phone_number_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_phone_number_lookup`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -4992,20 +4955,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "ng_phone_number_lookup",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "phone_number": "08000000000"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -5018,15 +4967,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_phone_number_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "phone_number": "08000000000"
                     }
                   }
@@ -5225,7 +5171,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_cac_lookup": {
       "post": {
         "summary": "Nigeria CAC Lookup",
-        "description": "Create a **Nigeria CAC Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`cac_number`), validation fields (`registration_name`), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `cac_number`\n**Optional:** `registration_name`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria CAC Lookup** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `cac_number`\n**Optional:** `registration_name`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_cac_lookup",
         "tags": [
           "single-gov-nigeria"
@@ -5249,11 +5195,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -5269,7 +5214,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_cac_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_cac_lookup`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -5308,20 +5253,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "ng_cac_lookup",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "cac_number": "RC00000011"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -5334,15 +5265,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_cac_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "cac_number": "RC00000011"
                     }
                   }
@@ -5541,7 +5469,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_passport_verification": {
       "post": {
         "summary": "Nigeria Passport Verification",
-        "description": "Create a **Nigeria Passport Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_passport_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`passport_id`, `last_name`), validation fields (none), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `passport_id`, `last_name`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria Passport Verification** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_passport_verification`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `passport_id`, `last_name`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_passport_verification",
         "tags": [
           "single-gov-nigeria"
@@ -5565,11 +5493,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -5585,7 +5512,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ng_passport_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ng_passport_verification`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -5624,21 +5551,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "ng_passport_verification",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "passport_id": "A01234567",
-                      "last_name": "Olakunle"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -5652,15 +5564,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ng_passport_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "passport_id": "A01234567",
                       "last_name": "Olakunle"
                     }
@@ -5860,7 +5769,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_passport_lookup": {
       "post": {
         "summary": "Ghana Passport Lookup",
-        "description": "Create a **Ghana Passport Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_passport_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`passport_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `passport_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Ghana Passport Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_passport_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`passport_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `passport_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-gh_passport_lookup",
         "tags": [
           "single-gov-ghana"
@@ -5887,8 +5796,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -5904,7 +5813,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `gh_passport_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `gh_passport_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -5929,6 +5838,20 @@
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
                       },
+                      "require_selfie": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
+                      },
+                      "allow_file_upload": {
+                        "type": "boolean",
+                        "description": "Link mode only. Same override as top-level `allow_file_upload`."
+                      },
+                      "selfie": {
+                        "type": "string",
+                        "description": "Direct mode only. HTTPS URL of a selfie image. Base64 data URIs are rejected.",
+                        "format": "uri"
+                      },
                       "passport_number": {
                         "type": "string",
                         "description": "Ghana passport number."
@@ -5949,12 +5872,16 @@
                       }
                     },
                     "additionalProperties": false
+                  },
+                  "allow_file_upload": {
+                    "type": "boolean",
+                    "description": "Link mode only. Overrides the tenant product setting. `true` = camera + file upload; `false` = camera only."
                   }
                 }
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "gh_passport_lookup",
                     "mode": "link",
@@ -5963,8 +5890,10 @@
                       "email": "customer@example.com",
                       "language": "EN",
                       "ttl": 60,
-                      "passport_number": "G0000555"
-                    }
+                      "passport_number": "G0000555",
+                      "require_selfie": true
+                    },
+                    "allow_file_upload": true
                   }
                 },
                 "direct": {
@@ -5974,21 +5903,20 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "passport_number": "G0000555"
+                      "passport_number": "G0000555",
+                      "selfie": "https://cdn.example.com/selfie.jpg"
                     }
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "gh_passport_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
-                      "passport_number": "G0000555"
+                      "passport_number": "G0000555",
+                      "selfie": "https://cdn.example.com/selfie.jpg"
                     }
                   }
                 }
@@ -6186,7 +6114,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_voter_card_lookup": {
       "post": {
         "summary": "Ghana Voter Card Lookup",
-        "description": "Create a **Ghana Voter Card Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`voter_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `voter_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Ghana Voter Card Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`voter_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `voter_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-gh_voter_card_lookup",
         "tags": [
           "single-gov-ghana"
@@ -6213,8 +6141,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -6230,7 +6158,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `gh_voter_card_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `gh_voter_card_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -6258,7 +6186,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -6298,7 +6226,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "gh_voter_card_lookup",
                     "mode": "link",
@@ -6326,19 +6254,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "gh_voter_card_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "voter_id": "9001330422",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -6535,7 +6459,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_ssnit_lookup": {
       "post": {
         "summary": "Ghana SSNIT Lookup",
-        "description": "Create a **Ghana SSNIT Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_ssnit_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`ssnit_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `ssnit_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Ghana SSNIT Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_ssnit_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`ssnit_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `ssnit_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-gh_ssnit_lookup",
         "tags": [
           "single-gov-ghana"
@@ -6562,8 +6486,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -6579,7 +6503,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `gh_ssnit_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `gh_ssnit_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -6607,7 +6531,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -6647,7 +6571,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "gh_ssnit_lookup",
                     "mode": "link",
@@ -6675,19 +6599,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "gh_ssnit_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "ssnit_number": "C987464748977",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -6884,7 +6804,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_drivers_license_lookup": {
       "post": {
         "summary": "Ghana Drivers License Lookup",
-        "description": "Create a **Ghana Drivers License Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_drivers_license_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`license_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `license_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Ghana Drivers License Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_drivers_license_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`license_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `license_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-gh_drivers_license_lookup",
         "tags": [
           "single-gov-ghana"
@@ -6911,8 +6831,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -6928,7 +6848,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `gh_drivers_license_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `gh_drivers_license_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -6956,7 +6876,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -6996,7 +6916,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "gh_drivers_license_lookup",
                     "mode": "link",
@@ -7024,19 +6944,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "gh_drivers_license_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "license_number": "070667",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -7233,7 +7149,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_passport_lookup": {
       "post": {
         "summary": "Kenya Passport Lookup",
-        "description": "Create a **Kenya Passport Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_passport_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`passport_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `passport_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Kenya Passport Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_passport_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`passport_number`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `passport_number`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ke_passport_lookup",
         "tags": [
           "single-gov-kenya"
@@ -7260,8 +7176,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -7277,7 +7193,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ke_passport_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ke_passport_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -7305,7 +7221,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -7345,7 +7261,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ke_passport_lookup",
                     "mode": "link",
@@ -7373,19 +7289,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ke_passport_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "passport_number": "A2011111",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -7582,7 +7494,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_national_id_lookup": {
       "post": {
         "summary": "Kenya National ID Lookup",
-        "description": "Create a **Kenya National ID Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_national_id_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`national_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `national_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Kenya National ID Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_national_id_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`national_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `national_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ke_national_id_lookup",
         "tags": [
           "single-gov-kenya"
@@ -7609,8 +7521,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -7626,7 +7538,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ke_national_id_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ke_national_id_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -7654,7 +7566,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -7694,7 +7606,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ke_national_id_lookup",
                     "mode": "link",
@@ -7722,19 +7634,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ke_national_id_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "national_id": "25219766",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -7931,7 +7839,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_phone_number_lookup": {
       "post": {
         "summary": "Kenya Phone Lookup",
-        "description": "Create a **Kenya Phone Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_phone_number_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`phone_number`, `type`), validation fields (none), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `phone_number`, `type`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Kenya Phone Lookup** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_phone_number_lookup`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `phone_number`, `type`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ke_phone_number_lookup",
         "tags": [
           "single-gov-kenya"
@@ -7955,11 +7863,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -7975,7 +7882,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ke_phone_number_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ke_phone_number_lookup`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -8018,21 +7925,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "ke_phone_number_lookup",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "phone_number": "0723818211",
-                      "type": "national_id"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -8046,15 +7938,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ke_phone_number_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "phone_number": "0723818211",
                       "type": "national_id"
                     }
@@ -8254,7 +8143,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ke_tax_pin_verification": {
       "post": {
         "summary": "Kenya Tax PIN Verification",
-        "description": "Create a **Kenya Tax PIN Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_tax_pin_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`tax_pin`), validation fields (none), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `tax_pin`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Kenya Tax PIN Verification** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ke_tax_pin_verification`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `tax_pin`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ke_tax_pin_verification",
         "tags": [
           "single-gov-kenya"
@@ -8278,11 +8167,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -8298,7 +8186,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ke_tax_pin_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ke_tax_pin_verification`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -8333,20 +8221,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "ke_tax_pin_verification",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "tax_pin": "A009274635J"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -8359,15 +8233,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ke_tax_pin_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "tax_pin": "A009274635J"
                     }
                   }
@@ -8678,7 +8549,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ci_national_id_lookup": {
       "post": {
         "summary": "Côte d'Ivoire National ID Lookup",
-        "description": "Create a **Côte d'Ivoire National ID Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ci_national_id_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`national_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `national_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Côte d'Ivoire National ID Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ci_national_id_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`national_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `national_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ci_national_id_lookup",
         "tags": [
           "single-gov-cote-divoire"
@@ -8705,8 +8576,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -8722,7 +8593,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ci_national_id_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ci_national_id_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -8750,7 +8621,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -8790,7 +8661,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ci_national_id_lookup",
                     "mode": "link",
@@ -8818,19 +8689,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ci_national_id_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "national_id": "00112233440",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -9027,7 +8894,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ci_residence_card_lookup": {
       "post": {
         "summary": "Côte d'Ivoire Residence Card Lookup",
-        "description": "Create a **Côte d'Ivoire Residence Card Lookup** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ci_residence_card_lookup`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`residence_card_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`, `input_data.require_selfie`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `residence_card_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Côte d'Ivoire Residence Card Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ci_residence_card_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`residence_card_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `residence_card_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ci_residence_card_lookup",
         "tags": [
           "single-gov-cote-divoire"
@@ -9054,8 +8921,8 @@
                       "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "`direct` always. `link` only when `input_data.require_selfie` is true. If omitted: `link` when require_selfie is true, otherwise `direct`."
                   },
                   "verification_type": {
                     "type": "string",
@@ -9071,7 +8938,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `ci_residence_card_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `ci_residence_card_lookup`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills and `require_selfie` must be true.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -9099,7 +8966,7 @@
                       "require_selfie": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Link mode only. When true, the customer must capture or upload a selfie on the hosted page."
+                        "description": "Required for link mode. Must be true. Link mode is rejected unless this is true."
                       },
                       "allow_file_upload": {
                         "type": "boolean",
@@ -9139,7 +9006,7 @@
               },
               "examples": {
                 "link": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Link mode — hosted selfie capture (require_selfie true)",
                   "value": {
                     "verification_type": "ci_residence_card_lookup",
                     "mode": "link",
@@ -9167,19 +9034,15 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "ci_residence_card_lookup",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "residence_card_id": "11223344555",
-                      "require_selfie": true
-                    },
-                    "allow_file_upload": true
+                      "selfie": "https://cdn.example.com/selfie.jpg"
+                    }
                   }
                 }
               }
@@ -9376,7 +9239,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/us_ssn_verification": {
       "post": {
         "summary": "United States SSN Verification",
-        "description": "Create a **United States SSN Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `us_ssn_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth`), validation fields (none), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **United States SSN Verification** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `us_ssn_verification`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-us_ssn_verification",
         "tags": [
           "single-gov-united-states"
@@ -9400,11 +9263,10 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "link",
                       "direct"
                     ],
-                    "default": "link",
-                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                    "default": "direct",
+                    "description": "This check does not support selfie matching. Only `direct` is allowed. Sending `link` returns 400."
                   },
                   "verification_type": {
                     "type": "string",
@@ -9420,7 +9282,7 @@
                   },
                   "input_data": {
                     "type": "object",
-                    "description": "Fields for `us_ssn_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "description": "Fields for `us_ssn_verification`. Direct mode only; the primary identifier(s) are required.",
                     "properties": {
                       "email": {
                         "type": "string",
@@ -9473,24 +9335,6 @@
                 }
               },
               "examples": {
-                "link": {
-                  "summary": "Link mode — hosted page",
-                  "value": {
-                    "verification_type": "us_ssn_verification",
-                    "mode": "link",
-                    "send_email": true,
-                    "input_data": {
-                      "email": "customer@example.com",
-                      "language": "EN",
-                      "ttl": 60,
-                      "ssn": "765439022",
-                      "first_name": "John",
-                      "last_name": "Smith",
-                      "phone_number": "+12109041086",
-                      "date_of_birth": "1995-01-23"
-                    }
-                  }
-                },
                 "direct": {
                   "summary": "Direct mode — async Korapay Identity",
                   "value": {
@@ -9507,15 +9351,12 @@
                   }
                 },
                 "default": {
-                  "summary": "Link mode — hosted page",
+                  "summary": "Direct mode — async Korapay Identity",
                   "value": {
                     "verification_type": "us_ssn_verification",
-                    "mode": "link",
-                    "send_email": true,
+                    "mode": "direct",
                     "input_data": {
-                      "email": "customer@example.com",
                       "language": "EN",
-                      "ttl": 60,
                       "ssn": "765439022",
                       "first_name": "John",
                       "last_name": "Smith",

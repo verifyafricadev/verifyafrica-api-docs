@@ -31,7 +31,7 @@ gh_voter_card_lookup
 
 Pass these fields inside `input_data` in your request body.
 
-**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page). Link mode also requires `input_data.require_selfie` to be `true`.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
@@ -43,14 +43,14 @@ Pass these fields inside `input_data` in your request body.
 
 ## Modes
 
-Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, selfies, and webhooks.
+This check supports Korapay **facial matching**, so **link mode is available only when you request a selfie** (`input_data.require_selfie: true`). Direct mode is always available. See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
 
 | Mode | Notes |
 | --- | --- |
-| `link` (default) | Hosted page. Prefill fields to lock them; leave optional validation blank for the customer. Returns `data.link.url`. |
-| `direct` | Send the required identifier now. Runs asynchronously. |
+| `direct` | Default unless `require_selfie` is true. Send the required identifier now. Optional `selfie` HTTPS URL. |
+| `link` | Only when `input_data.require_selfie` is `true`. Hosted page for selfie capture (and any fields you omit). Returns `data.link.url`. |
 
-Do not send internal `method_type`. Use top-level `mode` instead.
+Sending `mode: "link"` without `require_selfie: true` returns **400**. Do not send internal `method_type`.
 
 ## Making a Request
 
@@ -67,7 +67,8 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
   "send_email": true,
   "input_data": {
     "email": "customer@example.com",
-    "ttl": 60
+    "ttl": 60,
+    "require_selfie": true
   }
 }
 ```
