@@ -76,6 +76,11 @@
       "name": "single-gov-cote-divoire",
       "description": "Government registry checks for Côte d'Ivoire. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
       "x-displayName": "Côte d'Ivoire"
+    },
+    {
+      "name": "single-gov-united-states",
+      "description": "Government registry checks for the United States. Each operation supports `mode=link` (hosted) and `mode=direct` (async Korapay Identity).",
+      "x-displayName": "United States"
     }
   ],
   "x-tagGroups": [
@@ -91,11 +96,12 @@
     {
       "name": "Government Registry Checks",
       "tags": [
-        "single-gov-south-africa",
-        "single-gov-nigeria",
+        "single-gov-cote-divoire",
         "single-gov-ghana",
         "single-gov-kenya",
-        "single-gov-cote-divoire"
+        "single-gov-nigeria",
+        "single-gov-south-africa",
+        "single-gov-united-states"
       ]
     },
     {
@@ -9366,6 +9372,348 @@
           }
         }
       }
+    },
+    "/api/v2/public/verifications/requests/government_registry_checks/us_ssn_verification": {
+      "post": {
+        "summary": "United States SSN Verification",
+        "description": "Create a **United States SSN Verification** check in **link** or **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `us_ssn_verification`.\n\n### Link mode (`mode=link`, default)\n**Required:** `input_data`, `input_data.email`\n**Optional:** primary fields (`ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth`), validation fields (none), `send_email`, `input_data.ttl`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica page\nPrefill any registry / validation field to lock it for the customer; omit fields so the customer enters them.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth`\n**Optional:** none\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "operationId": "public-gov-us_ssn_verification",
+        "tags": [
+          "single-gov-united-states"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "verification_type",
+                  "input_data"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "link",
+                      "direct"
+                    ],
+                    "default": "link",
+                    "description": "Both modes (defaults to `link`). `link` returns a hosted URL; `direct` runs Korapay Identity asynchronously."
+                  },
+                  "verification_type": {
+                    "type": "string",
+                    "description": "Must match this check.",
+                    "enum": [
+                      "us_ssn_verification"
+                    ]
+                  },
+                  "send_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Link mode only. `true` to email the hosted capture link to `input_data.email`. Defaults to `false`."
+                  },
+                  "input_data": {
+                    "type": "object",
+                    "description": "Fields for `us_ssn_verification`. In **direct** mode the primary identifier(s) are required. In **link** mode they are optional prefills (locked when sent).",
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "description": "Link mode: required. Direct mode: optional customer email.",
+                        "format": "email"
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "Both modes. Language code. Defaults to \"EN\".",
+                        "example": "EN",
+                        "default": "EN"
+                      },
+                      "ttl": {
+                        "type": "integer",
+                        "enum": [
+                          15,
+                          30,
+                          60,
+                          120,
+                          240
+                        ],
+                        "default": 60,
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                      },
+                      "ssn": {
+                        "type": "string",
+                        "description": "9-digit Social Security Number. Dashes and spaces are stripped."
+                      },
+                      "first_name": {
+                        "type": "string",
+                        "description": "First name of the SSN holder."
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "description": "Last name of the SSN holder."
+                      },
+                      "phone_number": {
+                        "type": "string",
+                        "description": "US phone number with country code (`+1XXXXXXXXXX`). 10-digit numbers get `+1` prepended."
+                      },
+                      "date_of_birth": {
+                        "type": "string",
+                        "description": "Date of birth of the SSN holder (YYYY-MM-DD).",
+                        "format": "date",
+                        "example": "1995-01-23"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "examples": {
+                "link": {
+                  "summary": "Link mode — hosted page",
+                  "value": {
+                    "verification_type": "us_ssn_verification",
+                    "mode": "link",
+                    "send_email": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "ssn": "765439022",
+                      "first_name": "John",
+                      "last_name": "Smith",
+                      "phone_number": "+12109041086",
+                      "date_of_birth": "1995-01-23"
+                    }
+                  }
+                },
+                "direct": {
+                  "summary": "Direct mode — async Korapay Identity",
+                  "value": {
+                    "verification_type": "us_ssn_verification",
+                    "mode": "direct",
+                    "input_data": {
+                      "language": "EN",
+                      "ssn": "765439022",
+                      "first_name": "John",
+                      "last_name": "Smith",
+                      "phone_number": "+12109041086",
+                      "date_of_birth": "1995-01-23"
+                    }
+                  }
+                },
+                "default": {
+                  "summary": "Link mode — hosted page",
+                  "value": {
+                    "verification_type": "us_ssn_verification",
+                    "mode": "link",
+                    "send_email": true,
+                    "input_data": {
+                      "email": "customer@example.com",
+                      "language": "EN",
+                      "ttl": 60,
+                      "ssn": "765439022",
+                      "first_name": "John",
+                      "last_name": "Smith",
+                      "phone_number": "+12109041086",
+                      "date_of_birth": "1995-01-23"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Validation error",
+                    "value": {
+                      "success": false,
+                      "message": "Missing required parameters for 'us_ssn_verification': ssn",
+                      "errors": [
+                        "Missing required parameters for 'us_ssn_verification': ssn"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid Bearer API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "success": false,
+                      "message": "Invalid API key.",
+                      "errors": [
+                        "Invalid API key."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "KYC incomplete",
+                    "value": {
+                      "success": false,
+                      "message": "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications.",
+                      "errors": [
+                        "Tenant KYC is not complete. Please complete KYC before creating team members or performing verifications."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — verification does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Resource not found",
+                    "value": {
+                      "success": false,
+                      "message": "Resource not found.",
+                      "errors": [
+                        "Resource not found."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — unexpected failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                },
+                "examples": {
+                  "error": {
+                    "summary": "Unexpected error",
+                    "value": {
+                      "success": false,
+                      "message": "An unexpected error occurred.",
+                      "errors": [
+                        "An unexpected error occurred."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Verification created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success Response"
+                },
+                "examples": {
+                  "link": {
+                    "summary": "Link mode — hosted URL returned",
+                    "value": {
+                      "success": true,
+                      "message": "Verification link created successfully.",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "us_ssn_verification",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "link": {
+                          "url": "https://verify.verifyafrica.io/new-verify/25b6057a-7e63-4469-ad9f-45b3242e1d93"
+                        },
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "direct": {
+                    "summary": "Direct mode — accepted PENDING",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request accepted. Processing has started; listen for the kr.verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "us_ssn_verification",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  },
+                  "success": {
+                    "summary": "Direct mode — accepted PENDING",
+                    "value": {
+                      "success": true,
+                      "message": "Verification request accepted. Processing has started; listen for the kr.verification.completed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+                      "data": {
+                        "id": "06ab25b4-0004-7048-8000-eba5ee027bbb",
+                        "verification_type": "us_ssn_verification",
+                        "status": "PENDING",
+                        "created_at": "2026-09-22T10:41:04.035443Z",
+                        "response_data": {},
+                        "proofs": {},
+                        "proofs_available": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/"
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -9514,7 +9862,8 @@
           "ke_phone_number_lookup",
           "ke_tax_pin_verification",
           "ci_residence_card_lookup",
-          "ci_national_id_lookup"
+          "ci_national_id_lookup",
+          "us_ssn_verification"
         ],
         "example": "id_document",
         "x-enumDescriptions": {
@@ -9543,7 +9892,8 @@
           "ke_phone_number_lookup": "Kenya phone lookup (`POST .../government_registry_checks/`)",
           "ke_tax_pin_verification": "Kenya tax PIN (`POST .../government_registry_checks/`)",
           "ci_national_id_lookup": "Côte d'Ivoire national ID (`POST .../government_registry_checks/`)",
-          "ci_residence_card_lookup": "Côte d'Ivoire residence card (`POST .../government_registry_checks/`)"
+          "ci_residence_card_lookup": "Côte d'Ivoire residence card (`POST .../government_registry_checks/`)",
+          "us_ssn_verification": "United States Social Security Number (`POST .../government_registry_checks/`)"
         }
       },
       "VerificationRequestData": {

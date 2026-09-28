@@ -276,6 +276,29 @@ CHECKS: dict[str, dict] = {
             "selfie": "Direct mode only. HTTPS URL of a selfie image for facial matching.",
         },
     },
+    "us_ssn_verification": {
+        "summary": "United States SSN Verification",
+        "country": "US",
+        "required": ["ssn", "first_name", "last_name", "phone_number", "date_of_birth"],
+        "optional": [],
+        "selfie": False,
+        "sample": {
+            "ssn": "765439022",
+            "first_name": "John",
+            "last_name": "Smith",
+            "phone_number": "+12109041086",
+            "date_of_birth": "1995-01-23",
+        },
+        "field_desc": {
+            "ssn": "9-digit Social Security Number. Dashes and spaces are stripped.",
+            "first_name": "First name of the SSN holder.",
+            "last_name": "Last name of the SSN holder.",
+            "phone_number": (
+                "US phone number with country code (`+1XXXXXXXXXX`). 10-digit numbers get `+1` prepended."
+            ),
+            "date_of_birth": "Date of birth of the SSN holder (YYYY-MM-DD).",
+        },
+    },
 }
 
 
@@ -362,7 +385,7 @@ def build_input_properties(meta: dict) -> dict:
             props[key] = prop(
                 meta["field_desc"].get(key, "Date of birth (YYYY-MM-DD)."),
                 format="date",
-                example="1988-04-04",
+                example=meta["sample"].get("date_of_birth", "1988-04-04"),
             )
             continue
         props[key] = prop(meta["field_desc"].get(key, key))
@@ -741,16 +764,19 @@ def upgrade_webhooks(spec: dict) -> None:
 def ensure_country_tags(spec: dict) -> None:
     tags = spec.setdefault("tags", [])
     by_name = {t.get("name"): t for t in tags if isinstance(t, dict)}
+    # Sorted alphabetically by country name.
     desired = {
-        "single-gov-south-africa": "South Africa",
-        "single-gov-nigeria": "Nigeria",
+        "single-gov-cote-divoire": "Côte d'Ivoire",
         "single-gov-ghana": "Ghana",
         "single-gov-kenya": "Kenya",
-        "single-gov-cote-divoire": "Côte d'Ivoire",
+        "single-gov-nigeria": "Nigeria",
+        "single-gov-south-africa": "South Africa",
+        "single-gov-united-states": "United States",
     }
     for name, display in desired.items():
+        country = f"the {display}" if display == "United States" else display
         desc = (
-            f"Government registry checks for {display}. Each operation supports "
+            f"Government registry checks for {country}. Each operation supports "
             "`mode=link` (hosted) and `mode=direct` (async Korapay Identity)."
         )
         if name in by_name:
@@ -762,13 +788,7 @@ def ensure_country_tags(spec: dict) -> None:
     groups = spec.get("x-tagGroups") or []
     for group in groups:
         if group.get("name") == "Government Registry Checks":
-            group["tags"] = [
-                "single-gov-south-africa",
-                "single-gov-nigeria",
-                "single-gov-ghana",
-                "single-gov-kenya",
-                "single-gov-cote-divoire",
-            ]
+            group["tags"] = list(desired)
 
 
 COUNTRY_TAG_BY_CODE = {
@@ -777,6 +797,7 @@ COUNTRY_TAG_BY_CODE = {
     "GH": "single-gov-ghana",
     "KE": "single-gov-kenya",
     "CI": "single-gov-cote-divoire",
+    "US": "single-gov-united-states",
 }
 
 
@@ -798,10 +819,10 @@ def ensure_public_verification_type_enum(spec: dict) -> None:
     enum = list(schema.get("enum") or [])
     for vtype in CHECKS:
         if vtype not in enum:
-            # Insert CI types after Kenya tax PIN when present
-            if "ke_tax_pin_verification" in enum:
-                idx = enum.index("ke_tax_pin_verification") + 1
-                enum[idx:idx] = [v for v in (vtype,) if v not in enum]
+            # Insert new registry types after the last registry type already listed
+            registry_indexes = [i for i, item in enumerate(enum) if item in CHECKS]
+            if registry_indexes:
+                enum.insert(registry_indexes[-1] + 1, vtype)
             else:
                 enum.append(vtype)
     # De-dupe while preserving order
@@ -819,6 +840,9 @@ def ensure_public_verification_type_enum(spec: dict) -> None:
         )
         x_enum["ci_residence_card_lookup"] = (
             "Côte d'Ivoire residence card (`POST .../government_registry_checks/`)"
+        )
+        x_enum["us_ssn_verification"] = (
+            "United States Social Security Number (`POST .../government_registry_checks/`)"
         )
 
 

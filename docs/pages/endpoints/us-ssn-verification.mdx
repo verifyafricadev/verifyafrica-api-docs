@@ -1,0 +1,180 @@
+---
+title: United States SSN Verification
+description: Verify US Social Security Numbers against the holder's name, date of birth, and phone number.
+sidebar_label: United States SSN Verification
+---
+
+# United States SSN Verification
+
+Verify US Social Security Numbers (SSN) against the holder's name, date of birth, and phone number via Korapay Identity. Completed results include the holder's address history.
+
+:::tip API Reference
+Jump directly to the interactive API docs:
+
+- [API reference](/api/single-gov-united-states#united-states-ssn-verification) — schemas, examples, and playground
+- Create: `POST /api/v2/public/verifications/requests/government_registry_checks/`
+- Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
+:::
+
+## Verification Type
+
+```
+us_ssn_verification
+```
+
+## Use Cases
+
+- Identity verification for US customers during onboarding
+- Confirm an SSN belongs to the person applying, and retrieve their address history
+
+## Input Parameters
+
+Pass these fields inside `input_data` in your request body.
+
+**Required** below means required in **direct** mode. In **link** mode those fields are optional prefills (omit them so the customer enters them on the hosted page).
+
+Unlike most registry checks, the holder's name, date of birth, and phone number are **required** identity inputs for SSN, not optional validation fields.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `ssn` | string | Yes | 9-digit Social Security Number. Dashes and spaces are stripped (`765-43-9022` → `765439022`). |
+| `first_name` | string | Yes | First name of the SSN holder. |
+| `last_name` | string | Yes | Last name of the SSN holder. |
+| `phone_number` | string | Yes | US phone number with country code (`+1XXXXXXXXXX`). 10-digit numbers get `+1` prepended. |
+| `date_of_birth` | string | Yes | Date of birth (`YYYY-MM-DD`). |
+
+Selfie matching is not supported for this check.
+
+## Modes
+
+Supports **link** and **direct** mode (same product endpoint for every registry check). See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
+
+| Mode | Notes |
+| --- | --- |
+| `link` (default) | Hosted page. Prefill fields to lock them; the customer enters any required fields you leave out. Returns `data.link.url`. |
+| `direct` | Send all five required fields now. Runs asynchronously. |
+
+Do not send internal `method_type`. Use top-level `mode` instead.
+
+## Making a Request
+
+**Endpoint:** `POST https://api.verifyafrica.io/api/v2/public/verifications/requests/government_registry_checks/`
+
+Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `us_ssn_verification`.
+
+### Link mode
+
+```json
+{
+  "verification_type": "us_ssn_verification",
+  "mode": "link",
+  "send_email": true,
+  "input_data": {
+    "email": "customer@example.com",
+    "ttl": 60
+  }
+}
+```
+
+The customer enters their SSN, name, date of birth, and phone number on the hosted page. Prefill any of them (for example `"ssn": "765439022"`) to lock that field.
+
+### Direct mode
+
+```json
+{
+  "verification_type": "us_ssn_verification",
+  "mode": "direct",
+  "input_data": {
+    "ssn": "765439022",
+    "first_name": "John",
+    "last_name": "Smith",
+    "phone_number": "+12109041086",
+    "date_of_birth": "1995-01-23"
+  }
+}
+```
+
+Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
+
+Korapay processes SSN checks asynchronously, so the verification can stay `PENDING` for longer than other registry checks. VerifyAfrica picks up the final result from Korapay's webhook, or when you poll GET detail.
+
+## Completed Result
+
+When the check completes, `response_data.data` contains the SSN holder's record, including address history:
+
+```json
+{
+  "reference": "VR-tZmfSmVs4qHgKKrkz",
+  "full_name": "John Smith",
+  "id_type": "us_ssn",
+  "first_name": "John",
+  "last_name": "Smith",
+  "date_of_birth": "1995-01-23",
+  "phone_number": "12109041086",
+  "addresses": [
+    {
+      "street": "6 Jenna Plaza",
+      "state": "NY",
+      "town": "New York City",
+      "post_code": "10009",
+      "country": "USA",
+      "formatted_address": "6 Jenna Plaza, New York City, New York, United States of America, 10009"
+    }
+  ],
+  "id": "765439022",
+  "masked_id": "******022",
+  "country": "us",
+  "status": "found"
+}
+```
+
+## Sandbox testing
+
+With Korapay **test** keys, use the [Korapay sandbox identity values](https://developers.korapay.com/docs/testing-your-integration):
+
+| Scenario | SSN | First name | Last name | Phone number | Date of birth | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Valid | `765439022` | `John` | `Smith` | `+12109041086` | `1995-01-23` | `SUCCESS` with address history |
+| Not found | `123456789` | `John` | `Smith` | `+12109041086` | `1995-01-23` | `FAILED` |
+
+Korapay publishes only the valid SSN. Any other well-formed SSN (such as `123456789`) comes back as not found. Korapay rejects SSNs that can never be issued (such as `000000000`) as invalid, and the verification ends with status `ERROR` and the message "Please provide a valid SSN".
+
+Sandbox SSN checks can take anywhere from a few seconds to a few minutes to finish, so expect `PENDING` in the meantime.
+
+SSNs that are not 9 digits, phone numbers that are not US numbers, and dates not in `YYYY-MM-DD` format are rejected at create with HTTP 400.
+
+## Example Error Responses
+
+Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.
+
+```json
+{
+  "success": false,
+  "message": "ssn: SSN must be 9 digits.",
+  "errors": ["ssn: SSN must be 9 digits."]
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Missing required parameters for 'us_ssn_verification': phone_number",
+  "errors": ["Missing required parameters for 'us_ssn_verification': phone_number"]
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Invalid API key.",
+  "errors": ["Invalid API key."]
+}
+```
+
+See the [Introduction](/) for the full set of status-code examples, or the interactive [API Reference](/api).
+
+## API Reference
+
+View the full request/response schemas, response codes, and interactive playground:
+
+- [API reference](/api/single-gov-united-states#united-states-ssn-verification)

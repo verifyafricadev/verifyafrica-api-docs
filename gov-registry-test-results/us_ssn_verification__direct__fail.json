@@ -1,0 +1,112 @@
+{
+  "scenario": {
+    "verification_type": "us_ssn_verification",
+    "mode": "direct",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration",
+    "note": "Korapay docs list only a valid US SSN; fail uses a well-formed SSN that is not in the sandbox."
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "us_ssn_verification",
+        "mode": "direct",
+        "input_data": {
+          "ssn": "123456789",
+          "first_name": "John",
+          "last_name": "Smith",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06aba392-fa2b-7259-8000-ecdff2728404",
+        "verification_type": "us_ssn_verification",
+        "status": "PENDING",
+        "input_data": {
+          "ssn": "123456789",
+          "mode": "direct",
+          "language": "EN",
+          "last_name": "Smith",
+          "first_name": "John",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23"
+        },
+        "response_data": {},
+        "cost_charged": "1.25",
+        "currency": "USD",
+        "created_at": "2026-09-28T09:53:51.635863Z",
+        "submitted_at": "2026-09-28T09:53:51.635512Z",
+        "batch_id": null,
+        "reference": "VER-06aba392-fa2b-7e7f-8000-1d6e5cc3e624",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06aba392-fa2b-7259-8000-ecdff2728404"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06aba392-fa2b-7259-8000-ecdff2728404",
+        "verification_type": "us_ssn_verification",
+        "status": "FAILED",
+        "input_data": {
+          "ssn": "123456789",
+          "mode": "direct",
+          "language": "EN",
+          "last_name": "Smith",
+          "first_name": "John",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23",
+          "korapay_reference": "VR-68RszSK6WGa7aZgwk"
+        },
+        "response_data": {
+          "status": true,
+          "message": "Verification retrieved successfully",
+          "data": {
+            "reference": "VR-68RszSK6WGa7aZgwk",
+            "id": "123456789",
+            "masked_id": "******789",
+            "type": "kyc",
+            "class": "id_lookup",
+            "identity_type": "us_ssn",
+            "country": "us",
+            "requested_by": "API User",
+            "status": "not_found",
+            "date_created": "2026-09-28T09:53:52.269Z"
+          },
+          "event": "kr.verification.failed"
+        },
+        "cost_charged": "1.25",
+        "currency": "USD",
+        "created_at": "2026-09-28T09:53:51.635863Z",
+        "submitted_at": "2026-09-28T09:53:51.635512Z",
+        "batch_id": null,
+        "reference": "VER-06aba392-fa2b-7e7f-8000-1d6e5cc3e624",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

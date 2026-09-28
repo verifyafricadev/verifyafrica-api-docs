@@ -110,8 +110,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 	"/endpoints/overview/government-registry": {
 		title: "Government Registry Checks",
 		description:
-			"Verify identity and registry records against official government databases across South Africa, Nigeria, Ghana, Kenya, and Côte d'Ivoire.",
-		keywords: ["government registry", "official ID verification", "registry lookup", "Côte d'Ivoire"],
+			"Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States.",
+		keywords: ["government registry", "official ID verification", "registry lookup", "Côte d'Ivoire", "SSN verification"],
 	},
 	"/endpoints/overview/government-registry/south-africa": {
 		title: "South Africa Government Registry",
@@ -230,6 +230,17 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 		title: "Côte d'Ivoire Residence Card Lookup",
 		description: "Verify Ivorian Residence Card records against the government registry.",
 		keywords: ["Côte d'Ivoire residence card", "Ivory Coast titre de séjour"],
+	},
+	"/endpoints/overview/government-registry/united-states": {
+		title: "United States Government Registry",
+		description: "Government registry verification endpoints for the United States.",
+		keywords: ["United States", "USA", "SSN verification", "government registry"],
+	},
+	"/endpoints/us-ssn-verification": {
+		title: "United States SSN Verification",
+		description:
+			"Verify US Social Security Numbers against the holder's name, date of birth, and phone number.",
+		keywords: ["SSN verification", "Social Security Number", "US identity verification"],
 	},
 };
 

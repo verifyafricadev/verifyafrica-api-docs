@@ -1,6 +1,6 @@
 {
-  "total": 64,
-  "passed_expectation": 64,
+  "total": 68,
+  "passed_expectation": 68,
   "failed_expectation": [],
   "results": [
     {
@@ -642,13 +642,53 @@
       "final_status": "SUCCESS",
       "final_message": "South Africa ID verified successfully",
       "expected_ok": true
+    },
+    {
+      "file": "us_ssn_verification__direct__success.json",
+      "verification_type": "us_ssn_verification",
+      "mode": "direct",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Verification retrieved successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "us_ssn_verification__direct__fail.json",
+      "verification_type": "us_ssn_verification",
+      "mode": "direct",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Verification retrieved successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "us_ssn_verification__link__success.json",
+      "verification_type": "us_ssn_verification",
+      "mode": "link",
+      "outcome": "success",
+      "create_http_status": 201,
+      "final_status": "SUCCESS",
+      "final_message": "Verification retrieved successfully",
+      "expected_ok": true
+    },
+    {
+      "file": "us_ssn_verification__link__fail.json",
+      "verification_type": "us_ssn_verification",
+      "mode": "link",
+      "outcome": "fail",
+      "create_http_status": 201,
+      "final_status": "FAILED",
+      "final_message": "Verification retrieved successfully",
+      "expected_ok": true
     }
   ],
   "credentials_source": "https://developers.korapay.com/docs/testing-your-integration",
   "api": {
     "base": "http://localhost:8300",
     "create": "POST /api/v2/public/verifications/requests/government_registry_checks/",
-    "get": "GET /api/v2/public/verifications/requests/?verification_id=\u2026",
+    "get": "GET /api/v2/public/verifications/requests/?verification_id=…",
     "link_submit": "POST /api/v2/verifications/new-verify/{token}/government_registry/",
     "auth": "Authorization: Bearer <VA-api-key>"
   },

@@ -1,0 +1,159 @@
+{
+  "scenario": {
+    "verification_type": "us_ssn_verification",
+    "mode": "link",
+    "outcome": "fail",
+    "source": "https://developers.korapay.com/docs/testing-your-integration",
+    "note": "Korapay docs list only a valid US SSN; fail uses a well-formed SSN that is not in the sandbox."
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "us_ssn_verification",
+        "mode": "link",
+        "send_email": false,
+        "input_data": {
+          "email": "gov-registry-test+us_ssn_verification-fail@example.com",
+          "ssn": "123456789",
+          "first_name": "John",
+          "last_name": "Smith",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification link created. Redirect the customer to `data.link.url` and listen for the verification.completed or verification.failed webhook, or poll GET /api/v2/public/verifications/requests/?verification_id=…",
+      "data": {
+        "id": "06aba393-5b50-76bd-8000-bd0b82377216",
+        "verification_type": "us_ssn_verification",
+        "status": "PENDING",
+        "input_data": {
+          "ssn": "123456789",
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+us_ssn_verification-fail@example.com",
+          "language": "EN",
+          "last_name": "Smith",
+          "first_name": "John",
+          "send_email": false,
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23",
+          "require_selfie": false
+        },
+        "response_data": {},
+        "cost_charged": "0.00",
+        "currency": "USD",
+        "created_at": "2026-09-28T09:53:57.707375Z",
+        "submitted_at": null,
+        "batch_id": null,
+        "reference": "VER-06aba393-5b50-7ec9-8000-d3afcb3e6bc9",
+        "link": {
+          "id": "06aba393-5b71-700f-8000-4a663cec15f0",
+          "link": "7e0a32bd-8d59-4c2d-a9ae-c00f87f60ef0",
+          "url": "https://app.verifyafrica.io/new-verify/7e0a32bd-8d59-4c2d-a9ae-c00f87f60ef0",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-28T10:53:57.713501Z",
+          "created_at": "2026-09-28T09:53:57.715991Z",
+          "verification_id": "06aba393-5b50-76bd-8000-bd0b82377216",
+          "verification_reference": "VER-06aba393-5b50-7ec9-8000-d3afcb3e6bc9"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "submit": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/verifications/new-verify/7e0a32bd-8d59-4c2d-a9ae-c00f87f60ef0/government_registry/",
+      "payload": {}
+    },
+    "http_status": 202,
+    "response": {
+      "success": true,
+      "message": "We've received your details. Verification is in progress.",
+      "data": {
+        "reference": "VER-06aba393-5b50-7ec9-8000-d3afcb3e6bc9",
+        "event": null,
+        "status": "PENDING"
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06aba393-5b50-76bd-8000-bd0b82377216"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06aba393-5b50-76bd-8000-bd0b82377216",
+        "verification_type": "us_ssn_verification",
+        "status": "FAILED",
+        "input_data": {
+          "ssn": "123456789",
+          "ttl": 60,
+          "mode": "link",
+          "email": "gov-registry-test+us_ssn_verification-fail@example.com",
+          "language": "EN",
+          "last_name": "Smith",
+          "first_name": "John",
+          "send_email": false,
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23",
+          "require_selfie": false,
+          "korapay_reference": "VR-cVysbpt4AlPfnhNNS"
+        },
+        "response_data": {
+          "status": true,
+          "message": "Verification retrieved successfully",
+          "data": {
+            "reference": "VR-cVysbpt4AlPfnhNNS",
+            "id": "123456789",
+            "masked_id": "******789",
+            "type": "kyc",
+            "class": "id_lookup",
+            "identity_type": "us_ssn",
+            "country": "us",
+            "requested_by": "API User",
+            "status": "not_found",
+            "date_created": "2026-09-28T09:53:58.951Z"
+          },
+          "event": "kr.verification.failed"
+        },
+        "cost_charged": "1.25",
+        "currency": "USD",
+        "created_at": "2026-09-28T09:53:57.707375Z",
+        "submitted_at": "2026-09-28T09:53:57.745702Z",
+        "batch_id": null,
+        "reference": "VER-06aba393-5b50-7ec9-8000-d3afcb3e6bc9",
+        "link": {
+          "id": "06aba393-5b71-700f-8000-4a663cec15f0",
+          "link": "7e0a32bd-8d59-4c2d-a9ae-c00f87f60ef0",
+          "url": "https://app.verifyafrica.io/new-verify/7e0a32bd-8d59-4c2d-a9ae-c00f87f60ef0",
+          "link_type": "new_link",
+          "ttl_minutes": 60,
+          "expires_at": "2026-09-28T10:53:57.713501Z",
+          "created_at": "2026-09-28T09:53:57.715991Z",
+          "verification_id": "06aba393-5b50-76bd-8000-bd0b82377216",
+          "verification_reference": "VER-06aba393-5b50-7ec9-8000-d3afcb3e6bc9"
+        },
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

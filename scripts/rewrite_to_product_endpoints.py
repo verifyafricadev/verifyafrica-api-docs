@@ -48,6 +48,7 @@ GOV_TYPES = [
     "ke_tax_pin_verification",
     "ci_national_id_lookup",
     "ci_residence_card_lookup",
+    "us_ssn_verification",
 ]
 
 # MDX file stem → product slug

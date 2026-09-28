@@ -133,6 +133,28 @@ CHECKS: list[dict[str, Any]] = [
         "fail": {"residence_card_id": "00000000000"},
         "fail_note": "Korapay docs list only a valid CI Residence Card; fail uses a synthetic invalid ID.",
     },
+    {
+        "verification_type": "us_ssn_verification",
+        # Holder details from https://developers.korapay.com/docs/social-security-number-ssn-verification
+        "success": {
+            "ssn": "765439022",
+            "first_name": "John",
+            "last_name": "Smith",
+            "phone_number": "+12109041086",
+            "date_of_birth": "1995-01-23",
+        },
+        # Must be a well-formed SSN: Korapay rejects malformed ones (e.g. 000000000) with HTTP 422.
+        "fail": {
+            "ssn": "123456789",
+            "first_name": "John",
+            "last_name": "Smith",
+            "phone_number": "+12109041086",
+            "date_of_birth": "1995-01-23",
+        },
+        "fail_note": "Korapay docs list only a valid US SSN; fail uses a well-formed SSN that is not in the sandbox.",
+        # Korapay processes SSN asynchronously; sandbox results take a few minutes.
+        "poll_timeout_s": 420,
+    },
 ]
 
 
@@ -176,8 +198,8 @@ def _truncate_large_strings(obj: Any, *, limit: int = 240) -> Any:
     return obj
 
 
-def _poll(verification_id: str) -> dict:
-    deadline = time.time() + POLL_TIMEOUT_S
+def _poll(verification_id: str, timeout_s: float = POLL_TIMEOUT_S) -> dict:
+    deadline = time.time() + timeout_s
     last: dict = {}
     while time.time() < deadline:
         status, payload = _request("GET", f"{GET_PATH}?verification_id={verification_id}")
@@ -226,7 +248,7 @@ def run_direct(check: dict, outcome: str) -> Path:
         verification_id = ((create_body.get("data") or {}).get("id"))
     final = None
     if verification_id and create_status in {200, 201}:
-        final = _poll(str(verification_id))
+        final = _poll(str(verification_id), check.get("poll_timeout_s", POLL_TIMEOUT_S))
     doc = {
         "scenario": {
             "verification_type": vtype,
@@ -288,7 +310,7 @@ def run_link(check: dict, outcome: str) -> Path:
             auth=False,
         )
         if verification_id:
-            final = _poll(str(verification_id))
+            final = _poll(str(verification_id), check.get("poll_timeout_s", POLL_TIMEOUT_S))
 
     doc = {
         "scenario": {
@@ -328,11 +350,14 @@ def run_link(check: dict, outcome: str) -> Path:
 
 
 def main() -> int:
+    """Run every check, or only the verification types passed as arguments."""
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    selected = set(sys.argv[1:])
+    checks = [c for c in CHECKS if not selected or c["verification_type"] in selected]
     summary: list[dict[str, Any]] = []
-    total = len(CHECKS) * 4
+    total = len(checks) * 4
     idx = 0
-    for check in CHECKS:
+    for check in checks:
         for mode in ("direct", "link"):
             for outcome in ("success", "fail"):
                 idx += 1
@@ -341,7 +366,8 @@ def main() -> int:
                 try:
                     path = run_direct(check, outcome) if mode == "direct" else run_link(check, outcome)
                     raw = json.loads(path.read_text())
-                    final_status = ((raw.get("final") or {}).get("response") or {}).get("data", {}).get("status")
+                    final_data = ((raw.get("final") or {}).get("response") or {}).get("data") or {}
+                    final_status = final_data.get("status")
                     create_http = (raw.get("create") or {}).get("http_status")
                     print(f"    -> {path.name} create={create_http} final_status={final_status}", flush=True)
                     summary.append(
@@ -352,6 +378,8 @@ def main() -> int:
                             "outcome": outcome,
                             "create_http_status": create_http,
                             "final_status": final_status,
+                            "final_message": (final_data.get("response_data") or {}).get("message"),
+                            "expected_ok": final_status == ("SUCCESS" if outcome == "success" else "FAILED"),
                         }
                     )
                 except Exception as exc:  # noqa: BLE001 — collect and continue
@@ -362,12 +390,40 @@ def main() -> int:
                             "mode": mode,
                             "outcome": outcome,
                             "error": str(exc),
+                            "expected_ok": False,
                         }
                     )
 
     summary_path = OUT_DIR / "_summary.json"
-    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
-    print(f"\nWrote {len(summary)} scenarios. Summary: {summary_path}", flush=True)
+    existing = json.loads(summary_path.read_text()) if summary_path.exists() else {}
+    if not isinstance(existing, dict):
+        existing = {}
+    results = summary
+    if selected:
+        previous = existing.get("results") or []
+        results = [r for r in previous if r.get("verification_type") not in selected] + summary
+    failed = [
+        r.get("file") or f"{r['verification_type']}/{r['mode']}/{r['outcome']}"
+        for r in results
+        if not r.get("expected_ok")
+    ]
+    document = {
+        "total": len(results),
+        "passed_expectation": len(results) - len(failed),
+        "failed_expectation": failed,
+        "results": results,
+        "credentials_source": existing.get(
+            "credentials_source", "https://developers.korapay.com/docs/testing-your-integration"
+        ),
+        "api": existing.get("api", {"base": BASE_URL, "create": f"POST {CREATE_PATH}", "get": f"GET {GET_PATH}"}),
+        "notes": existing.get("notes", []),
+    }
+    summary_path.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n")
+    print(
+        f"\nWrote {len(summary)} scenarios ({document['passed_expectation']}/{document['total']} "
+        f"as expected overall). Summary: {summary_path}",
+        flush=True,
+    )
     return 0
 
 

@@ -1,0 +1,127 @@
+{
+  "scenario": {
+    "verification_type": "us_ssn_verification",
+    "mode": "direct",
+    "outcome": "success",
+    "source": "https://developers.korapay.com/docs/testing-your-integration"
+  },
+  "create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v2/public/verifications/requests/government_registry_checks/",
+      "payload": {
+        "verification_type": "us_ssn_verification",
+        "mode": "direct",
+        "input_data": {
+          "ssn": "765439022",
+          "first_name": "John",
+          "last_name": "Smith",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "success": true,
+      "message": "Verification request accepted. Processing has started; listen for the verification.completed or verification.failed webhook or poll GET /api/v2/public/verifications/requests/?verification_id=… when the verification is complete.",
+      "data": {
+        "id": "06aba392-d0fe-7047-8000-5cd0dbb606e8",
+        "verification_type": "us_ssn_verification",
+        "status": "PENDING",
+        "input_data": {
+          "ssn": "765439022",
+          "mode": "direct",
+          "language": "EN",
+          "last_name": "Smith",
+          "first_name": "John",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23"
+        },
+        "response_data": {},
+        "cost_charged": "1.25",
+        "currency": "USD",
+        "created_at": "2026-09-28T09:53:49.062443Z",
+        "submitted_at": "2026-09-28T09:53:49.061892Z",
+        "batch_id": null,
+        "reference": "VER-06aba392-d0ff-7027-8000-eb7d05d8d556",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  },
+  "final": {
+    "request": {
+      "method": "GET",
+      "path": "/api/v2/public/verifications/requests/?verification_id=06aba392-d0fe-7047-8000-5cd0dbb606e8"
+    },
+    "response": {
+      "success": true,
+      "message": "Verification request retrieved successfully.",
+      "data": {
+        "id": "06aba392-d0fe-7047-8000-5cd0dbb606e8",
+        "verification_type": "us_ssn_verification",
+        "status": "SUCCESS",
+        "input_data": {
+          "ssn": "765439022",
+          "mode": "direct",
+          "language": "EN",
+          "last_name": "Smith",
+          "first_name": "John",
+          "phone_number": "+12109041086",
+          "date_of_birth": "1995-01-23",
+          "korapay_reference": "VR-0scXXQ7KkveaJ7zd6"
+        },
+        "response_data": {
+          "status": true,
+          "message": "Verification retrieved successfully",
+          "data": {
+            "reference": "VR-0scXXQ7KkveaJ7zd6",
+            "full_name": "John Smith",
+            "id_type": "us_ssn",
+            "first_name": "John",
+            "last_name": "Smith",
+            "date_of_birth": "1995-01-23",
+            "phone_number": "12109041086",
+            "addresses": [
+              {
+                "street": "6 Jenna Plaza",
+                "state": "NY",
+                "town": "New York City",
+                "post_code": "10009",
+                "country": "USA",
+                "formatted_address": "6 Jenna Plaza, New York City, New York, United States of America, 10009"
+              }
+            ],
+            "id": "765439022",
+            "masked_id": "******022",
+            "type": "kyc",
+            "class": "id_lookup",
+            "identity_type": "us_ssn",
+            "country": "us",
+            "requested_by": "API User",
+            "status": "found",
+            "date_created": "2026-09-28T09:53:49.720Z"
+          },
+          "event": "kr.verification.completed"
+        },
+        "cost_charged": "1.25",
+        "currency": "USD",
+        "created_at": "2026-09-28T09:53:49.062443Z",
+        "submitted_at": "2026-09-28T09:53:49.061892Z",
+        "batch_id": null,
+        "reference": "VER-06aba392-d0ff-7027-8000-eb7d05d8d556",
+        "link": null,
+        "email_sent_at": null,
+        "by_api": true,
+        "api_key_id": "06a9a7ea-5d9f-746f-8000-81a46079e71c",
+        "proofs": {},
+        "proofs_available": false
+      }
+    }
+  }
+}

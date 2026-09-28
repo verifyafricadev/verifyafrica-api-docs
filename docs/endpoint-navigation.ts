@@ -71,24 +71,11 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 					items: [
 						{
 							type: "category",
-							label: "🇿🇦 South Africa",
-							link: "endpoints/overview/government-registry/south-africa",
+							label: "🇨🇮 Côte d'Ivoire",
+							link: "endpoints/overview/government-registry/cote-divoire",
 							items: [
-"endpoints/za-said-verification",
-							],
-						},
-						{
-							type: "category",
-							label: "🇳🇬 Nigeria",
-							link: "endpoints/overview/government-registry/nigeria",
-							items: [
-"endpoints/ng-bvn-verification",
-"endpoints/ng-nin-verification",
-"endpoints/ng-virtual-nin-verification",
-"endpoints/ng-advanced-phone-number-verification",
-"endpoints/ng-phone-number-lookup",
-"endpoints/ng-cac-lookup",
-"endpoints/ng-passport-verification",
+"endpoints/ci-national-id-lookup",
+"endpoints/ci-residence-card-lookup",
 							],
 						},
 						{
@@ -115,11 +102,32 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 						},
 						{
 							type: "category",
-							label: "🇨🇮 Côte d'Ivoire",
-							link: "endpoints/overview/government-registry/cote-divoire",
+							label: "🇳🇬 Nigeria",
+							link: "endpoints/overview/government-registry/nigeria",
 							items: [
-"endpoints/ci-national-id-lookup",
-"endpoints/ci-residence-card-lookup",
+"endpoints/ng-bvn-verification",
+"endpoints/ng-nin-verification",
+"endpoints/ng-virtual-nin-verification",
+"endpoints/ng-advanced-phone-number-verification",
+"endpoints/ng-phone-number-lookup",
+"endpoints/ng-cac-lookup",
+"endpoints/ng-passport-verification",
+							],
+						},
+						{
+							type: "category",
+							label: "🇿🇦 South Africa",
+							link: "endpoints/overview/government-registry/south-africa",
+							items: [
+"endpoints/za-said-verification",
+							],
+						},
+						{
+							type: "category",
+							label: "🇺🇸 United States",
+							link: "endpoints/overview/government-registry/united-states",
+							items: [
+"endpoints/us-ssn-verification",
 							],
 						},
 					],
