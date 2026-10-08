@@ -35,6 +35,18 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 			"async verification",
 		],
 	},
+	"/errors": {
+		title: "Error Codes",
+		description:
+			"VerifyAfrica error codes, what they mean, whether to retry, and how charges are handled for rejected requests, upstream errors, failed checks, and hosted sessions.",
+		keywords: [
+			"error codes",
+			"VerifyAfrica errors",
+			"API errors",
+			"retryable errors",
+			"verification failed",
+		],
+	},
 	"/endpoints/overview/identity-verification": {
 		title: "Identity Verification",
 		description:

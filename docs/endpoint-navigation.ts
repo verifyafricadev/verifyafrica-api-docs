@@ -19,6 +19,12 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 				icon: "webhook",
 			},
 			{
+				type: "doc",
+				file: "errors",
+				label: "Error Codes",
+				icon: "circle-alert",
+			},
+			{
 				type: "category",
 				label: "Endpoints",
 				icon: "layers",

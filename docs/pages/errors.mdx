@@ -1,0 +1,192 @@
+---
+title: Error Codes
+description: VerifyAfrica error codes, what they mean, whether to retry, and how charges are handled.
+sidebar_label: Error Codes
+sidebar_icon: circle-alert
+---
+
+# Error Codes
+
+Every error from VerifyAfrica carries a stable error code such as `VA-2003`. Codes never change meaning, so you can safely branch on them in your integration. Messages are written for humans and may be reworded over time — do not parse them.
+
+## Where codes appear
+
+There are two places you will see an error code:
+
+1. **Rejected requests** — the API refuses the request straight away with an HTTP error. No verification is created and you are not charged.
+2. **Verification results** — the verification was created, but it ended in `ERROR` or `FAILED`. The code is on `response_data.error` in the GET detail response and in the `verification.failed` webhook.
+
+### Rejected request
+
+Uses the standard public error envelope, with `code` added:
+
+```json
+{
+  "success": false,
+  "code": "VA-1005",
+  "message": "Your wallet balance is too low for this verification. Please top up and try again.",
+  "errors": ["Your wallet balance is too low for this verification. Please top up and try again."]
+}
+```
+
+### Verification result
+
+```json
+{
+  "id": "06ac65b9-741b-7614-8000-d1f7d54b6cf2",
+  "verification_type": "ke_national_id_lookup",
+  "status": "ERROR",
+  "reference": "VER-06ac65b9-741b-7d48-8000-2ed72fa24e44",
+  "response_data": {
+    "status": "ERROR",
+    "message": "The verification service returned an unexpected error. Please try again.",
+    "error": {
+      "code": "VA-2003-KR",
+      "http_status": 502,
+      "origin": "provider",
+      "message": "The verification service returned an unexpected error. Please try again.",
+      "retryable": true
+    }
+  },
+  "cost_charged": "1.60",
+  "refunded": true,
+  "currency": "USD"
+}
+```
+
+## The error object
+
+| Field | Description |
+| --- | --- |
+| `code` | The error code. See [Reading a code](#reading-a-code). |
+| `http_status` | The HTTP status that best describes the error. See [HTTP status](#http-status). |
+| `origin` | Where the problem happened: `request` (your request), `provider` (an upstream verification network), or `verifyafrica` (our platform). |
+| `message` | A human-readable explanation, safe to show to your users. |
+| `retryable` | `true` when sending the same request again later may succeed. |
+
+The top-level `response_data.message` is kept for backward compatibility and always matches `error.message`.
+
+## HTTP status
+
+Every code has an HTTP status, shown in the tables below.
+
+- **Rejected requests (VA-1xxx)** — the status is the actual HTTP status of the response.
+- **Verification results (VA-2xxx to VA-5xxx)** — verifications run in the background, so the GET request or webhook that delivers the result is itself a normal `200` response. The status is provided on `error.http_status` so you can group and log errors the same way as rejected requests. Do not check the HTTP status of the GET or webhook to detect these errors; check `status` and `response_data.error` instead.
+
+## Reading a code
+
+```
+VA-2003-KR
+│  │    └── Source tag (upstream errors only)
+│  └─────── Error number — the first digit is the category
+└────────── VerifyAfrica prefix
+```
+
+- **Category** — the first digit tells you the kind of error at a glance (see the tables below).
+- **Source tag** — errors with `origin: "provider"` end in a two-letter tag identifying which upstream verification network handled the check. Include the full code when contacting support so we can trace the issue quickly. Match on the error number (e.g. `VA-2003`) in your code, not the tag, because the network used for a product can change.
+
+## Categories
+
+| Range | Category | Verification status | Charged |
+| --- | --- | --- | --- |
+| `VA-1xxx` | Request rejected | No verification created | No |
+| `VA-2xxx` | Upstream service error | `ERROR` | Refunded automatically |
+| `VA-3xxx` | Check completed, not passed | `FAILED` | Yes — the check was performed |
+| `VA-4xxx` | Hosted session outcome | `ERROR` or `ABANDONED` | See [Session outcomes](#va-4xxx-session-outcomes) |
+| `VA-5xxx` | VerifyAfrica platform error | `ERROR` | Refunded automatically |
+
+## VA-1xxx: Request rejected
+
+The request was refused before any verification was created. Fix the request (or your account) before trying again.
+
+| Code | HTTP | Meaning | Retryable |
+| --- | --- | --- | --- |
+| `VA-1001` | 400 | Required fields are missing or invalid. `errors` lists each problem. | No |
+| `VA-1002` | 400 | An identifier is in the wrong format, for example a BVN that is not 11 digits. | No |
+| `VA-1003` | 400 | The verification type or country is not supported. | No |
+| `VA-1004` | 403 | This product is not enabled for your account. | No |
+| `VA-1005` | 402 | Your wallet balance is too low for this verification. Top up and try again. | No |
+| `VA-1006` | 403 | Your account is disabled or outside its active period. Contact support. | No |
+| `VA-1007` | 401 | The API key is missing, invalid, or revoked. | No |
+| `VA-1008` | 429 | Too many requests. Slow down and retry after a short wait. | Yes |
+
+## VA-2xxx: Upstream service error
+
+The upstream verification network or the government registry behind it could not complete the check. These are not caused by your request or your customer's data, and the charge is refunded automatically.
+
+| Code | HTTP | Meaning | Retryable |
+| --- | --- | --- | --- |
+| `VA-2001` | 503 | The verification service is unavailable. | Yes |
+| `VA-2002` | 504 | The verification service did not respond in time. | Yes |
+| `VA-2003` | 502 | The verification service returned an unexpected error. | Yes |
+| `VA-2004` | 429 | The verification service is receiving too many requests. | Yes |
+| `VA-2005` | 422 | The verification service rejected the request as invalid. Check the submitted data. | No |
+| `VA-2006` | 502 | The verification service returned a response that could not be read. | Yes |
+| `VA-2007` | 503 | The verification service is temporarily unavailable for this product. We have been alerted. | No |
+| `VA-2008` | 503 | The government registry is temporarily unavailable. | Yes |
+
+For retryable codes, wait before retrying and back off between attempts (for example 1, 5, then 15 minutes). Each retry creates a new verification.
+
+## VA-3xxx: Check completed, not passed
+
+The check ran successfully but the result was negative. These are normal outcomes, not system errors, so the verification is charged.
+
+| Code | HTTP | Meaning | Retryable |
+| --- | --- | --- | --- |
+| `VA-3001` | 404 | No record was found for the identifier provided. | No |
+| `VA-3002` | 422 | The submitted details do not match the registry record (for example name or date of birth). | No |
+| `VA-3003` | 422 | The verification was declined. `response_data.declined_reason` explains why. | No |
+
+Retrying with the same data returns the same result. Ask your customer to check their details instead.
+
+## VA-4xxx: Session outcomes
+
+These apply to link-mode verifications, where your customer completes the check on a hosted page.
+
+| Code | HTTP | Meaning | Status | Retryable |
+| --- | --- | --- | --- | --- |
+| `VA-4001` | 410 | The session expired before the customer finished. | `ERROR` | Yes — create a new link |
+| `VA-4002` | 409 | The customer cancelled the session. | `ERROR` | Yes — create a new link |
+| `VA-4003` | 408 | The session was still pending after 24 hours and was closed. | `ABANDONED` | Yes — create a new link |
+| `VA-4004` | 410 | The session was removed before completion. | `ERROR` | Yes — create a new link |
+
+## VA-5xxx: VerifyAfrica platform error
+
+Something went wrong on our side. The charge is refunded automatically and our team is alerted.
+
+| Code | HTTP | Meaning | Retryable |
+| --- | --- | --- | --- |
+| `VA-5001` | 500 | An unexpected error occurred. | No |
+| `VA-5002` | 500 | The wallet charge or refund could not be completed. | No |
+
+Contact support with the verification `reference` and the error code if a VA-5xxx error persists.
+
+## Handling errors
+
+```javascript
+function handleVerification(verification) {
+  const error = verification.response_data?.error;
+  if (!error) return; // SUCCESS or still PENDING
+
+  // Match on the number, not the source tag.
+  const number = error.code.split("-").slice(0, 2).join("-");
+
+  if (number.startsWith("VA-3")) {
+    // Negative result: ask the customer to check their details.
+    return notifyCustomer(error.message);
+  }
+
+  if (error.retryable) {
+    // Upstream or session issue: retry later with backoff.
+    return scheduleRetry(verification.id);
+  }
+
+  // Not retryable: log it and contact support with the full code.
+  console.error(verification.reference, error.code, error.message);
+}
+```
+
+## Next steps
+
+- Read the [Webhooks](/webhooks) guide to receive `verification.failed` events
+- Open the [API Reference](/api) for full request and response schemas

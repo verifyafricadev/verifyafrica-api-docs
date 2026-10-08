@@ -77,7 +77,7 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 
 Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
-Korapay processes SSN checks asynchronously, so the verification can stay `PENDING` for longer than other registry checks. VerifyAfrica picks up the final result from Korapay's webhook, or when you poll GET detail.
+Korapay processes SSN checks asynchronously, so the verification can stay `PENDING` for longer than other registry checks. VerifyAfrica updates the verification when Korapay's webhook delivers the final result, then sends you `kr.verification.completed` / `kr.verification.failed`. GET detail returns the latest stored status.
 
 ## Completed Result
 
