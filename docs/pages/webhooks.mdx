@@ -181,6 +181,10 @@ app.post("/webhooks/verify-africa", (req, res) => {
 - Switch on both `event` and `data.verification_type` using the OpenAPI enums
 - Idempotently handle retries with `data.id`
 
+## Service status
+
+If webhooks are delayed or verifications stay `PENDING` longer than usual, check [status.verifyafrica.io](https://status.verifyafrica.io) for live API and provider health, uptime history, and ongoing incidents.
+
 ## Next steps
 
 - Browse [Webhook schemas](/api/webhooks) in the API Reference

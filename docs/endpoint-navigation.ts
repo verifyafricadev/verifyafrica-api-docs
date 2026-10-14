@@ -25,6 +25,12 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 				icon: "circle-alert",
 			},
 			{
+				type: "link",
+				label: "Service Status",
+				to: "https://status.verifyafrica.io",
+				icon: "activity",
+			},
+			{
 				type: "category",
 				label: "Endpoints",
 				icon: "layers",
