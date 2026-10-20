@@ -49,7 +49,7 @@ aml_screening
 | --- | --- | --- | --- | --- |
 | `email` | string | Required | Required | Customer's email address. |
 | `language` | string | Optional (default `"EN"`) | Optional | Language code. |
-| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes: `15`, `30`, `60`, `120`, `240`. |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes: `15`, `30`, `60`, `120`, `240`, `1440` (24 hours). |
 | `country` | string | Optional | Optional | ISO 3166-1 alpha-2. Compatibility alias for a single code; prefer `background_checks.countries`. Locks countries in link mode. |
 | `filters` | object | Optional | Optional | `{ "filters": [...], "match_score": 100, "rca_search": true, "alias_search": true }`. Defaults: RCA and alias search on. |
 | `background_checks` | object | Optional | Required | Subject details. Direct mode requires `name.full_name`. |

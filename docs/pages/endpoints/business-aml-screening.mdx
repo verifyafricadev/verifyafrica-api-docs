@@ -45,7 +45,7 @@ business_aml_screening
 | Parameter | Type | Link | Direct | Description |
 | --- | --- | --- | --- | --- |
 | `email` | string | Required | Required | Customer's email. |
-| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. |
+| `ttl` | integer | Optional (default `60`) | — | Link lifetime in minutes. One of `15`, `30`, `60`, `120`, `240`, `1440` (24 hours). |
 | `country` | string | Optional | Optional | ISO 3166-1 alpha-2. Compatibility alias for a single code; prefer `aml_for_businesses.countries`. Locks countries in link mode. |
 | `filters` | object | Optional | Optional | `{ "filters": [...], "match_score": 100, "rca_search": true, "alias_search": true }`. |
 | `aml_for_businesses` | object | Optional | Required | Direct mode requires `business_name`. |
