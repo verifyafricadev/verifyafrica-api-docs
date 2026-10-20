@@ -370,7 +370,7 @@ def build_input_properties(meta: dict) -> dict:
         "language": prop('Both modes. Language code. Defaults to "EN".', example="EN", default="EN"),
         "ttl": {
             "type": "integer",
-            "enum": [15, 30, 60, 120, 240],
+            "enum": [15, 30, 60, 120, 240, 1440],
             "default": 60,
             "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode.",
         },

@@ -168,10 +168,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. One of 15, 30, 60, 120, 240. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. One of 15, 30, 60, 120, 240, 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "country": {
                         "type": "string",
@@ -572,7 +573,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -885,7 +887,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -1263,7 +1266,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
@@ -1686,7 +1690,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
@@ -2102,7 +2107,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
@@ -3236,7 +3242,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -3543,7 +3550,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -3897,7 +3905,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -4251,7 +4260,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -4596,7 +4606,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -4940,7 +4951,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -5234,7 +5246,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -5532,7 +5545,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -5833,7 +5847,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -6178,7 +6193,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -6523,7 +6539,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -6868,7 +6885,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -7213,7 +7231,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -7558,7 +7577,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -7902,7 +7922,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -8206,7 +8227,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -8613,7 +8635,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -8958,7 +8981,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -9302,7 +9326,8 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
                         "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
@@ -9807,7 +9832,12 @@
                 "description": "Full hosted capture URL for customer redirect."
               },
               "link_type": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "sf_link",
+                  "verify_link"
+                ],
+                "description": "`sf_link` for provider-hosted capture pages, `verify_link` for VerifyAfrica-hosted verification pages."
               },
               "ttl_minutes": {
                 "type": "integer",
