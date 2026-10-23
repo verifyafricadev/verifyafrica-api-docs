@@ -205,15 +205,19 @@ Content-Type: application/json
 {
   "template_id": "06adb17a-0000-0000-0000-000000000001",
   "email": "customer@example.com",
-  "reference": "order-123"
+  "reference": "order-123",
+  "ttl": 60
 }
 ```
+
+Optional `ttl` is the hosted link lifetime in minutes: `15`, `30`, `60` (default), `120`, `240`, or `1440` (24 hours). Every step in the session must be finished before the link expires.
 
 Or inline steps (same shape as template `steps`):
 
 ```json
 {
   "email": "customer@example.com",
+  "ttl": 120,
   "steps": {
     "steps": {
       "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa": {
@@ -228,7 +232,7 @@ Or inline steps (same shape as template `steps`):
 }
 ```
 
-Response includes session id, status, step summaries, and a hosted `verification_url` / `link`.
+Response includes session id, status, step summaries, `ttl_minutes`, `expires_at`, and a hosted `verification_url` / `link`.
 
 ## Session status
 
