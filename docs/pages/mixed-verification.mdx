@@ -1,0 +1,267 @@
+---
+title: Mixed Verification
+description: Multi-step verification sessions with one hosted link, per-step config, per-step billing, and batch webhooks.
+sidebar_label: Mixed Verification
+sidebar_icon: layers
+---
+
+Mixed verification combines multiple checks into one forward-only hosted flow. Customers complete each step on VerifyAfrica’s `/new-verify` UI. Each step is billed when it is submitted and processed asynchronously.
+
+You can create **templates** (dashboard or public API) with ordered steps and optional per-step `config`, then start sessions from a template — or start with an inline `steps` / `verifications` payload.
+
+## Templates
+
+**Allowed step types:** any verification product except `risk_assessment` and `mixed_verification`. That includes:
+
+- Identity: `id_document`, `face_match`
+- Address: `address_verification`
+- Screening: `aml_screening`, `business_aml_screening`, `kyb_screening`, `crypto_wallet_screening`
+- Government registry products (e.g. `ng_bvn_verification`, `gh_passport_lookup`, …)
+
+Duplicate types are allowed (each step has its own UUID).
+
+### Steps shape
+
+```json
+{
+  "steps": {
+    "550e8400-e29b-41d4-a716-446655440000": {
+      "type": "id_document",
+      "order": 1,
+      "config": {
+        "country": "NG",
+        "document": {
+          "supported_types": ["passport", "driving_license"]
+        },
+        "collect": {
+          "dob": true,
+          "age": false,
+          "gender": false,
+          "backside_proof_required": false,
+          "verification_instructions": "Use a clear photo of your passport."
+        }
+      }
+    },
+    "6ba7b810-9dad-11d1-80b4-00c04fd430c8": {
+      "type": "face_match",
+      "order": 2,
+      "config": {
+        "face": {
+          "verification_mode": "image_only",
+          "check_duplicate_request": "0",
+          "allow_offline": "0",
+          "allow_online": "1",
+          "age": { "min": "16" }
+        }
+      }
+    },
+    "7c9e6679-7425-40de-944b-e07fc1f90ae7": {
+      "type": "aml_screening",
+      "order": 3,
+      "config": {
+        "filters": {
+          "filters": ["sanction", "pep", "adverse-media"],
+          "match_score": 70,
+          "rca_search": true,
+          "alias_search": true
+        },
+        "background_checks": {
+          "context": "pre-employment"
+        }
+      }
+    },
+    "8d0f7780-8536-41ef-a55c-f18fd2a01bf8": {
+      "type": "ng_bvn_verification",
+      "order": 4,
+      "config": {
+        "require_selfie": true
+      }
+    }
+  }
+}
+```
+
+When a session starts, each step’s `config` is merged into that child’s `input_data` (alongside `email`, mixed session metadata, and link method defaults).
+
+Legacy journey-based templates are disabled (`legacy_unsupported=true`) and cannot be started.
+
+### Per-step `config` (by type)
+
+Unknown config keys are rejected. Omit `config` if you do not need defaults.
+
+| Step type | Supported `config` keys |
+| --- | --- |
+| `id_document` | `country`, `document` (`supported_types`, …), `collect` (`dob`, `age`, `gender`, `backside_proof_required`, `verification_instructions`) |
+| `address_verification` | `country`, `address` (`supported_types`, …), `collect.verification_instructions` |
+| `face_match` | `country`, `face` (`verification_mode`, `check_duplicate_request`, `allow_offline`, `allow_online`, `age`), `collect.verification_instructions` |
+| `aml_screening` | `filters` (`filters`, `match_score`, `rca_search`, `alias_search`), `background_checks` (e.g. `context`, `countries`) |
+| `business_aml_screening` | `filters` (same as AML), `aml_for_businesses` (e.g. `context`) |
+| Government registry types | `require_selfie`, optional locked `first_name` / `last_name` / `date_of_birth` |
+| Other allowed types | `country` only for now |
+
+**ID document `supported_types`:** `id_card`, `passport`, `driving_license`. Omit or use `[]` to allow all three.
+
+**Face `verification_mode`:** `image_only` or `video_only`. `check_duplicate_request` is `"1"` / `"0"`.
+
+**AML `filters.filters`:** hyphenated list such as `sanction`, `warning`, `fitness-probity`, `pep`, `pep-class-1` … `pep-class-4`, `adverse-media`. `match_score` is `0`–`100`.
+
+## Public API
+
+Base path: `/api/v2/public/verifications/mixed-verifications/`
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` / `POST` | `templates/` | List active templates, or create a tenant custom template |
+| `GET` / `PATCH` | `templates/{id}/` | Template detail; update **your** custom template (`name`, `description`, `is_active`, `steps` / `verifications`) |
+| `POST` | `sessions/` | Start from `template_id` **or** inline `verifications` / `steps` |
+| `GET` | `sessions/{id}/` | Session status + steps |
+| `POST` | `sessions/{id}/steps/{step_id}/` | Submit one step (`202`; async processing) |
+
+Dashboard start remains: `POST /api/v2/verifications/mixed-verifications/start/`.
+
+### Create template
+
+```http
+POST /api/v2/public/verifications/mixed-verifications/templates/
+Authorization: Bearer VA-…
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "KYC + AML",
+  "description": "Passport then AML",
+  "is_active": true,
+  "steps": {
+    "steps": {
+      "550e8400-e29b-41d4-a716-446655440000": {
+        "type": "id_document",
+        "order": 1,
+        "config": {
+          "document": { "supported_types": ["passport"] },
+          "collect": { "dob": true }
+        }
+      },
+      "6ba7b810-9dad-11d1-80b4-00c04fd430c8": {
+        "type": "aml_screening",
+        "order": 2,
+        "config": {
+          "filters": {
+            "filters": ["sanction", "pep"],
+            "match_score": 70,
+            "rca_search": true,
+            "alias_search": true
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+You may also send a legacy top-level `verifications` array of type strings (no per-step config). Prefer `steps` when you need configuration.
+
+### Update template
+
+```http
+PATCH /api/v2/public/verifications/mixed-verifications/templates/{id}/
+Authorization: Bearer VA-…
+Content-Type: application/json
+```
+
+Only **tenant-owned custom** templates can be updated. Platform templates are read-only via this endpoint.
+
+Partial body examples:
+
+```json
+{ "name": "KYC + AML (v2)", "is_active": true }
+```
+
+```json
+{
+  "steps": {
+    "steps": {
+      "550e8400-e29b-41d4-a716-446655440000": {
+        "type": "id_document",
+        "order": 1,
+        "config": {
+          "document": { "supported_types": ["passport", "id_card"] }
+        }
+      }
+    }
+  }
+}
+```
+
+### Start a session
+
+```http
+POST /api/v2/public/verifications/mixed-verifications/sessions/
+Authorization: Bearer VA-…
+Content-Type: application/json
+```
+
+```json
+{
+  "template_id": "06adb17a-0000-0000-0000-000000000001",
+  "email": "customer@example.com",
+  "reference": "order-123"
+}
+```
+
+Or inline steps (same shape as template `steps`):
+
+```json
+{
+  "email": "customer@example.com",
+  "steps": {
+    "steps": {
+      "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa": {
+        "type": "face_match",
+        "order": 1,
+        "config": {
+          "face": { "verification_mode": "image_only", "check_duplicate_request": "0" }
+        }
+      }
+    }
+  }
+}
+```
+
+Response includes session id, status, step summaries, and a hosted `verification_url` / `link`.
+
+## Session status
+
+| Status | Meaning |
+|--------|---------|
+| `PENDING` | Created; no step submitted yet |
+| `PROCESSING` | At least one step submitted / in flight |
+| `SUCCESS` | Every child finished successfully |
+| `FAILED` | Every child failed (or error/abandoned) |
+| `PARTIAL` | All children finished with mixed outcomes |
+| `ERROR` / `ABANDONED` | Session-level failure or abandon |
+
+## Webhooks
+
+Batch / session events:
+
+- `batch.created`
+- `batch.pending`
+- `batch.processing`
+- `batch.partial`
+- `batch.failed`
+- `batch.error`
+
+Per-child `sf.|kr.verification.completed|failed` events are sent **by default**. Disable with tenant webhook setting `notify_individual_batch_verifications=false`.
+
+## Billing
+
+Wallet is checked and debited **per step** when that step is submitted. If submit fails before the provider accepts the work, the step amount is refunded.
+
+## Related product docs
+
+- [Document Verification](/endpoints/id-document) — `supported_types`, collect flags
+- [Facial Screening](/endpoints/face-match)
+- [AML Screening](/endpoints/aml-screening)
+- [Address Verification](/endpoints/address-verification)
+- [Government Registry Checks](/endpoints/overview/government-registry)

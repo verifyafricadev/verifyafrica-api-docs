@@ -6,7 +6,7 @@ sidebar_label: KYB - Know Your Business
 
 # KYB - Know Your Business
 
-KYB supports three bases. Set `input_data.kyb.base` to choose one. Link and direct modes both work for every base. The backend stores Shufti coverage per jurisdiction and rejects unsupported identifiers, document labels, and purchase documents. Fields that do not belong to the selected base are stripped before the provider request.
+KYB supports three bases. Set `input_data.kyb.base` to choose one. Link and direct modes both work for every base. The backend stores coverage per jurisdiction and rejects unsupported identifiers, document labels, and purchase documents. Fields that do not belong to the selected base are stripped before the provider request.
 
 | Base | What it does |
 | --- | --- |
@@ -17,7 +17,7 @@ KYB supports three bases. Set `input_data.kyb.base` to choose one. Link and dire
 | Mode | What you send | What create returns | When verification finishes |
 | --- | --- | --- | --- |
 | `link` (default) | Email plus optional locks | `data.link.url` | After the customer completes the hosted form |
-| `direct` | Base-specific company fields | Accepted request (`PENDING`) | After Shufti finishes (webhook) |
+| `direct` | Base-specific company fields | Accepted request (`PENDING`) | After provider processing completes (webhook) |
 
 Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`
 
@@ -43,7 +43,7 @@ kyb_screening
 | `advanced_search` | search | `"1"` / `"0"`. Defaults to `"1"`. |
 | `company_name` | search | Used when the jurisdiction supports `company_name`. |
 | `company_registration_number` | search, document_purchase | Registration / RC number. |
-| `company_jurisdiction_code` | search, document_purchase | Jurisdiction code. US states use `US_AL`. Purchase is sent to Shufti as a lowercase ISO code. |
+| `company_jurisdiction_code` | search, document_purchase | Jurisdiction code. US states use `US_AL`. Purchase uses a lowercase ISO code upstream. |
 | `search_type` | search | `fuzzy` (default), `contains`, or `start_with`. |
 | `search_by` | search | Must be a coverage identifier for that country (`vat_number`, `trn_number`, …). |
 | `search_word` | search | Value for `search_by` when it is not company name or registration number. |

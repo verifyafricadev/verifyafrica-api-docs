@@ -47,6 +47,19 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 			"verification failed",
 		],
 	},
+	"/mixed-verification": {
+		title: "Mixed Verification",
+		description:
+			"Build multi-step hosted verification flows with templates, per-step configuration (document types, AML filters, face mode, GRC selfie), batch webhooks, and per-step billing.",
+		keywords: [
+			"mixed verification",
+			"multi-step KYC",
+			"verification templates",
+			"batch webhooks",
+			"custom verification",
+			"VerifyAfrica mixed",
+		],
+	},
 	"/endpoints/overview/identity-verification": {
 		title: "Identity Verification",
 		description:

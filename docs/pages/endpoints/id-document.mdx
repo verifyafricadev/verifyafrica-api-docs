@@ -63,6 +63,7 @@ Do not send internal `method_type` or `verification_type` — the product path s
 | `input_data` | **Yes** | Customer details and capture options |
 | `input_data.email` | **Yes** | Used for notifications and the hosted session |
 | `input_data.document` | No | Defaults applied if omitted |
+| `input_data.document.supported_types` | No | Restrict allowed ID types (`id_card`, `passport`, `driving_license`). Omit / `[]` = all |
 | `send_email` | No | Link only — emails `data.link.url` to `input_data.email` |
 | `allow_file_upload` | No | Link only — overrides tenant camera vs file-upload setting |
 
@@ -76,6 +77,7 @@ Do not send internal `method_type` or `verification_type` — the product path s
 | `input_data.email` | **Yes** | Customer identifier |
 | `input_data.document` | **Yes** | Must include `proof` |
 | `input_data.document.proof` | **Yes** | HTTPS URL of the front-of-ID image |
+| `input_data.document.supported_types` | No | Prefer a single type matching the uploaded proof when restricting |
 
 **Do not send in direct mode:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.collect`, `input_data.allow_file_upload`, any `document.*proof*` except the URLs you are submitting
 
@@ -109,6 +111,7 @@ Do not send internal `method_type` or `verification_type` — the product path s
 | `proof` | string (URL) | — | Required | HTTPS URL of the front-of-ID image. Base64 data URIs are rejected. |
 | `backside_proof` | string (URL) | — | Optional | HTTPS URL of the back of the ID when needed. |
 | `additional_proof` | string (URL) | — | Optional | Optional extra HTTPS proof URL. |
+| `supported_types` | string[] | Optional | Optional | Restricts which ID types are accepted on the hosted page (and which type may be submitted in direct mode). Omit or send `[]` to allow every type listed below. |
 | `backside_proof_required` | boolean | Optional (default `false`) | Optional | `true` to require the back of the ID during capture (link) or to mark a backside proof as required (direct). |
 | `dob` | string | — | Optional | Date of birth (`YYYY-MM-DD`) for cross-validation. |
 | `age` | string | — | Optional | Age for cross-validation. |
@@ -118,6 +121,16 @@ Do not send internal `method_type` or `verification_type` — the product path s
 | `name` | object | Optional | Optional | Optional name matching details for the document owner. |
 
 Do not send `allow_online`, `allow_offline`, or any field not listed above. Extra keys on the request or inside `input_data` / `document` / `collect` are rejected.
+
+### Accepted `document.supported_types`
+
+| Value | Label |
+| --- | --- |
+| `id_card` | National / ID card |
+| `passport` | Passport |
+| `driving_license` | Driver's license |
+
+Omit `supported_types` (or send an empty list) to allow all three. When you restrict the list, the hosted capture UI only offers those options; for **direct** mode the submitted proof must correspond to one of the allowed types.
 
 ### `input_data.document.name`
 
@@ -154,6 +167,7 @@ Do not send `allow_online`, `allow_offline`, or any field not listed above. Extr
     "first_name": "John",
     "last_name": "Doe",
     "document": {
+      "supported_types": ["passport", "driving_license"],
       "backside_proof_required": false,
       "verification_mode": "any",
       "fetch_enhanced_data": true,
@@ -190,6 +204,7 @@ Create returns `status: PENDING`, `data.link.url` (redirect the customer), and r
     "document": {
       "proof": "https://cdn.example.com/id-front.jpg",
       "backside_proof": "https://cdn.example.com/id-back.jpg",
+      "supported_types": ["passport"],
       "verification_mode": "any",
       "fetch_enhanced_data": true,
       "name": {

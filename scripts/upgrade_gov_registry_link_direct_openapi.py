@@ -764,7 +764,7 @@ def upgrade_webhooks(spec: dict) -> None:
         completed["description"] = (
             "VerifyAfrica POSTs this event to your dashboard-configured webhook URL when a "
             "verification finishes successfully (`data.status` = `SUCCESS`).\n\n"
-            "The `event` field is provider-prefixed: `sf.verification.completed` (Shufti) or "
+            "The `event` field is provider-prefixed: `sf.verification.completed` (identity / screening) or "
             "`kr.verification.completed` (Korapay Identity / government registry).\n\n"
             "For unsuccessful outcomes, see `verification.failed`.\n\n"
             "Public API creates return `PENDING` immediately — use these webhooks (or poll GET) "
@@ -782,7 +782,7 @@ def upgrade_webhooks(spec: dict) -> None:
         default = examples.get("default", {})
         if isinstance(default.get("value"), dict):
             default["value"]["event"] = "sf.verification.completed"
-            default["summary"] = "Shufti — document / AML / address"
+            default["summary"] = "Document / AML / address"
         examples["government_registry"] = {
             "summary": "Korapay — government registry (NIN)",
             "value": GOV_WEBHOOK_COMPLETED,
@@ -794,7 +794,7 @@ def upgrade_webhooks(spec: dict) -> None:
         failed["description"] = (
             "VerifyAfrica POSTs this event when a verification does not succeed "
             "(`data.status` = `FAILED` or `ERROR`).\n\n"
-            "The `event` field is provider-prefixed: `sf.verification.failed` (Shufti) or "
+            "The `event` field is provider-prefixed: `sf.verification.failed` (identity / screening) or "
             "`kr.verification.failed` (Korapay Identity / government registry).\n\n"
             "For successful outcomes, see `verification.completed`.\n\n"
             "**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n"
@@ -809,7 +809,7 @@ def upgrade_webhooks(spec: dict) -> None:
         default = examples.get("default", {})
         if isinstance(default.get("value"), dict):
             default["value"]["event"] = "sf.verification.failed"
-            default["summary"] = "Shufti — document / AML / address"
+            default["summary"] = "Document / AML / address"
         examples["government_registry"] = {
             "summary": "Korapay — government registry (NIN)",
             "value": GOV_WEBHOOK_FAILED,

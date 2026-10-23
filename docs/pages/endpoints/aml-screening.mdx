@@ -8,7 +8,7 @@ sidebar_label: AML Screening
 
 Screen individuals against global sanctions, PEP, watchlist, and adverse media sources in either **link** or **direct** mode.
 
-Shufti Individual AML is name-based. There is no customer document upload.
+Individual AML is name-based. There is no customer document upload.
 
 | Mode | What you send | What create returns | When verification finishes |
 | --- | --- | --- | --- |
@@ -17,7 +17,7 @@ Shufti Individual AML is name-based. There is no customer document upload.
 
 If you send `countries` (or a single `country`) or `dob` in **link** mode, those values are locked. The customer cannot send them, and the backend rejects them if they try.
 
-Place screening categories in a top-level `filters` object. The same filters are applied to `background_checks` before the request is sent to Shufti.
+Place screening categories in a top-level `filters` object. The same filters are applied to `background_checks` before the request is sent upstream.
 
 Use [Webhooks](/webhooks) or `GET …/requests/?verification_id=…` for the terminal result in both modes. Error payloads include `internal_error_provider` and `internal_error_message`.
 
@@ -63,7 +63,7 @@ aml_screening
 | `countries` | array of string | Optional | Optional | ISO 3166-1 alpha-2 codes. Leave empty for a global screen. Any values lock countries in link mode. |
 | `filters` | array of string | Optional | Optional | Screening categories. Prefer the top-level `filters` object. |
 | `match_score` | integer | Optional | Optional | `0`–`100`. Defaults to `100`. |
-| `biometric_search_image` | string | Optional | Optional | HTTPS URL of a JPEG or PNG (max 5MB) for biometric matching. Do not send base64; the API fetches the URL and encodes it for Shufti. |
+| `biometric_search_image` | string | Optional | Optional | HTTPS URL of a JPEG or PNG (max 5MB) for biometric matching. Do not send base64; the API fetches the URL and encodes it for the provider. |
 | `context` | string | Optional | Optional | Extra context used when assessing matches. |
 
 Allowed filter values: `sanction`, `warning`, `fitness-probity`, `pep`, `pep-class-1`, `pep-class-2`, `pep-class-3`, `pep-class-4`, `adverse-media`.
