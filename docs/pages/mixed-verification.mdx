@@ -91,7 +91,7 @@ Unknown config keys are rejected. Omit `config` if you do not need defaults.
 
 | Step type | Supported `config` keys |
 | --- | --- |
-| `id_document` | `country`, `document` (`supported_types`, …), `collect` (`dob`, `age`, `gender`, `backside_proof_required`, `verification_instructions`) |
+| `id_document` | `country`, `document` (`supported_types`, …), `collect` (`dob`, `age`, `gender`, `backside_proof_required`, `verification_instructions`), `allow_file_upload` (boolean; overrides the tenant product setting for this step) |
 | `address_verification` | `country`, `address` (`supported_types`, …), `collect.verification_instructions` |
 | `face_match` | `country`, `face` (`verification_mode`, `check_duplicate_request`, `allow_offline`, `allow_online`, `age`), `collect.verification_instructions` |
 | `aml_screening` | `filters` (`filters`, `match_score`, `rca_search`, `alias_search`), `background_checks` (e.g. `context`, `countries`) |
