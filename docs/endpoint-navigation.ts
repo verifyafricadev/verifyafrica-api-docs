@@ -9,6 +9,8 @@ export const endpointNavigation: NonNullable<ZudokuConfig["navigation"]> = [
 			{
 				type: "doc",
 				file: "introduction",
+				// Serve at `/` so the first paint is real content (not a client redirect → 404 flash).
+				path: "/",
 				label: "Getting Started",
 				icon: "star",
 			},

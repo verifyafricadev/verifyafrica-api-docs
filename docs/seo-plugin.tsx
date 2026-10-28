@@ -25,7 +25,8 @@ export const seoPlugin: ZudokuPlugin = {
 		}
 
 		const ogTitle = `${page.title} | ${SITE_TITLE}`;
-		const canonicalUrl = `${SITE_URL}${pathname === "/" ? "/introduction" : pathname.replace(/\/$/, "")}`;
+		const canonicalPath = pathname === "/" ? "" : pathname.replace(/\/$/, "");
+		const canonicalUrl = `${SITE_URL}${canonicalPath}`;
 		const ogImage = `${SITE_URL}${getPageOgImage(page)}`;
 		const keywords = buildKeywords(page.keywords);
 

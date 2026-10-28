@@ -8,7 +8,7 @@ export type PageSeo = {
 };
 
 export const PAGE_SEO: Record<string, PageSeo> = {
-	"/introduction": {
+	"/": {
 		title:
 			"VerifyAfrica: Identity Verification, Compliance Screening & Government Registry API",
 		description:
@@ -270,9 +270,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 };
 
 export function getPageSeo(pathname: string): PageSeo | undefined {
-	const normalized = pathname.replace(/\/$/, "") || "/introduction";
-	const path = normalized === "/" ? "/introduction" : normalized;
-	return PAGE_SEO[path];
+	const normalized = pathname.replace(/\/$/, "") || "/";
+	return PAGE_SEO[normalized];
 }
 
 export function getPageOgImage(page: PageSeo): string {

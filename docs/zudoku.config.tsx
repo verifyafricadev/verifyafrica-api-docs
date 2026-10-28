@@ -50,7 +50,8 @@ const config: ZudokuConfig = {
 		priority: 0.7,
 	},
 	navigation: endpointNavigation,
-	redirects: [{ from: "/", to: "/introduction" }],
+	// Keep old /introduction bookmarks working; landing content lives at `/`.
+	redirects: [{ from: "/introduction", to: "/" }],
 	apis: [
 		{
 			type: "file",
