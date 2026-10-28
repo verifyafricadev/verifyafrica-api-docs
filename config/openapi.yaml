@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "Verify Africa Public API",
-    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, address, AML, Business AML, and KYB** support `mode=link` (default; returns `data.link.url`) or `mode=direct` (verification runs asynchronously). KYB uses `input_data.kyb.base`: `search`, `document`, or `document_purchase`. Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`. Crypto and risk creates behave like direct mode. **Government registry** checks: `mode=direct` always; `mode=link` only for selfie-capable checks when `input_data.require_selfie` is true (hosted selfie capture; returns `data.link.url`). Billing is deferred until provider submit. Terminal webhooks use the `kr.` prefix (`kr.verification.completed` / `kr.verification.failed`).\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=…` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema — `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=…`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n",
+    "description": "Identity verification, compliance screening, and government registry checks across Africa.\n\n## Authentication\n\nAll endpoints require a tenant API key as a Bearer token:\n\n```\nAuthorization: Bearer VA-your_api_key_here\n```\n\nDo not send `X-API-KEY`. Tenant context comes from the API key — no `X-TENANT-ID` header is required.\n\n## API Sections\n\nCreate via product-scoped endpoints:\n\n- `POST /api/v2/public/verifications/requests/document_verification/`\n- `POST /api/v2/public/verifications/requests/facial_screening/`\n- `POST /api/v2/public/verifications/requests/address_verification/`\n- `POST /api/v2/public/verifications/requests/aml_screening/`\n- `POST /api/v2/public/verifications/requests/business_aml_screening/`\n- `POST /api/v2/public/verifications/requests/kyb/`\n- `POST /api/v2/public/verifications/requests/crypto_wallet_screening/`\n- `POST /api/v2/public/verifications/requests/risk_assessment/`\n- `POST /api/v2/public/verifications/requests/government_registry_checks/`\n\nMixed verification (templates + hosted multi-step sessions):\n\n- `GET /api/v2/public/verifications/mixed-verifications/availability/`\n- `GET|POST /api/v2/public/verifications/mixed-verifications/templates/`\n- `GET|PATCH /api/v2/public/verifications/mixed-verifications/templates/{id}/`\n- `POST /api/v2/public/verifications/mixed-verifications/sessions/`\n- `GET /api/v2/public/verifications/mixed-verifications/sessions/{id}/`\n- `POST /api/v2/public/verifications/mixed-verifications/sessions/{id}/steps/{step_id}/`\n\nRetrieve a verification via `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`.\n\n**Document, facial, address, AML, Business AML, and KYB** support `mode=link` (default; returns `data.link.url`) or `mode=direct` (verification runs asynchronously). KYB uses `input_data.kyb.base`: `search`, `document`, or `document_purchase`. Coverage: `GET /api/v2/public/verifications/supported-countries/?verification_type=kyb_screening&kyb_base=search`. Crypto and risk creates behave like direct mode. **Government registry** checks: `mode=direct` always; `mode=link` only for selfie-capable checks when `input_data.require_selfie` is true (hosted selfie capture; returns `data.link.url`). Billing is deferred until provider submit. Terminal webhooks use the `kr.` prefix (`kr.verification.completed` / `kr.verification.failed`).\n\nCreates return immediately with `status: PENDING`. Use the `verification.completed` webhook or poll GET `/api/v2/public/verifications/requests/?verification_id=…` for the terminal result.\n\n## Webhooks\n\nVerifyAfrica POSTs events to your dashboard-configured webhook URL. See the **Webhooks** section in the API Reference for the full schema — `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, and `WebhookPayload` are the source of truth.\n\nPublic creates return `PENDING` immediately; listen for `verification.completed` or `verification.failed` / `verification.failed` or poll GET `/api/v2/public/verifications/requests/?verification_id=…`.\n\n## Response format\n\nSuccess responses use:\n\n```json\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n```\n\nError responses use:\n\n```json\n{ \"success\": false, \"message\": \"...\", \"errors\": [\"...\"] }\n```\n\n## Base URL\n\n`https://api.verifyafrica.io`\n\n## Public response shape\n\nPublic create, GET, and webhook payloads are provider-agnostic:\n\n- Internal provider names are never exposed\n- `response_data` is sanitized (no provider hosted URLs, access tokens, or verification links)\n- Document/face proofs must be submitted as **HTTPS URLs** (base64 data URIs are rejected)\n- Stored and returned `input_data.*.proof` values are the same URLs you sent at create time\n- Top-level `proofs` on GET/webhook echoes those original proof URLs (never provider-hosted assets)\n\nCreates return immediately with `status: PENDING`. Use webhooks (`verification.completed` / `verification.failed`) or GET for the final result.\n\nGovernment registry API reference operations are listed per `verification_type` for readability; the live create URL is always `POST /api/v2/public/verifications/requests/government_registry_checks/` with `verification_type` in the body.\n",
     "contact": {
       "name": "Verify Africa Support",
       "url": "https://verifyafrica.io",
@@ -14,6 +14,10 @@
     {
       "url": "https://api.verifyafrica.io",
       "description": "Production"
+    },
+    {
+      "url": "https://test.api.verifyafrica.io",
+      "description": "Test"
     }
   ],
   "security": [
@@ -81,6 +85,11 @@
       "name": "single-gov-united-states",
       "description": "Government registry checks for the United States. `mode=direct` is always available. `mode=link` is only available for selfie-capable checks when `require_selfie` is true.",
       "x-displayName": "United States"
+    },
+    {
+      "name": "mixed-verification",
+      "description": "Multi-step hosted verification: templates, sessions, step submit, and tenant availability catalog.",
+      "x-displayName": "Mixed Verification"
     }
   ],
   "x-tagGroups": [
@@ -102,6 +111,12 @@
         "single-gov-nigeria",
         "single-gov-south-africa",
         "single-gov-united-states"
+      ]
+    },
+    {
+      "name": "Mixed Verification",
+      "tags": [
+        "mixed-verification"
       ]
     },
     {
@@ -168,10 +183,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. One of 15, 30, 60, 120, 240. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. One of 15, 30, 60, 120, 240. Defaults to 60. Omit in direct mode. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours)."
                       },
                       "country": {
                         "type": "string",
@@ -572,10 +588,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours)."
                       },
                       "country": {
                         "type": "string",
@@ -591,12 +608,11 @@
                           "verification_mode": {
                             "type": "string",
                             "enum": [
-                              "any",
                               "image_only",
                               "video_only"
                             ],
-                            "default": "any",
-                            "description": "Both modes. `\"any\"`, `\"image_only\"`, or `\"video_only\"`. Defaults to `\"any\"`."
+                            "description": "Required in both modes. Must be `image_only` or `video_only` (must match `proof` media type in direct mode).",
+                            "example": "image_only"
                           },
                           "check_duplicate_request": {
                             "type": "boolean",
@@ -607,9 +623,28 @@
                             "type": "string",
                             "format": "uri",
                             "description": "Direct mode only. Required in direct mode. HTTPS URL of the face image / selfie. Base64 data URIs are rejected."
+                          },
+                          "age": {
+                            "type": "object",
+                            "description": "Optional age gate. When set, both `min` and `max` are required. `min` must be at least 16.",
+                            "properties": {
+                              "min": {
+                                "type": "string",
+                                "example": "16",
+                                "description": "Minimum age (inclusive). ≥ 16."
+                              },
+                              "max": {
+                                "type": "string",
+                                "example": "80",
+                                "description": "Maximum age (inclusive)."
+                              }
+                            }
                           }
                         },
-                        "description": "Both modes. Required. Direct mode must include `proof`."
+                        "description": "Both modes. Required. Direct mode must include `proof`.",
+                        "required": [
+                          "verification_mode"
+                        ]
                       }
                     }
                   },
@@ -635,7 +670,7 @@
                       "language": "EN",
                       "ttl": 60,
                       "face": {
-                        "verification_mode": "any",
+                        "verification_mode": "image_only",
                         "check_duplicate_request": false
                       }
                     }
@@ -652,7 +687,7 @@
                       "language": "EN",
                       "ttl": 60,
                       "face": {
-                        "verification_mode": "any",
+                        "verification_mode": "image_only",
                         "check_duplicate_request": false
                       }
                     }
@@ -667,7 +702,7 @@
                       "language": "EN",
                       "face": {
                         "proof": "https://cdn.example.com/selfie.jpg",
-                        "verification_mode": "any"
+                        "verification_mode": "image_only"
                       }
                     }
                   }
@@ -885,10 +920,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours)."
                       },
                       "country": {
                         "type": "string",
@@ -1263,10 +1299,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours)."
                       },
                       "country": {
                         "type": "string",
@@ -1686,10 +1723,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours)."
                       },
                       "country": {
                         "type": "string",
@@ -2102,10 +2140,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Omit in direct mode. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours)."
                       },
                       "country": {
                         "type": "string",
@@ -3236,22 +3275,26 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "id_number": {
                         "type": "string",
-                        "description": "South African ID number."
+                        "description": "South African ID number.",
+                        "example": "8012185201077"
                       },
                       "first_name": {
                         "type": "string",
-                        "description": "Optional first name for cross-validation."
+                        "description": "Optional first name for cross-validation.",
+                        "example": "John"
                       },
                       "last_name": {
                         "type": "string",
-                        "description": "Optional last name for cross-validation."
+                        "description": "Optional last name for cross-validation.",
+                        "example": "Doe"
                       }
                     },
                     "additionalProperties": false
@@ -3543,10 +3586,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -3564,15 +3608,18 @@
                       },
                       "bvn": {
                         "type": "string",
-                        "description": "11-digit Bank Verification Number."
+                        "description": "11-digit Bank Verification Number.",
+                        "example": "22222222222"
                       },
                       "first_name": {
                         "type": "string",
-                        "description": "Optional first name for cross-validation."
+                        "description": "Optional first name for cross-validation.",
+                        "example": "Bimbo"
                       },
                       "last_name": {
                         "type": "string",
-                        "description": "Optional last name for cross-validation."
+                        "description": "Optional last name for cross-validation.",
+                        "example": "Olakunle"
                       },
                       "date_of_birth": {
                         "type": "string",
@@ -3897,10 +3944,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -3918,15 +3966,18 @@
                       },
                       "nin": {
                         "type": "string",
-                        "description": "11-digit National Identification Number."
+                        "description": "11-digit National Identification Number.",
+                        "example": "55555555555"
                       },
                       "first_name": {
                         "type": "string",
-                        "description": "Optional first name for cross-validation."
+                        "description": "Optional first name for cross-validation.",
+                        "example": "Bimbo"
                       },
                       "last_name": {
                         "type": "string",
-                        "description": "Optional last name for cross-validation."
+                        "description": "Optional last name for cross-validation.",
+                        "example": "Olakunle"
                       },
                       "date_of_birth": {
                         "type": "string",
@@ -4251,10 +4302,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -4272,7 +4324,8 @@
                       },
                       "virtual_nin": {
                         "type": "string",
-                        "description": "16-character Virtual NIN."
+                        "description": "16-character Virtual NIN.",
+                        "example": "KO111111111111IL"
                       },
                       "first_name": {
                         "type": "string",
@@ -4596,10 +4649,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -4617,7 +4671,8 @@
                       },
                       "phone_number": {
                         "type": "string",
-                        "description": "Nigerian phone number."
+                        "description": "Nigerian phone number.",
+                        "example": "08000000000"
                       },
                       "first_name": {
                         "type": "string",
@@ -4940,14 +4995,16 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "phone_number": {
                         "type": "string",
-                        "description": "Nigerian phone number."
+                        "description": "Nigerian phone number.",
+                        "example": "08000000000"
                       }
                     },
                     "additionalProperties": false
@@ -5171,7 +5228,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/ng_cac_lookup": {
       "post": {
         "summary": "Nigeria CAC Lookup",
-        "description": "Create a **Nigeria CAC Lookup** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `cac_number`\n**Optional:** `registration_name`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Nigeria CAC Lookup** check in **direct** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `ng_cac_lookup`.\n\nThis check does **not** support selfie matching, so **link mode is not available**.\nSending `mode=link` returns 400. If `mode` is omitted it defaults to `direct`.\n\n### Direct mode (`mode=direct`)\n**Required:** `input_data`, `cac_number`\n**Optional:** `registration_name`, `registration_type`\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`, `input_data.selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-ng_cac_lookup",
         "tags": [
           "single-gov-nigeria"
@@ -5234,18 +5291,25 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "cac_number": {
                         "type": "string",
-                        "description": "CAC registration number (e.g. RC00000011)."
+                        "description": "CAC registration number (e.g. RC00000011).",
+                        "example": "RC00000011"
                       },
                       "registration_name": {
                         "type": "string",
                         "description": "Optional registered business name."
+                      },
+                      "registration_type": {
+                        "type": "string",
+                        "description": "Optional CAC registration type (e.g. `RC`, `BN`).",
+                        "example": "RC"
                       }
                     },
                     "additionalProperties": false
@@ -5260,7 +5324,8 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "cac_number": "RC00000011"
+                      "cac_number": "RC00000011",
+                      "registration_type": "RC"
                     }
                   }
                 },
@@ -5271,7 +5336,8 @@
                     "mode": "direct",
                     "input_data": {
                       "language": "EN",
-                      "cac_number": "RC00000011"
+                      "cac_number": "RC00000011",
+                      "registration_type": "RC"
                     }
                   }
                 }
@@ -5532,18 +5598,21 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "passport_id": {
                         "type": "string",
-                        "description": "Passport number."
+                        "description": "Passport number.",
+                        "example": "A01234567"
                       },
                       "last_name": {
                         "type": "string",
-                        "description": "Last name as on the passport."
+                        "description": "Last name as on the passport.",
+                        "example": "Olakunle"
                       }
                     },
                     "additionalProperties": false
@@ -5833,10 +5902,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -5854,7 +5924,8 @@
                       },
                       "passport_number": {
                         "type": "string",
-                        "description": "Ghana passport number."
+                        "description": "Ghana passport number.",
+                        "example": "G0000555"
                       },
                       "first_name": {
                         "type": "string",
@@ -6114,7 +6185,7 @@
     "/api/v2/public/verifications/requests/government_registry_checks/gh_voter_card_lookup": {
       "post": {
         "summary": "Ghana Voter Card Lookup",
-        "description": "Create a **Ghana Voter Card Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`voter_id`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `voter_id`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
+        "description": "Create a **Ghana Voter Card Lookup** check in **direct** or **link** mode.\n\nCall `POST /api/v2/public/verifications/requests/government_registry_checks/` and set `verification_type` to `gh_voter_card_lookup`.\n\n### Link mode (`mode=link`)\nAllowed **only** when `input_data.require_selfie` is `true` (this check supports Korapay facial matching).\n**Required:** `input_data`, `input_data.email`, `input_data.require_selfie=true`\n**Optional:** primary fields (`voter_id`, `type`), validation fields (`first_name`, `last_name`, `date_of_birth`), `send_email`, `input_data.ttl`, `allow_file_upload`\n**Do not send:** `input_data.selfie` (proof URL)\n**Returns:** `data.link.url` for the hosted VerifyAfrica selfie capture page\n\n### Direct mode (`mode=direct`, default unless require_selfie is true)\n**Required:** `input_data`, `voter_id`, `type`\n**Optional:** `first_name`, `last_name`, `date_of_birth`, `input_data.selfie` (HTTPS URL)\n**Do not send:** `send_email`, `allow_file_upload`, `input_data.ttl`, `input_data.require_selfie`\n**Returns:** accepted request (`PENDING`); Korapay Identity runs asynchronously\n\nBilling is deferred until the check is submitted to Korapay (not at HTTP create).\nDo not send internal `method_type`. Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET) for the terminal result.",
         "operationId": "public-gov-gh_voter_card_lookup",
         "tags": [
           "single-gov-ghana"
@@ -6178,10 +6249,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -6199,7 +6271,17 @@
                       },
                       "voter_id": {
                         "type": "string",
-                        "description": "Ghana voter ID."
+                        "description": "Ghana voter ID.",
+                        "example": "9001330422"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "old_voters_card",
+                          "new_voters_card"
+                        ],
+                        "description": "Voter card type — `old_voters_card` or `new_voters_card`.",
+                        "example": "new_voters_card"
                       },
                       "first_name": {
                         "type": "string",
@@ -6236,6 +6318,7 @@
                       "language": "EN",
                       "ttl": 60,
                       "voter_id": "9001330422",
+                      "type": "new_voters_card",
                       "require_selfie": true
                     },
                     "allow_file_upload": true
@@ -6249,6 +6332,7 @@
                     "input_data": {
                       "language": "EN",
                       "voter_id": "9001330422",
+                      "type": "new_voters_card",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
                   }
@@ -6261,6 +6345,7 @@
                     "input_data": {
                       "language": "EN",
                       "voter_id": "9001330422",
+                      "type": "new_voters_card",
                       "selfie": "https://cdn.example.com/selfie.jpg"
                     }
                   }
@@ -6523,10 +6608,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -6544,7 +6630,8 @@
                       },
                       "ssnit_number": {
                         "type": "string",
-                        "description": "Ghana SSNIT number."
+                        "description": "Ghana SSNIT number.",
+                        "example": "C987464748977"
                       },
                       "first_name": {
                         "type": "string",
@@ -6868,10 +6955,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -6889,7 +6977,8 @@
                       },
                       "license_number": {
                         "type": "string",
-                        "description": "Ghana driver's licence number."
+                        "description": "Ghana driver's licence number.",
+                        "example": "070667"
                       },
                       "first_name": {
                         "type": "string",
@@ -7213,10 +7302,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -7234,7 +7324,8 @@
                       },
                       "passport_number": {
                         "type": "string",
-                        "description": "Kenya passport number."
+                        "description": "Kenya passport number.",
+                        "example": "A2011111"
                       },
                       "first_name": {
                         "type": "string",
@@ -7558,10 +7649,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -7579,7 +7671,8 @@
                       },
                       "national_id": {
                         "type": "string",
-                        "description": "Kenya national ID number."
+                        "description": "Kenya national ID number.",
+                        "example": "25219766"
                       },
                       "first_name": {
                         "type": "string",
@@ -7902,14 +7995,16 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "phone_number": {
                         "type": "string",
-                        "description": "Kenya phone number."
+                        "description": "Kenya phone number.",
+                        "example": "0723818211"
                       },
                       "type": {
                         "type": "string",
@@ -7917,7 +8012,8 @@
                           "national_id",
                           "passport"
                         ],
-                        "description": "Identity type linked to the phone — `national_id` or `passport`."
+                        "description": "Identity type linked to the phone — `national_id` or `passport`.",
+                        "example": "national_id"
                       }
                     },
                     "additionalProperties": false
@@ -8206,14 +8302,16 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "tax_pin": {
                         "type": "string",
-                        "description": "Kenya tax PIN."
+                        "description": "Kenya tax PIN.",
+                        "example": "A009274635J"
                       }
                     },
                     "additionalProperties": false
@@ -8613,10 +8711,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -8634,7 +8733,8 @@
                       },
                       "national_id": {
                         "type": "string",
-                        "description": "Ivorian National ID. 7–12 alphanumeric characters; normalized to uppercase before sending to Korapay."
+                        "description": "Ivorian National ID. 7–12 alphanumeric characters; normalized to uppercase before sending to Korapay.",
+                        "example": "00112233440"
                       },
                       "first_name": {
                         "type": "string",
@@ -8958,10 +9058,11 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "require_selfie": {
                         "type": "boolean",
@@ -8979,7 +9080,8 @@
                       },
                       "residence_card_id": {
                         "type": "string",
-                        "description": "Ivorian Residence Card ID. 7–12 alphanumeric characters; normalized to uppercase before sending to Korapay."
+                        "description": "Ivorian Residence Card ID. 7–12 alphanumeric characters; normalized to uppercase before sending to Korapay.",
+                        "example": "11223344555"
                       },
                       "first_name": {
                         "type": "string",
@@ -9302,26 +9404,31 @@
                           30,
                           60,
                           120,
-                          240
+                          240,
+                          1440
                         ],
                         "default": 60,
-                        "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode."
+                        "description": "Link mode only. Hosted link lifetime in minutes. Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
                       },
                       "ssn": {
                         "type": "string",
-                        "description": "9-digit Social Security Number. Dashes and spaces are stripped."
+                        "description": "9-digit Social Security Number. Dashes and spaces are stripped.",
+                        "example": "765439022"
                       },
                       "first_name": {
                         "type": "string",
-                        "description": "First name of the SSN holder."
+                        "description": "First name of the SSN holder.",
+                        "example": "John"
                       },
                       "last_name": {
                         "type": "string",
-                        "description": "Last name of the SSN holder."
+                        "description": "Last name of the SSN holder.",
+                        "example": "Smith"
                       },
                       "phone_number": {
                         "type": "string",
-                        "description": "US phone number with country code (`+1XXXXXXXXXX`). 10-digit numbers get `+1` prepended."
+                        "description": "US phone number with country code (`+1XXXXXXXXXX`). 10-digit numbers get `+1` prepended.",
+                        "example": "+12109041086"
                       },
                       "date_of_birth": {
                         "type": "string",
@@ -9555,6 +9662,1525 @@
           }
         }
       }
+    },
+    "/api/v2/public/verifications/mixed-verifications/availability/": {
+      "get": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-availability",
+        "summary": "Mixed verification availability",
+        "description": "Catalog of which mixed step types (and related products) are available for the API-key tenant, including structured disable reasons.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mixed verification availability retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification availability retrieved."
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/mixed-verifications/templates/": {
+      "get": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-templates-list",
+        "summary": "List mixed verification templates",
+        "description": "Lists active platform templates and this tenant's custom templates (excludes legacy unsupported journeys).",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mixed verification templates retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification templates retrieved."
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "is_active": {
+                            "type": "boolean"
+                          },
+                          "is_custom": {
+                            "type": "boolean"
+                          },
+                          "legacy_unsupported": {
+                            "type": "boolean"
+                          },
+                          "steps": {
+                            "type": "object",
+                            "required": [
+                              "steps"
+                            ],
+                            "properties": {
+                              "steps": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "order"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                                      "example": "id_document"
+                                    },
+                                    "order": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "example": 1
+                                    },
+                                    "config": {
+                                      "type": "object",
+                                      "additionalProperties": true,
+                                      "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                                    }
+                                  }
+                                },
+                                "description": "Map of step UUID → step definition."
+                              }
+                            }
+                          },
+                          "verifications": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Ordered list of step types (derived from steps)."
+                          },
+                          "available": {
+                            "type": "boolean",
+                            "description": "Whether this template can be started for the current tenant."
+                          },
+                          "reasons": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            },
+                            "description": "Structured unavailability reasons when `available` is false."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-templates-create",
+        "summary": "Create mixed verification template",
+        "description": "Create a tenant-owned custom template with ordered steps and optional per-step `config`.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "KYC + AML"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "is_active": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "steps": {
+                    "type": "object",
+                    "required": [
+                      "steps"
+                    ],
+                    "properties": {
+                      "steps": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "object",
+                          "required": [
+                            "type",
+                            "order"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                              "example": "id_document"
+                            },
+                            "order": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "example": 1
+                            },
+                            "config": {
+                              "type": "object",
+                              "additionalProperties": true,
+                              "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                            }
+                          }
+                        },
+                        "description": "Map of step UUID → step definition."
+                      }
+                    }
+                  },
+                  "verifications": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Legacy ordered type list when `steps` is omitted."
+                  }
+                }
+              },
+              "examples": {
+                "with_steps": {
+                  "summary": "Steps with per-step config",
+                  "value": {
+                    "name": "KYC + AML",
+                    "description": "Passport then AML",
+                    "is_active": true,
+                    "steps": {
+                      "steps": {
+                        "550e8400-e29b-41d4-a716-446655440000": {
+                          "type": "id_document",
+                          "order": 1,
+                          "config": {
+                            "document": {
+                              "supported_types": [
+                                "passport"
+                              ]
+                            },
+                            "collect": {
+                              "dob": true
+                            }
+                          }
+                        },
+                        "6ba7b810-9dad-11d1-80b4-00c04fd430c8": {
+                          "type": "aml_screening",
+                          "order": 2,
+                          "config": {
+                            "filters": {
+                              "filters": [
+                                "sanction",
+                                "pep"
+                              ],
+                              "match_score": 70,
+                              "rca_search": true,
+                              "alias_search": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mixed verification template created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification template created."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        },
+                        "is_custom": {
+                          "type": "boolean"
+                        },
+                        "legacy_unsupported": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "type": "object",
+                          "required": [
+                            "steps"
+                          ],
+                          "properties": {
+                            "steps": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "order"
+                                ],
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                                    "example": "id_document"
+                                  },
+                                  "order": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "example": 1
+                                  },
+                                  "config": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                                  }
+                                }
+                              },
+                              "description": "Map of step UUID → step definition."
+                            }
+                          }
+                        },
+                        "verifications": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Ordered list of step types (derived from steps)."
+                        },
+                        "available": {
+                          "type": "boolean",
+                          "description": "Whether this template can be started for the current tenant."
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "Structured unavailability reasons when `available` is false."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/mixed-verifications/templates/{template_id}/": {
+      "get": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-templates-detail",
+        "summary": "Get mixed verification template",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mixed verification template retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification template retrieved."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        },
+                        "is_custom": {
+                          "type": "boolean"
+                        },
+                        "legacy_unsupported": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "type": "object",
+                          "required": [
+                            "steps"
+                          ],
+                          "properties": {
+                            "steps": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "order"
+                                ],
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                                    "example": "id_document"
+                                  },
+                                  "order": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "example": 1
+                                  },
+                                  "config": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                                  }
+                                }
+                              },
+                              "description": "Map of step UUID → step definition."
+                            }
+                          }
+                        },
+                        "verifications": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Ordered list of step types (derived from steps)."
+                        },
+                        "available": {
+                          "type": "boolean",
+                          "description": "Whether this template can be started for the current tenant."
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "Structured unavailability reasons when `available` is false."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-templates-update",
+        "summary": "Update mixed verification template",
+        "description": "Only tenant-owned custom templates can be updated. Platform templates are read-only.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  },
+                  "steps": {
+                    "type": "object",
+                    "required": [
+                      "steps"
+                    ],
+                    "properties": {
+                      "steps": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "object",
+                          "required": [
+                            "type",
+                            "order"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                              "example": "id_document"
+                            },
+                            "order": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "example": 1
+                            },
+                            "config": {
+                              "type": "object",
+                              "additionalProperties": true,
+                              "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                            }
+                          }
+                        },
+                        "description": "Map of step UUID → step definition."
+                      }
+                    }
+                  },
+                  "verifications": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mixed verification template updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification template updated."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        },
+                        "is_custom": {
+                          "type": "boolean"
+                        },
+                        "legacy_unsupported": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "type": "object",
+                          "required": [
+                            "steps"
+                          ],
+                          "properties": {
+                            "steps": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "order"
+                                ],
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                                    "example": "id_document"
+                                  },
+                                  "order": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "example": 1
+                                  },
+                                  "config": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                                  }
+                                }
+                              },
+                              "description": "Map of step UUID → step definition."
+                            }
+                          }
+                        },
+                        "verifications": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Ordered list of step types (derived from steps)."
+                        },
+                        "available": {
+                          "type": "boolean",
+                          "description": "Whether this template can be started for the current tenant."
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          },
+                          "description": "Structured unavailability reasons when `available` is false."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/mixed-verifications/sessions/": {
+      "post": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-sessions-start",
+        "summary": "Start mixed verification session",
+        "description": "Start a hosted multi-step session from `template_id` **or** inline `steps` / `verifications`. Returns a capture URL. Each step is billed when submitted.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "template_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "reference": {
+                    "type": "string"
+                  },
+                  "ttl": {
+                    "type": "integer",
+                    "enum": [
+                      15,
+                      30,
+                      60,
+                      120,
+                      240,
+                      1440
+                    ],
+                    "default": 60,
+                    "description": "Hosted link lifetime in minutes."
+                  },
+                  "steps": {
+                    "type": "object",
+                    "required": [
+                      "steps"
+                    ],
+                    "properties": {
+                      "steps": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "object",
+                          "required": [
+                            "type",
+                            "order"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "description": "Verification type for this step. Any product except `risk_assessment` and `mixed_verification`.",
+                              "example": "id_document"
+                            },
+                            "order": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "example": 1
+                            },
+                            "config": {
+                              "type": "object",
+                              "additionalProperties": true,
+                              "description": "Optional per-step defaults merged into child `input_data` at session start. Unknown keys are rejected. See Mixed Verification docs for allowed keys by type."
+                            }
+                          }
+                        },
+                        "description": "Map of step UUID → step definition."
+                      }
+                    }
+                  },
+                  "verifications": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Legacy ordered type list when not using template_id/steps."
+                  }
+                }
+              },
+              "examples": {
+                "from_template": {
+                  "summary": "Start from template",
+                  "value": {
+                    "template_id": "06adb17a-0000-0000-0000-000000000001",
+                    "email": "customer@example.com",
+                    "reference": "order-123",
+                    "ttl": 60
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mixed verification session started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification session started."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "PROCESSING",
+                            "SUCCESS",
+                            "FAILED",
+                            "PARTIAL",
+                            "ERROR",
+                            "ABANDONED"
+                          ]
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "reference": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "ttl_minutes": {
+                          "type": "integer",
+                          "enum": [
+                            15,
+                            30,
+                            60,
+                            120,
+                            240,
+                            1440
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "verification_url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "Hosted `/new-verify` capture URL for the customer."
+                        },
+                        "link": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            }
+                          }
+                        },
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/mixed-verifications/sessions/{session_id}/": {
+      "get": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-sessions-detail",
+        "summary": "Get mixed verification session",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mixed verification session retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification session retrieved."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "PROCESSING",
+                            "SUCCESS",
+                            "FAILED",
+                            "PARTIAL",
+                            "ERROR",
+                            "ABANDONED"
+                          ]
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "reference": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "ttl_minutes": {
+                          "type": "integer",
+                          "enum": [
+                            15,
+                            30,
+                            60,
+                            120,
+                            240,
+                            1440
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "verification_url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "Hosted `/new-verify` capture URL for the customer."
+                        },
+                        "link": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            }
+                          }
+                        },
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/verifications/mixed-verifications/sessions/{session_id}/steps/{step_id}/": {
+      "post": {
+        "tags": [
+          "mixed-verification"
+        ],
+        "operationId": "public-mixed-sessions-step-submit",
+        "summary": "Submit mixed verification step",
+        "description": "Submit one step of an in-progress session. Returns `202` and processes asynchronously. Wallet debit happens per step on submit.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "step_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Step UUID from the template/session steps map."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Step-specific capture payload (fields vary by step type)."
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Mixed verification step accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mixed verification step accepted."
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — validation failed or invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — tenant KYC incomplete, product unavailable, or insufficient wallet balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — resource does not exist for this tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error Response"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -9625,19 +11251,31 @@
       "WebhookEvent": {
         "type": "string",
         "title": "WebhookEvent",
-        "description": "Webhook event names emitted by VerifyAfrica to your endpoint.\n\nNames are prefixed by product family: `sf.` (document, face, address, AML, KYB, …) or `kr.` (government registry). Handle unknown values defensively so future events do not break your integration.",
+        "description": "Webhook event names emitted by VerifyAfrica to your endpoint.\n\nNames are prefixed by product family: `sf.` (document, face, address, AML, KYB, …) or `kr.` (government registry). Handle unknown values defensively so future events do not break your integration.\n\nMixed verification sessions also emit `batch.*` lifecycle events (in addition to per-child `sf.`/`kr.` verification events).",
         "enum": [
           "sf.verification.completed",
           "kr.verification.completed",
           "sf.verification.failed",
-          "kr.verification.failed"
+          "kr.verification.failed",
+          "batch.created",
+          "batch.pending",
+          "batch.processing",
+          "batch.partial",
+          "batch.failed",
+          "batch.error"
         ],
         "example": "sf.verification.completed",
         "x-enumDescriptions": {
           "sf.verification.completed": "Verification finished successfully (`data.status` = `SUCCESS`).",
           "kr.verification.completed": "Kora verification finished successfully (`data.status` = `SUCCESS`).",
           "sf.verification.failed": "Verification did not complete successfully (`data.status` = `FAILED` or `ERROR`).",
-          "kr.verification.failed": "Kora verification did not complete successfully (`data.status` = `FAILED` or `ERROR`)."
+          "kr.verification.failed": "Kora verification did not complete successfully (`data.status` = `FAILED` or `ERROR`).",
+          "batch.created": "Mixed/bulk session created.",
+          "batch.pending": "Mixed/bulk session pending customer action.",
+          "batch.processing": "Mixed/bulk session has at least one step in flight.",
+          "batch.partial": "Mixed/bulk session finished with mixed step outcomes.",
+          "batch.failed": "Mixed/bulk session failed.",
+          "batch.error": "Mixed/bulk session errored."
         }
       },
       "VerificationStatus": {
@@ -9925,7 +11563,7 @@
           "webhooks"
         ],
         "summary": "sf./kr.verification.completed",
-        "description": "VerifyAfrica POSTs this event to your dashboard-configured webhook URL when a verification finishes successfully (`data.status` = `SUCCESS`).\n\nThe `event` field is provider-prefixed: `sf.verification.completed` (identity / screening) or `kr.verification.completed` (government registry).\n\nFor unsuccessful outcomes, see `verification.failed`.\n\nPublic API creates return `PENDING` immediately — use these webhooks (or poll GET) for the final result.\n\n**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n**Your endpoint must return HTTP 200.** Non-200 responses are retried up to 3 times (30s delay).",
+        "description": "VerifyAfrica POSTs this event to your dashboard-configured webhook URL when a verification finishes successfully (`data.status` = `SUCCESS`).\n\nThe `event` field is provider-prefixed: `sf.verification.completed` (identity / screening) or `kr.verification.completed` (Korapay Identity / government registry).\n\nFor unsuccessful outcomes, see `verification.failed`.\n\nPublic API creates return `PENDING` immediately — use these webhooks (or poll GET) for the final result.\n\n**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n**Your endpoint must return HTTP 200.** Non-200 responses are retried up to 3 times (30s delay).",
         "parameters": [
           {
             "name": "Authorization",
@@ -10053,7 +11691,7 @@
           "webhooks"
         ],
         "summary": "sf./kr.verification.failed",
-        "description": "VerifyAfrica POSTs this event when a verification does not succeed (`data.status` = `FAILED` or `ERROR`).\n\nThe `event` field is provider-prefixed: `sf.verification.failed` (identity / screening) or `kr.verification.failed` (government registry).\n\nFor successful outcomes, see `verification.completed`.\n\n**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n**Your endpoint must return HTTP 200.** Non-200 responses are retried up to 3 times (30s delay).",
+        "description": "VerifyAfrica POSTs this event when a verification does not succeed (`data.status` = `FAILED` or `ERROR`).\n\nThe `event` field is provider-prefixed: `sf.verification.failed` (identity / screening) or `kr.verification.failed` (Korapay Identity / government registry).\n\nFor successful outcomes, see `verification.completed`.\n\n**Auth:** when webhook auth is enabled, requests include `Authorization: Bearer <webhook_token>`.\n\n**Your endpoint must return HTTP 200.** Non-200 responses are retried up to 3 times (30s delay).",
         "parameters": [
           {
             "name": "Authorization",

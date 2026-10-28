@@ -36,6 +36,7 @@ Pass these fields inside `input_data` in your request body.
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `voter_id` | string | Yes | Ghana voter ID number. |
+| `type` | string | Yes | Voter card type — `old_voters_card` or `new_voters_card`. |
 | `first_name` | string | No | First name for cross-validation. |
 | `last_name` | string | No | Last name for cross-validation. |
 | `date_of_birth` | string | No | Date of birth (YYYY-MM-DD). |
@@ -80,7 +81,8 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
   "verification_type": "gh_voter_card_lookup",
   "mode": "direct",
   "input_data": {
-    "voter_id": "9001330422"
+    "voter_id": "9001330422",
+    "type": "new_voters_card"
   }
 }
 ```

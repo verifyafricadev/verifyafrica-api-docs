@@ -110,12 +110,13 @@ CHECKS: dict[str, dict] = {
         "summary": "Nigeria CAC Lookup",
         "country": "NG",
         "required": ["cac_number"],
-        "optional": ["registration_name"],
+        "optional": ["registration_name", "registration_type"],
         "selfie": False,
-        "sample": {"cac_number": "RC00000011"},
+        "sample": {"cac_number": "RC00000011", "registration_type": "RC"},
         "field_desc": {
             "cac_number": "CAC registration number (e.g. RC00000011).",
             "registration_name": "Optional registered business name.",
+            "registration_type": "Optional CAC registration type (e.g. `RC`, `BN`).",
         },
     },
     "ng_passport_verification": {
@@ -148,12 +149,13 @@ CHECKS: dict[str, dict] = {
     "gh_voter_card_lookup": {
         "summary": "Ghana Voter Card Lookup",
         "country": "GH",
-        "required": ["voter_id"],
+        "required": ["voter_id", "type"],
         "optional": ["first_name", "last_name", "date_of_birth", "selfie"],
         "selfie": True,
-        "sample": {"voter_id": "9001330422"},
+        "sample": {"voter_id": "9001330422", "type": "new_voters_card"},
         "field_desc": {
             "voter_id": "Ghana voter ID.",
+            "type": "Voter card type — `old_voters_card` or `new_voters_card`.",
             "first_name": "Optional first name for cross-validation.",
             "last_name": "Optional last name for cross-validation.",
             "date_of_birth": "Optional date of birth (YYYY-MM-DD).",
@@ -361,7 +363,7 @@ def build_description(vtype: str, meta: dict) -> str:
     return "\n".join(lines)
 
 
-def build_input_properties(meta: dict) -> dict:
+def build_input_properties(meta: dict, *, vtype: str | None = None) -> dict:
     props: dict = {
         "email": prop(
             "Link mode: required. Direct mode: optional customer email.",
@@ -370,9 +372,12 @@ def build_input_properties(meta: dict) -> dict:
         "language": prop('Both modes. Language code. Defaults to "EN".', example="EN", default="EN"),
         "ttl": {
             "type": "integer",
-            "enum": [15, 30, 60, 120, 240],
+            "enum": [15, 30, 60, 120, 240, 1440],
             "default": 60,
-            "description": "Link mode only. Hosted link lifetime in minutes. Defaults to 60. Omit in direct mode.",
+            "description": (
+                "Link mode only. Hosted link lifetime in minutes. "
+                "Allowed: 15, 30, 60, 120, 240, or 1440 (24 hours). Defaults to 60. Omit in direct mode."
+            ),
         },
     }
     if meta["selfie"]:
@@ -394,10 +399,16 @@ def build_input_properties(meta: dict) -> dict:
         if key == "selfie":
             continue
         if key == "type":
+            if vtype == "gh_voter_card_lookup":
+                type_enum = ["old_voters_card", "new_voters_card"]
+            else:
+                # ke_phone_number_lookup (and any future phone-linked identity type)
+                type_enum = ["national_id", "passport"]
             props["type"] = {
                 "type": "string",
-                "enum": ["national_id", "passport"],
+                "enum": type_enum,
                 "description": meta["field_desc"].get(key, key),
+                "example": meta["sample"].get("type", type_enum[0]),
             }
             continue
         if key == "date_of_birth":
@@ -407,7 +418,10 @@ def build_input_properties(meta: dict) -> dict:
                 example=meta["sample"].get("date_of_birth", "1988-04-04"),
             )
             continue
-        props[key] = prop(meta["field_desc"].get(key, key))
+        extra = {}
+        if key in meta["sample"]:
+            extra["example"] = meta["sample"][key]
+        props[key] = prop(meta["field_desc"].get(key, key), **extra)
     return props
 
 
@@ -448,7 +462,7 @@ def build_request_schema(vtype: str, meta: dict) -> dict:
         "input_data": {
             "type": "object",
             "description": input_desc,
-            "properties": build_input_properties(meta),
+            "properties": build_input_properties(meta, vtype=vtype),
             "additionalProperties": False,
         },
     }

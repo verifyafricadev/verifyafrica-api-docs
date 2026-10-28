@@ -93,11 +93,12 @@ Unknown config keys are rejected. Omit `config` if you do not need defaults.
 | --- | --- |
 | `id_document` | `country`, `document` (`supported_types`, …), `collect` (`dob`, `age`, `gender`, `backside_proof_required`, `verification_instructions`), `allow_file_upload` (boolean; overrides the tenant product setting for this step) |
 | `address_verification` | `country`, `address` (`supported_types`, …), `collect.verification_instructions` |
-| `face_match` | `country`, `face` (`verification_mode`, `check_duplicate_request`, `allow_offline`, `allow_online`, `age`), `collect.verification_instructions` |
-| `aml_screening` | `filters` (`filters`, `match_score`, `rca_search`, `alias_search`), `background_checks` (e.g. `context`, `countries`) |
-| `business_aml_screening` | `filters` (same as AML), `aml_for_businesses` (e.g. `context`) |
-| Government registry types | `require_selfie`, optional locked `first_name` / `last_name` / `date_of_birth` |
-| Other allowed types | `country` only for now |
+| `face_match` | `country`, `face` (`verification_mode`, `check_duplicate_request`, `allow_offline`, `allow_online`, `age`), `collect.verification_instructions`, `allow_file_upload` |
+| `aml_screening` | `country`, `filters` (`filters`, `match_score`, `rca_search`, `alias_search`), `background_checks` (e.g. `context`, `countries`), `allow_file_upload` |
+| `business_aml_screening` | `country`, `filters` (same as AML), `aml_for_businesses` (e.g. `context`), `allow_file_upload` |
+| `kyb_screening` | `country`, `kyb` (`base`, `search_type`, `advanced_search`, …), `allow_file_upload` |
+| Government registry types | `require_selfie`, `allow_file_upload`, optional locked `first_name` / `last_name` / `date_of_birth` |
+| Other allowed types (e.g. crypto) | `country` only for now |
 
 **ID document `supported_types`:** `id_card`, `passport`, `driving_license`. Omit or use `[]` to allow all three.
 
@@ -111,6 +112,7 @@ Base path: `/api/v2/public/verifications/mixed-verifications/`
 
 | Method | Path | Purpose |
 |--------|------|---------|
+| `GET` | `availability/` | Catalog of which step types are available for this API-key tenant (with structured reasons) |
 | `GET` / `POST` | `templates/` | List active templates, or create a tenant custom template |
 | `GET` / `PATCH` | `templates/{id}/` | Template detail; update **your** custom template (`name`, `description`, `is_active`, `steps` / `verifications`) |
 | `POST` | `sessions/` | Start from `template_id` **or** inline `verifications` / `steps` |

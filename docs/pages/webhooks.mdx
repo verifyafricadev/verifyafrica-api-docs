@@ -12,10 +12,10 @@ Webhooks fire for verifications created from the **dashboard**, **public API**, 
 :::tip Source of truth
 Event names, `verification_type` values, statuses, and the full payload shape are defined in the OpenAPI schemas:
 
-- [Webhook events & payload](/api/webhooks) — `sf.verification.completed`, `kr.verification.completed`, `sf.verification.failed`, and `kr.verification.failed`
+- [Webhook events & payload](/api/webhooks) — `sf.`/`kr.` verification events and mixed-session `batch.*` events
 - Schemas: `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, `WebhookPayload`
 
-Prefer those schemas over copying examples from this page.
+Prefer those schemas over copying examples from this page. Mixed session lifecycle events are also covered in [Mixed Verification](/mixed-verification).
 :::
 
 ## Public API + webhooks
@@ -51,7 +51,7 @@ Each OpenAPI schema maps to a specific key in the webhook JSON body:
 | Schema | Payload key | What it defines |
 | --- | --- | --- |
 | `WebhookPayload` | *(root body)* | Full JSON object POSTed to your endpoint |
-| `WebhookEvent` | `event` | `sf.verification.completed`, `kr.verification.completed`, `sf.verification.failed`, `kr.verification.failed` |
+| `WebhookEvent` | `event` | `sf.`/`kr.` verification completed/failed, plus mixed `batch.created` / `batch.pending` / `batch.processing` / `batch.partial` / `batch.failed` / `batch.error` |
 | — | `status` | Envelope status: `success` or `failure` (aligned with `event`) |
 | `VerificationRequestData` | `data` | Verification object nested under the root payload |
 | `PublicVerificationType` | `data.verification_type` | Every public-API product type value |
@@ -62,8 +62,9 @@ Each OpenAPI schema maps to a specific key in the webhook JSON body:
 | --- | --- | --- | --- |
 | `sf.verification.completed` / `kr.verification.completed` | Verification finished successfully | `success` | `SUCCESS` |
 | `sf.verification.failed` / `kr.verification.failed` | Verification did not succeed | `failure` | `FAILED` or `ERROR` |
+| `batch.*` | Mixed verification session lifecycle (see [Mixed Verification](/mixed-verification)) | varies | session status |
 
-No webhook is sent while the verification is still `PENDING`.
+No per-verification webhook is sent while the verification is still `PENDING`.
 
 ## Payload shape
 
