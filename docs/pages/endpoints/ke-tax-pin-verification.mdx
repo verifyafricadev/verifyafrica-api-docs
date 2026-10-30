@@ -67,6 +67,16 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use Korapay sandbox Tax PINs only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real Tax PINs fail on test.
+
+| Scenario | `input_data.tax_pin` |
+| --- | --- |
+| Valid | `A009274635J` |
+| Invalid | `A0000000000` |
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

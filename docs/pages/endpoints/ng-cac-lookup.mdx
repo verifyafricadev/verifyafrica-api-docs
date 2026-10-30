@@ -69,6 +69,16 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use Korapay sandbox CAC numbers only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real RC numbers fail on test.
+
+| Scenario | `input_data.cac_number` |
+| --- | --- |
+| Valid | `RC00000011` |
+| Invalid | `RC11111111` |
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

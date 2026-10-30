@@ -91,6 +91,16 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use Korapay sandbox voter IDs only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real voter IDs fail on test.
+
+| Scenario | `input_data.voter_id` | `input_data.type` |
+| --- | --- | --- |
+| Valid | `9001330422` | `old_voters_card` or `new_voters_card` |
+| Invalid | `0000000000` | `old_voters_card` or `new_voters_card` |
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

@@ -89,6 +89,16 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use Korapay sandbox licence numbers only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real licences fail on test.
+
+| Scenario | `input_data.license_number` |
+| --- | --- |
+| Valid | `070667` |
+| Invalid | `000000` |
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

@@ -89,6 +89,16 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use Korapay sandbox passport numbers only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real passports fail on test.
+
+| Scenario | `input_data.passport_number` |
+| --- | --- |
+| Valid | `G0000555` |
+| Invalid | `G0000000` |
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

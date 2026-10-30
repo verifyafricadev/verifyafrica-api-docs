@@ -20,6 +20,19 @@ Set `verification_type` to the identifier for the check you need. Retrieve resul
 
 Every check supports **link** and **direct** mode. See [Government Registry Checks](../government-registry) for shared `mode`, selfie, billing, and webhook details.
 
+## Sandbox testing (required on test)
+
+On the **test** environment you must use Korapay sandbox IDs from [Testing your Integration](https://developers.korapay.com/docs/testing-your-integration). Real Kenyan IDs fail on test.
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [National ID](../../ke-national-id-lookup) | `ke_national_id_lookup` | `national_id` | `25219766` | `00000000` |
+| [Passport](../../ke-passport-lookup) | `ke_passport_lookup` | `passport_number` | `A2011111` | `A0000000` |
+| [Tax PIN](../../ke-tax-pin-verification) | `ke_tax_pin_verification` | `tax_pin` | `A009274635J` | `A0000000000` |
+| [Phone lookup](../../ke-phone-number-lookup) | `ke_phone_number_lookup` | `phone_number` | `0723818211` | — |
+
+Phone lookup also requires `type` (`national_id` or `passport`). Full GRC sandbox tables: [Government Registry Checks](../government-registry#sandbox-testing-required-on-test).
+
 ## Endpoints
 
 - [Kenya Passport Lookup](../../ke-passport-lookup) — [API](/api/single-gov-kenya#kenya-passport-lookup)

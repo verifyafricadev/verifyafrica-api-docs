@@ -20,6 +20,22 @@ Set `verification_type` to the identifier for the check you need. Retrieve resul
 
 Every check supports **link** and **direct** mode. See [Government Registry Checks](../government-registry) for shared `mode`, selfie, billing, and webhook details.
 
+## Sandbox testing (required on test)
+
+On the **test** environment you must use Korapay sandbox IDs from [Testing your Integration](https://developers.korapay.com/docs/testing-your-integration). Real Nigerian IDs fail on test.
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [BVN](../../ng-bvn-verification) | `ng_bvn_verification` | `bvn` | `22222222222` | `00000000000` |
+| [NIN](../../ng-nin-verification) | `ng_nin_verification` | `nin` | `55555555555` | `00000000000` |
+| [Virtual NIN](../../ng-virtual-nin-verification) | `ng_virtual_nin_verification` | `virtual_nin` | `KO111111111111IL` | `KO000000000000II` |
+| [Passport](../../ng-passport-verification) | `ng_passport_verification` | `passport_id` | `A01234567` | `A00000000` |
+| [Phone lookup](../../ng-phone-number-lookup) | `ng_phone_number_lookup` | `phone_number` | `08000000000` | `08000000001` |
+| [Advanced phone](../../ng-advanced-phone-number-verification) | `ng_advanced_phone_number_verification` | `phone_number` | `08000000000` | `08000000001` |
+| [CAC](../../ng-cac-lookup) | `ng_cac_lookup` | `cac_number` | `RC00000011` | `RC11111111` |
+
+See also [KYC Nigeria](https://developers.korapay.com/docs/kyc-nigeria) and the shared tables under [Government Registry Checks → Sandbox testing](../government-registry#sandbox-testing-required-on-test).
+
 ## Endpoints
 
 - [Nigeria BVN Verification](../../ng-bvn-verification) — [API](/api/single-gov-nigeria#nigeria-bvn-verification)

@@ -89,6 +89,16 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use Korapay sandbox national IDs only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real national IDs fail on test.
+
+| Scenario | `input_data.national_id` |
+| --- | --- |
+| Valid | `25219766` |
+| Invalid | `00000000` |
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

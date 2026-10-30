@@ -20,6 +20,16 @@ Set `verification_type` to the identifier for the check you need. Retrieve resul
 
 Every check supports **link** and **direct** mode. See [Government Registry Checks](../government-registry) for shared `mode`, selfie, billing, and webhook details.
 
+## Sandbox testing (required on test)
+
+On the **test** environment you must use Korapay sandbox IDs from [Testing your Integration](https://developers.korapay.com/docs/testing-your-integration). Real SA IDs fail on test.
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [SA ID](../../za-said-verification) | `za_said_verification` | `id_number` | `8012185201077` | `8000000000001` |
+
+Full GRC sandbox tables: [Government Registry Checks](../government-registry#sandbox-testing-required-on-test).
+
 ## Endpoints
 
 - [South Africa ID Verification](../../za-said-verification) — [API](/api/single-gov-south-africa#south-africa-id-verification)

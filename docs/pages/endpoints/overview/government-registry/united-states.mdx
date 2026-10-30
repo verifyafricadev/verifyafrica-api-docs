@@ -22,6 +22,16 @@ Every check supports **link** and **direct** mode. See [Government Registry Chec
 
 SSN verification requires the holder's first name, last name, date of birth, and US phone number alongside the SSN. Korapay processes it asynchronously.
 
+## Sandbox testing (required on test)
+
+On the **test** environment you must use Korapay sandbox identity values from [Testing your Integration](https://developers.korapay.com/docs/testing-your-integration). Real SSNs fail on test.
+
+| Check | `verification_type` | Request keys | Valid sandbox values |
+| --- | --- | --- | --- |
+| [SSN](../../us-ssn-verification) | `us_ssn_verification` | `ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth` | `765439022`, `John`, `Smith`, `+12109041086`, `1995-01-23` |
+
+Full GRC sandbox tables: [Government Registry Checks](../government-registry#sandbox-testing-required-on-test).
+
 ## Endpoints
 
 - [United States SSN Verification](../../us-ssn-verification) — [API](/api/single-gov-united-states#united-states-ssn-verification)

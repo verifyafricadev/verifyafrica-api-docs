@@ -69,6 +69,17 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 
 
+## Sandbox testing (required on test)
+
+On **test**, use the Korapay sandbox phone number ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real numbers fail on test.
+
+| Scenario | `input_data.phone_number` | `input_data.type` |
+| --- | --- | --- |
+| Valid | `0723818211` | `national_id` or `passport` |
+
+Korapay publishes only a valid Kenyan phone sandbox value.
+
+
 ## Example Error Responses
 
 Errors use the v2 envelope `{ "success": false, "message": "…", "errors": ["…"] }`.

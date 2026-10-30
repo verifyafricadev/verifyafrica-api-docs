@@ -168,20 +168,74 @@ Response includes `data.link.url`. The customer captures a selfie (and any field
 
 Create returns `PENDING`. Listen for `kr.verification.completed` / `kr.verification.failed`, or poll GET detail.
 
-## Sandbox testing
+## Sandbox testing (required on test)
 
-With Korapay **test** secret keys, only [Korapay sandbox identity numbers](https://developers.korapay.com/docs/testing-your-integration) work. Real NINs/BVNs return “data not found”. Live keys are required for real identities.
+When your VerifyAfrica environment uses Korapay **test** credentials (sandbox / test dashboard), you **must** use the official Korapay sandbox identity values below. Real government IDs (real NIN, BVN, passport, etc.) return “data not found” / fail on test.
 
-Each check page lists its sandbox values. For example:
+Source: [Korapay — Testing your Integration](https://developers.korapay.com/docs/testing-your-integration) (Identity section). Also see [KYC Nigeria](https://developers.korapay.com/docs/kyc-nigeria) for Nigeria product context.
 
-| Check | Valid sandbox input |
-| --- | --- |
-| [Côte d'Ivoire National ID](./ci-national-id-lookup) | `national_id`: `00112233440` |
-| [Ghana SSNIT](./gh-ssnit-lookup) | `ssnit_number`: `C987464748977` |
-| [Kenya National ID](./ke-national-id-lookup) | `national_id`: `25219766` |
-| [Nigeria NIN](./ng-nin-verification) | `nin`: `55555555555` |
-| [South Africa ID](./za-said-verification) | `id_number`: `8012185201077` |
-| [United States SSN](./us-ssn-verification) | `ssn`: `765439022`, `first_name`: `John`, `last_name`: `Smith`, `phone_number`: `+12109041086`, `date_of_birth`: `1995-01-23` |
+- Put the value in the check’s primary `input_data` field (column **Request key**).
+- Use the **Valid** row for a successful match; use **Invalid** to exercise failure paths.
+- Live / production credentials require real IDs — sandbox values will not work there.
+
+### 🇳🇬 Nigeria
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [BVN](./ng-bvn-verification) | `ng_bvn_verification` | `bvn` | `22222222222` | `00000000000` |
+| [NIN](./ng-nin-verification) | `ng_nin_verification` | `nin` | `55555555555` | `00000000000` |
+| [Virtual NIN](./ng-virtual-nin-verification) | `ng_virtual_nin_verification` | `virtual_nin` | `KO111111111111IL` | `KO000000000000II` |
+| [Passport](./ng-passport-verification) | `ng_passport_verification` | `passport_id` | `A01234567` | `A00000000` |
+| [Phone lookup](./ng-phone-number-lookup) | `ng_phone_number_lookup` | `phone_number` | `08000000000` | `08000000001` |
+| [Advanced phone](./ng-advanced-phone-number-verification) | `ng_advanced_phone_number_verification` | `phone_number` | `08000000000` | `08000000001` |
+| [CAC](./ng-cac-lookup) | `ng_cac_lookup` | `cac_number` | `RC00000011` | `RC11111111` |
+
+Nigeria passport also requires `last_name` in direct mode (any non-empty last name works for the sandbox passport).
+
+### 🇬🇭 Ghana
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [SSNIT](./gh-ssnit-lookup) | `gh_ssnit_lookup` | `ssnit_number` | `C987464748977` | `C000000000000` |
+| [Driver's licence](./gh-drivers-license-lookup) | `gh_drivers_license_lookup` | `license_number` | `070667` | `000000` |
+| [Passport](./gh-passport-lookup) | `gh_passport_lookup` | `passport_number` | `G0000555` | `G0000000` |
+| [Voter card](./gh-voter-card-lookup) | `gh_voter_card_lookup` | `voter_id` | `9001330422` | `0000000000` |
+
+Voter card also requires `type`: `old_voters_card` or `new_voters_card`.
+
+### 🇰🇪 Kenya
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [National ID](./ke-national-id-lookup) | `ke_national_id_lookup` | `national_id` | `25219766` | `00000000` |
+| [Passport](./ke-passport-lookup) | `ke_passport_lookup` | `passport_number` | `A2011111` | `A0000000` |
+| [Tax PIN](./ke-tax-pin-verification) | `ke_tax_pin_verification` | `tax_pin` | `A009274635J` | `A0000000000` |
+| [Phone lookup](./ke-phone-number-lookup) | `ke_phone_number_lookup` | `phone_number` | `0723818211` | — |
+
+Kenya phone lookup also requires `type`: `national_id` or `passport`. Korapay publishes only a valid phone sandbox value.
+
+### 🇨🇮 Côte d'Ivoire
+
+| Check | `verification_type` | Request key | Valid |
+| --- | --- | --- | --- |
+| [National ID](./ci-national-id-lookup) | `ci_national_id_lookup` | `national_id` | `00112233440` (new) or `C00112233440` (old) |
+| [Residence card](./ci-residence-card-lookup) | `ci_residence_card_lookup` | `residence_card_id` | `11223344555` |
+
+IDs must be 7–12 alphanumeric characters (normalized to uppercase).
+
+### 🇿🇦 South Africa
+
+| Check | `verification_type` | Request key | Valid | Invalid |
+| --- | --- | --- | --- | --- |
+| [SA ID](./za-said-verification) | `za_said_verification` | `id_number` | `8012185201077` | `8000000000001` |
+
+### 🇺🇸 United States
+
+| Check | `verification_type` | Request keys | Valid sandbox values |
+| --- | --- | --- | --- |
+| [SSN](./us-ssn-verification) | `us_ssn_verification` | `ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth` | `ssn`: `765439022`, `first_name`: `John`, `last_name`: `Smith`, `phone_number`: `+12109041086`, `date_of_birth`: `1995-01-23` |
+
+Korapay publishes only the valid SSN. Other well-formed SSNs typically come back as not found; see the [SSN page](./us-ssn-verification) for details.
 
 ## Webhooks
 

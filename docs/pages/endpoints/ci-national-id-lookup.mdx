@@ -87,13 +87,14 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 
 Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
-## Sandbox testing
+## Sandbox testing (required on test)
 
-With Korapay **test** keys, use the [Korapay sandbox identity numbers](https://developers.korapay.com/docs/testing-your-integration):
+On **test**, use Korapay sandbox National IDs only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real IDs fail on test.
 
-| Scenario | National ID |
+| Scenario | `input_data.national_id` |
 | --- | --- |
-| Valid | `00112233440` |
+| Valid (new National ID) | `00112233440` |
+| Valid (old National ID) | `C00112233440` |
 
 IDs are normalized to uppercase. Values outside 7–12 alphanumeric characters are rejected at create with HTTP 400.
 

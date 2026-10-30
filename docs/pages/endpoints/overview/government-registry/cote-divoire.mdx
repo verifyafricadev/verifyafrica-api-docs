@@ -22,6 +22,17 @@ Every check supports **link** and **direct** mode. See [Government Registry Chec
 
 Ivorian National ID and Residence Card values must be **7–12 alphanumeric characters** and are normalized to uppercase.
 
+## Sandbox testing (required on test)
+
+On the **test** environment you must use Korapay sandbox IDs from [Testing your Integration](https://developers.korapay.com/docs/testing-your-integration). Real Ivorian IDs fail on test.
+
+| Check | `verification_type` | Request key | Valid |
+| --- | --- | --- | --- |
+| [National ID](../../ci-national-id-lookup) | `ci_national_id_lookup` | `national_id` | `00112233440` (new) or `C00112233440` (old) |
+| [Residence card](../../ci-residence-card-lookup) | `ci_residence_card_lookup` | `residence_card_id` | `11223344555` |
+
+IDs must be 7–12 alphanumeric characters. Full GRC sandbox tables: [Government Registry Checks](../government-registry#sandbox-testing-required-on-test).
+
 ## Endpoints
 
 - [Côte d'Ivoire National ID Lookup](../../ci-national-id-lookup) — [API](/api/single-gov-cote-divoire#cote-d-ivoire-national-id-lookup)
