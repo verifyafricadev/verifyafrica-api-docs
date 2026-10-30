@@ -1,12 +1,16 @@
 ---
 title: Côte d'Ivoire National ID Lookup
-description: Verify Ivorian National ID records against the government registry via Korapay Identity.
+description: Verify Ivorian National ID records against the government registry.
 sidebar_label: Côte d'Ivoire National ID Lookup
 ---
 
-# Côte d'Ivoire National ID Lookup
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
 
-Verify Ivorian National ID records against the government registry via Korapay Identity.
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
+
+Verify Ivorian National ID records against the government registry.
 
 :::tip API Reference
 Jump directly to the interactive API docs:
@@ -35,7 +39,7 @@ Pass these fields inside `input_data` in your request body.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `national_id` | string | Yes | Ivorian National ID. **7–12 alphanumeric characters**; normalized to uppercase before Korapay. |
+| `national_id` | string | Yes | Ivorian National ID. **7–12 alphanumeric characters**; normalized to uppercase before submission. |
 | `first_name` | string | No | First name for cross-validation. |
 | `last_name` | string | No | Last name for cross-validation. |
 | `date_of_birth` | string | No | Date of birth (YYYY-MM-DD). |
@@ -43,7 +47,7 @@ Pass these fields inside `input_data` in your request body.
 
 ## Modes
 
-This check supports Korapay **facial matching**, so **link mode is available only when you request a selfie** (`input_data.require_selfie: true`). Direct mode is always available. See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
+This check supports **facial matching**, so **link mode is available only when you request a selfie** (`input_data.require_selfie: true`). Direct mode is always available. See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
 
 | Mode | Notes |
 | --- | --- |
@@ -89,7 +93,7 @@ Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET d
 
 ## Sandbox testing (required on test)
 
-On **test**, use Korapay sandbox National IDs only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real IDs fail on test.
+On **test**, use sandbox National IDs only. Real IDs fail on test.
 
 | Scenario | `input_data.national_id` |
 | --- | --- |

@@ -4,7 +4,11 @@ description: Lookup Ghanaian international passport records.
 sidebar_label: Ghana Passport Lookup
 ---
 
-# Ghana Passport Lookup
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
+
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
 
 Lookup Ghanaian international passport records.
 
@@ -43,7 +47,7 @@ Pass these fields inside `input_data` in your request body.
 
 ## Modes
 
-This check supports Korapay **facial matching**, so **link mode is available only when you request a selfie** (`input_data.require_selfie: true`). Direct mode is always available. See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
+This check supports **facial matching**, so **link mode is available only when you request a selfie** (`input_data.require_selfie: true`). Direct mode is always available. See [Government Registry Checks](./overview/government-registry) for shared request fields, billing, and webhooks.
 
 | Mode | Notes |
 | --- | --- |
@@ -87,17 +91,14 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 
 Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
-
-
 ## Sandbox testing (required on test)
 
-On **test**, use Korapay sandbox passport numbers only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real passports fail on test.
+On **test**, use sandbox passport numbers only. Real passports fail on test.
 
 | Scenario | `input_data.passport_number` |
 | --- | --- |
 | Valid | `G0000555` |
 | Invalid | `G0000000` |
-
 
 ## Example Error Responses
 

@@ -4,7 +4,11 @@ description: Government registry verification endpoints for Nigeria.
 sidebar_label: 🇳🇬 Nigeria
 ---
 
-# 🇳🇬 Nigeria
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
+
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
 
 Official government registry checks for Nigeria.
 
@@ -22,7 +26,7 @@ Every check supports **link** and **direct** mode. See [Government Registry Chec
 
 ## Sandbox testing (required on test)
 
-On the **test** environment you must use Korapay sandbox IDs from [Testing your Integration](https://developers.korapay.com/docs/testing-your-integration). Real Nigerian IDs fail on test.
+On the **test** environment you must use sandbox IDs Real Nigerian IDs fail on test.
 
 | Check | `verification_type` | Request key | Valid | Invalid |
 | --- | --- | --- | --- | --- |
@@ -34,7 +38,7 @@ On the **test** environment you must use Korapay sandbox IDs from [Testing your 
 | [Advanced phone](../../ng-advanced-phone-number-verification) | `ng_advanced_phone_number_verification` | `phone_number` | `08000000000` | `08000000001` |
 | [CAC](../../ng-cac-lookup) | `ng_cac_lookup` | `cac_number` | `RC00000011` | `RC11111111` |
 
-See also [KYC Nigeria](https://developers.korapay.com/docs/kyc-nigeria) and the shared tables under [Government Registry Checks → Sandbox testing](../government-registry#sandbox-testing-required-on-test).
+See also and the shared tables under [Government Registry Checks → Sandbox testing](../government-registry#sandbox-testing-required-on-test).
 
 ## Endpoints
 

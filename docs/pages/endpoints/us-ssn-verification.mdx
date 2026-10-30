@@ -4,9 +4,13 @@ description: Verify US Social Security Numbers against the holder's name, date o
 sidebar_label: United States SSN Verification
 ---
 
-# United States SSN Verification
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
 
-Verify US Social Security Numbers (SSN) against the holder's name, date of birth, and phone number via Korapay Identity. Completed results include the holder's address history.
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
+
+Verify US Social Security Numbers (SSN) against the holder's name, date of birth, and phone number. Completed results include the holder's address history.
 
 :::tip API Reference
 Jump directly to the interactive API docs:
@@ -59,8 +63,6 @@ Do not send internal `method_type`.
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `us_ssn_verification`.
 
-
-
 ```json
 {
   "verification_type": "us_ssn_verification",
@@ -77,7 +79,7 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 
 Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
-Korapay processes SSN checks asynchronously, so the verification can stay `PENDING` for longer than other registry checks. VerifyAfrica updates the verification when Korapay's webhook delivers the final result, then sends you `kr.verification.completed` / `kr.verification.failed`. GET detail returns the latest stored status.
+SSN checks are processed asynchronously, so the verification can stay `PENDING` for longer than other registry checks. VerifyAfrica updates the verification when the upstream result arrives, then sends you `kr.verification.completed` / `kr.verification.failed`. GET detail returns the latest stored status.
 
 ## Completed Result
 
@@ -111,14 +113,14 @@ When the check completes, `response_data.data` contains the SSN holder's record,
 
 ## Sandbox testing (required on test)
 
-On **test**, use Korapay sandbox SSN values only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real SSNs fail on test.
+On **test**, use sandbox SSN values only. Real SSNs fail on test.
 
 | Scenario | SSN | First name | Last name | Phone number | Date of birth | Result |
 | --- | --- | --- | --- | --- | --- | --- |
 | Valid | `765439022` | `John` | `Smith` | `+12109041086` | `1995-01-23` | `SUCCESS` with address history |
 | Not found | `123456789` | `John` | `Smith` | `+12109041086` | `1995-01-23` | `FAILED` |
 
-Korapay publishes only the valid SSN. Any other well-formed SSN (such as `123456789`) comes back as not found. Korapay rejects SSNs that can never be issued (such as `000000000`) as invalid, and the verification ends with status `ERROR` and the message "Please provide a valid SSN".
+Only the valid SSN is published for sandbox. Any other well-formed SSN (such as `123456789`) comes back as not found. SSNs that can never be issued (such as `000000000`) are rejected as invalid, and the verification ends with status `ERROR` and the message "Please provide a valid SSN".
 
 Sandbox SSN checks can take anywhere from a few seconds to a few minutes to finish, so expect `PENDING` in the meantime.
 

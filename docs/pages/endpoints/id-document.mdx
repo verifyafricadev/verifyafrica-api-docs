@@ -3,9 +3,6 @@ title: Document Verification
 description: Verify passports, national IDs, and driver's licenses via hosted link mode or direct proof upload.
 sidebar_label: Document Verification
 ---
-
-# Document Verification
-
 Verify government-issued IDs (passport, national ID, driver's license) in either **link** or **direct** mode.
 
 | Mode | What you send | What create returns | When verification finishes |
@@ -225,7 +222,7 @@ Create returns `status: PENDING` immediately while verification runs. There is n
 GET https://api.verifyafrica.io/api/v2/public/verifications/supported-countries/?verification_type=id_document
 ```
 
-No authentication required. Returns `{ "verification_type": "id_document", "countries": [{ "name": "Nigeria", "code": "NG" }, ...] }`.
+No authentication required. Returns `{ "verification_type": "id_document", "countries": [{ "name": "Nigeria", "code": "NG" },...] }`.
 
 ## Example Error Responses
 

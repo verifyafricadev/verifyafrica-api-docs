@@ -4,7 +4,11 @@ description: Verify South African ID numbers against the Department of Home Affa
 sidebar_label: South Africa ID Verification
 ---
 
-# South Africa ID Verification
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
+
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
 
 Verify South African ID numbers against the Department of Home Affairs registry.
 
@@ -53,8 +57,6 @@ Do not send internal `method_type`.
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `za_said_verification`.
 
-
-
 ```json
 {
   "verification_type": "za_said_verification",
@@ -67,17 +69,14 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 
 Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
-
-
 ## Sandbox testing (required on test)
 
-On **test**, use Korapay sandbox SA ID numbers only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real SA IDs fail on test.
+On **test**, use sandbox SA ID numbers only. Real SA IDs fail on test.
 
 | Scenario | `input_data.id_number` |
 | --- | --- |
 | Valid | `8012185201077` |
 | Invalid | `8000000000001` |
-
 
 ## Example Error Responses
 

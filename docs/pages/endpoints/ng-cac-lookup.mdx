@@ -4,7 +4,11 @@ description: Lookup company records from the Nigerian Corporate Affairs Commissi
 sidebar_label: Nigeria CAC Lookup
 ---
 
-# Nigeria CAC Lookup
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
+
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
 
 Lookup company records from the Nigerian Corporate Affairs Commission (CAC).
 
@@ -53,8 +57,6 @@ Do not send internal `method_type`.
 
 Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_type` to `ng_cac_lookup`.
 
-
-
 ```json
 {
   "verification_type": "ng_cac_lookup",
@@ -67,17 +69,14 @@ Authenticate with `Authorization: Bearer <VA-…api-key>` and set `verification_
 
 Listen for `kr.verification.completed` / `kr.verification.failed` (or poll GET detail) for the terminal result.
 
-
-
 ## Sandbox testing (required on test)
 
-On **test**, use Korapay sandbox CAC numbers only ([Testing your Integration](https://developers.korapay.com/docs/testing-your-integration)). Real RC numbers fail on test.
+On **test**, use sandbox CAC numbers only. Real RC numbers fail on test.
 
 | Scenario | `input_data.cac_number` |
 | --- | --- |
 | Valid | `RC00000011` |
 | Invalid | `RC11111111` |
-
 
 ## Example Error Responses
 

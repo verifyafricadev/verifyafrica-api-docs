@@ -5,11 +5,15 @@ sidebar_label: Government Registry Checks
 sidebar_icon: landmark
 ---
 
-# Government Registry Checks
+:::tip Test vs production
+On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
+
+On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
+:::
 
 Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States.
 
-**Direct mode** is always available. **Link mode** is only available for checks that support Korapay facial matching, and only when you set `input_data.require_selfie` to `true` so the customer can capture a selfie on the hosted page.
+**Direct mode** is always available. **Link mode** is only available for checks that support facial matching, and only when you set `input_data.require_selfie` to `true` so the customer can capture a selfie on the hosted page.
 
 | Mode | When you can use it | What you send | What create returns |
 | --- | --- | --- | --- |
@@ -18,7 +22,7 @@ Verify identity and registry records against official government databases acros
 
 Use [Webhooks](/webhooks) (`kr.verification.completed` / `kr.verification.failed`) or `GET …/requests/?verification_id=…` for the terminal result in both modes.
 
-Billing for registry checks is deferred until the check is submitted to Korapay (not at HTTP create).
+Billing for registry checks is deferred until the check is submitted upstream (not at HTTP create).
 
 :::tip API Reference
 Jump directly to the interactive API docs:
@@ -61,7 +65,7 @@ Sending `mode: "link"` without `require_selfie: true`, or on a check that does n
 
 ### Checks that support selfie (link mode allowed)
 
-These match Korapay Identity facial matching (`validation.selfie`):
+These support facial matching (`validation.selfie`):
 
 | Country | Checks |
 | --- | --- |
@@ -170,9 +174,7 @@ Create returns `PENDING`. Listen for `kr.verification.completed` / `kr.verificat
 
 ## Sandbox testing (required on test)
 
-When your VerifyAfrica environment uses Korapay **test** credentials (sandbox / test dashboard), you **must** use the official Korapay sandbox identity values below. Real government IDs (real NIN, BVN, passport, etc.) return “data not found” / fail on test.
-
-Source: [Korapay — Testing your Integration](https://developers.korapay.com/docs/testing-your-integration) (Identity section). Also see [KYC Nigeria](https://developers.korapay.com/docs/kyc-nigeria) for Nigeria product context.
+When your VerifyAfrica environment is on **test** (sandbox), you **must** use the sandbox identity values below. Real government IDs (real NIN, BVN, passport, etc.) return “data not found” / fail on test.
 
 - Put the value in the check’s primary `input_data` field (column **Request key**).
 - Use the **Valid** row for a successful match; use **Invalid** to exercise failure paths.
@@ -212,7 +214,7 @@ Voter card also requires `type`: `old_voters_card` or `new_voters_card`.
 | [Tax PIN](./ke-tax-pin-verification) | `ke_tax_pin_verification` | `tax_pin` | `A009274635J` | `A0000000000` |
 | [Phone lookup](./ke-phone-number-lookup) | `ke_phone_number_lookup` | `phone_number` | `0723818211` | — |
 
-Kenya phone lookup also requires `type`: `national_id` or `passport`. Korapay publishes only a valid phone sandbox value.
+Kenya phone lookup also requires `type`: `national_id` or `passport`. Only a valid phone sandbox value is published.
 
 ### 🇨🇮 Côte d'Ivoire
 
@@ -235,7 +237,7 @@ IDs must be 7–12 alphanumeric characters (normalized to uppercase).
 | --- | --- | --- | --- |
 | [SSN](./us-ssn-verification) | `us_ssn_verification` | `ssn`, `first_name`, `last_name`, `phone_number`, `date_of_birth` | `ssn`: `765439022`, `first_name`: `John`, `last_name`: `Smith`, `phone_number`: `+12109041086`, `date_of_birth`: `1995-01-23` |
 
-Korapay publishes only the valid SSN. Other well-formed SSNs typically come back as not found; see the [SSN page](./us-ssn-verification) for details.
+Only the valid SSN is published for sandbox. Other well-formed SSNs typically come back as not found; see the [SSN page](./us-ssn-verification) for details.
 
 ## Webhooks
 
