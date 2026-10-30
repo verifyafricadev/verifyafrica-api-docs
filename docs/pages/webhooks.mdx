@@ -9,14 +9,14 @@ VerifyAfrica can POST verification events to your server so you do not need to h
 
 Webhooks fire for verifications created from the **dashboard**, **public API**, **bulk uploads**, and other internal flows — as long as your tenant webhook is configured and active.
 
-:::tip Source of truth
+**Source of truth**
+
 Event names, `verification_type` values, statuses, and the full payload shape are defined in the OpenAPI schemas:
 
 - [Webhook events & payload](/api/webhooks) — `sf.`/`kr.` verification events and mixed-session `batch.*` events
 - Schemas: `WebhookEvent`, `PublicVerificationType`, `VerificationStatus`, `WebhookPayload`
 
 Prefer those schemas over copying examples from this page. Mixed session lifecycle events are also covered in [Mixed Verification](/mixed-verification).
-:::
 
 ## Public API + webhooks
 

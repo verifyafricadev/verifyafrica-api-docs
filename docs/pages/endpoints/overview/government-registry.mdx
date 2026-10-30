@@ -5,11 +5,11 @@ sidebar_label: Government Registry Checks
 sidebar_icon: landmark
 ---
 
-:::tip Test vs production
+**Test vs production**
+
 On **test**, identity values are sandbox-specific — you must use the sandbox IDs listed in these docs. Real government IDs fail on test.
 
 On **production**, you can use any real government ID. Sandbox values do not work with live credentials.
-:::
 
 Verify identity and registry records against official government databases across Côte d'Ivoire, Ghana, Kenya, Nigeria, South Africa, and the United States.
 
@@ -24,13 +24,13 @@ Use [Webhooks](/webhooks) (`kr.verification.completed` / `kr.verification.failed
 
 Billing for registry checks is deferred until the check is submitted upstream (not at HTTP create).
 
-:::tip API Reference
+**API Reference**
+
 Jump directly to the interactive API docs:
 
 - [API reference](/api) — schemas, examples, and playground
 - Create: `POST /api/v2/public/verifications/requests/government_registry_checks/`
 - Detail: `GET /api/v2/public/verifications/requests/?verification_id={verification_id}`
-:::
 
 ## Countries
 
